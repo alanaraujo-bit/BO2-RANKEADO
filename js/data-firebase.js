@@ -1,16 +1,18 @@
 // BO2 RANKED - DATA MANAGEMENT WITH FIREBASE
 
-// Wait for Firebase to initialize
-let firebaseReady = false;
 let auth, db;
+let firebaseReady = false;
 
-// Initialize when Firebase is ready
-setTimeout(() => {
-    auth = window.firebaseAuth;
-    db = window.firebaseDB;
-    firebaseReady = true;
-    console.log('Data layer connected to Firebase');
-}, 1000);
+// Initialize Firebase when loaded
+window.addEventListener('load', () => {
+    const initialized = window.initFirebase();
+    if (initialized) {
+        auth = window.firebaseAuth;
+        db = window.firebaseDB;
+        firebaseReady = true;
+        console.log('Data layer connected to Firebase');
+    }
+});
 
 const RankedData = {
     currentUser: null,
@@ -22,46 +24,50 @@ const RankedData = {
     
     // Initialize
     async init() {
-        if (!firebaseReady) {
-            setTimeout(() => this.init(), 500);
-            return;
+        // Wait for Firebase to be ready
+        while (!firebaseReady) {
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
         
         // Listen to auth state
-        window.FirebaseAuth.onAuthStateChanged(auth, async (user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
                 this.currentUserId = user.uid;
-                this.currentUser = user.email || user.displayName;
-                console.log('User logged in:', this.currentUser);
                 await this.loadUserData();
+                if (window.updateUserDisplay) {
+                    window.updateUserDisplay();
+                }
             } else {
                 this.currentUserId = null;
                 this.currentUser = null;
-                console.log('User logged out');
             }
         });
+        
+        console.log('RankedData initialized');
     },
     
     // Load user data from Firestore
     async loadUserData() {
         if (!this.currentUserId) return;
         
-        const { doc, getDoc } = window.FirestoreDB;
-        const userDoc = await getDoc(doc(db, 'players', this.currentUserId));
-        
-        if (userDoc.exists()) {
-            this.players[this.currentUser] = userDoc.data();
+        try {
+            const doc = await db.collection('players').doc(this.currentUserId).get();
+            
+            if (doc.exists) {
+                const data = doc.data();
+                this.currentUser = data.username;
+                this.players[data.username] = data;
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
         }
     },
     
     // Create new player
     async createPlayer(username, email, password) {
         try {
-            const { createUserWithEmailAndPassword } = window.FirebaseAuth;
-            const { doc, setDoc } = window.FirestoreDB;
-            
             // Create auth user
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             const userId = userCredential.user.uid;
             
             // Create player document in Firestore
@@ -91,7 +97,7 @@ const RankedData = {
                 }
             };
             
-            await setDoc(doc(db, 'players', userId), playerData);
+            await db.collection('players').doc(userId).set(playerData);
             
             this.currentUserId = userId;
             this.currentUser = username;
@@ -107,15 +113,13 @@ const RankedData = {
     // Login
     async login(email, password) {
         try {
-            const { signInWithEmailAndPassword } = window.FirebaseAuth;
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
             
             // Load player data
-            const { doc, getDoc } = window.FirestoreDB;
-            const playerDoc = await getDoc(doc(db, 'players', userCredential.user.uid));
+            const doc = await db.collection('players').doc(userCredential.user.uid).get();
             
-            if (playerDoc.exists()) {
-                const playerData = playerDoc.data();
+            if (doc.exists) {
+                const playerData = doc.data();
                 this.currentUserId = userCredential.user.uid;
                 this.currentUser = playerData.username;
                 this.players[this.currentUser] = playerData;
@@ -131,8 +135,7 @@ const RankedData = {
     
     // Logout
     async logout() {
-        const { signOut } = window.FirebaseAuth;
-        await signOut(auth);
+        await auth.signOut();
         this.currentUser = null;
         this.currentUserId = null;
         this.players = {};
@@ -146,14 +149,18 @@ const RankedData = {
         }
         
         // Query Firestore
-        const { collection, query, where, getDocs } = window.FirestoreDB;
-        const q = query(collection(db, 'players'), where('username', '==', username));
-        const querySnapshot = await getDocs(q);
-        
-        if (!querySnapshot.empty) {
-            const playerData = querySnapshot.docs[0].data();
-            this.players[username] = playerData;
-            return playerData;
+        try {
+            const querySnapshot = await db.collection('players')
+                .where('username', '==', username)
+                .get();
+            
+            if (!querySnapshot.empty) {
+                const playerData = querySnapshot.docs[0].data();
+                this.players[username] = playerData;
+                return playerData;
+            }
+        } catch (error) {
+            console.error('Error getting player:', error);
         }
         
         return null;
@@ -164,98 +171,126 @@ const RankedData = {
         const player = await this.getPlayer(username);
         if (!player) return false;
         
-        const { doc, updateDoc } = window.FirestoreDB;
-        await updateDoc(doc(db, 'players', player.userId), updates);
-        
-        // Update local cache
-        Object.assign(this.players[username], updates);
-        return true;
+        try {
+            await db.collection('players').doc(player.userId).update(updates);
+            
+            // Update local cache
+            Object.assign(this.players[username], updates);
+            return true;
+        } catch (error) {
+            console.error('Error updating player:', error);
+            return false;
+        }
     },
     
     // Add match
     async addMatch(matchData) {
-        const { collection, addDoc } = window.FirestoreDB;
-        
-        const match = {
-            ...matchData,
-            timestamp: Date.now(),
-            id: null,
-            confirmed: false
-        };
-        
-        const docRef = await addDoc(collection(db, 'matches'), match);
-        match.id = docRef.id;
-        
-        this.matches.push(match);
-        return match;
+        try {
+            const match = {
+                ...matchData,
+                timestamp: Date.now(),
+                confirmed: false
+            };
+            
+            const docRef = await db.collection('matches').add(match);
+            match.id = docRef.id;
+            
+            this.matches.push(match);
+            return match;
+        } catch (error) {
+            console.error('Error adding match:', error);
+            throw error;
+        }
     },
     
     // Add pending confirmation
     async addPendingConfirmation(match) {
-        const { collection, addDoc } = window.FirestoreDB;
-        
-        const pending = {
-            matchId: match.id,
-            reporter: match.reporter,
-            opponent: match.playerA === match.reporter ? match.playerB : match.playerA,
-            matchData: match,
-            timestamp: Date.now()
-        };
-        
-        const docRef = await addDoc(collection(db, 'pendingConfirmations'), pending);
-        pending.id = docRef.id;
-        
-        this.pendingConfirmations.push(pending);
-        return pending;
+        try {
+            const pending = {
+                matchId: match.id,
+                reporter: match.reporter,
+                opponent: match.playerA === match.reporter ? match.playerB : match.playerA,
+                matchData: match,
+                timestamp: Date.now()
+            };
+            
+            const docRef = await db.collection('pendingConfirmations').add(pending);
+            pending.id = docRef.id;
+            
+            this.pendingConfirmations.push(pending);
+            return pending;
+        } catch (error) {
+            console.error('Error adding pending confirmation:', error);
+            throw error;
+        }
     },
     
     // Confirm match
     async confirmMatch(matchId) {
-        const { doc, updateDoc, deleteDoc, collection, query, where, getDocs } = window.FirestoreDB;
-        
-        // Update match as confirmed
-        await updateDoc(doc(db, 'matches', matchId), { confirmed: true });
-        
-        // Remove from pending
-        const q = query(collection(db, 'pendingConfirmations'), where('matchId', '==', matchId));
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach(async (document) => {
-            await deleteDoc(doc(db, 'pendingConfirmations', document.id));
-        });
-        
-        // Update local arrays
-        this.pendingConfirmations = this.pendingConfirmations.filter(p => p.matchId !== matchId);
-        const match = this.matches.find(m => m.id === matchId);
-        if (match) match.confirmed = true;
+        try {
+            // Update match as confirmed
+            await db.collection('matches').doc(matchId).update({ confirmed: true });
+            
+            // Remove from pending
+            const querySnapshot = await db.collection('pendingConfirmations')
+                .where('matchId', '==', matchId)
+                .get();
+            
+            const deletePromises = querySnapshot.docs.map(doc => doc.ref.delete());
+            await Promise.all(deletePromises);
+            
+            // Update local arrays
+            this.pendingConfirmations = this.pendingConfirmations.filter(p => p.matchId !== matchId);
+            const match = this.matches.find(m => m.id === matchId);
+            if (match) match.confirmed = true;
+            
+            return true;
+        } catch (error) {
+            console.error('Error confirming match:', error);
+            return false;
+        }
     },
     
     // Get leaderboard
     async getLeaderboard(type = 'global') {
-        const { collection, getDocs, orderBy, query } = window.FirestoreDB;
-        
-        const q = query(collection(db, 'players'), orderBy('mmr', 'desc'));
-        const querySnapshot = await getDocs(q);
-        
-        const leaderboard = [];
-        querySnapshot.forEach((doc) => {
-            leaderboard.push(doc.data());
-        });
-        
-        return leaderboard;
+        try {
+            const querySnapshot = await db.collection('players')
+                .orderBy('mmr', 'desc')
+                .limit(100)
+                .get();
+            
+            const leaderboard = [];
+            querySnapshot.forEach((doc) => {
+                leaderboard.push(doc.data());
+            });
+            
+            return leaderboard;
+        } catch (error) {
+            console.error('Error getting leaderboard:', error);
+            return [];
+        }
     },
     
     // Get stats
     async getStats() {
-        const { collection, getDocs } = window.FirestoreDB;
-        
-        const playersSnapshot = await getDocs(collection(db, 'players'));
-        const matchesSnapshot = await getDocs(collection(db, 'matches'));
-        
-        return {
-            totalPlayers: playersSnapshot.size,
-            totalMatches: matchesSnapshot.docs.filter(doc => doc.data().confirmed).length,
-            activeSeason: this.currentSeason
-        };
+        try {
+            const playersSnapshot = await db.collection('players').get();
+            const matchesSnapshot = await db.collection('matches').get();
+            
+            const confirmedMatches = matchesSnapshot.docs.filter(doc => doc.data().confirmed);
+            
+            return {
+                totalPlayers: playersSnapshot.size,
+                totalMatches: confirmedMatches.length,
+                activeSeason: this.currentSeason
+            };
+        } catch (error) {
+            console.error('Error getting stats:', error);
+            return {
+                totalPlayers: 0,
+                totalMatches: 0,
+                activeSeason: this.currentSeason
+            };
+        }
     }
 };
