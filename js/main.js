@@ -255,8 +255,8 @@ async function handleMatchSubmit(event) {
         return;
     }
     
-    // Submit match
-    const success = MatchSystem.submitMatch({
+    // Submit match (await for Firebase)
+    const success = await MatchSystem.submitMatch({
         opponent,
         map,
         mode,

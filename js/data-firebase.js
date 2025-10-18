@@ -85,15 +85,40 @@ const RankedData = {
             
             this.pendingConfirmations = [];
             querySnapshot.forEach((doc) => {
-                this.pendingConfirmations.push({
+                const data = doc.data();
+                
+                // Reconstruct matchData object from flattened data
+                const pending = {
                     id: doc.id,
-                    ...doc.data()
-                });
+                    matchId: data.matchId,
+                    reporter: data.reporter,
+                    opponent: data.opponent,
+                    timestamp: data.timestamp,
+                    matchData: {
+                        id: data.matchId,
+                        playerA: data.playerA,
+                        playerB: data.playerB,
+                        winner: data.winner,
+                        loser: data.loser,
+                        kills: data.kills,
+                        deaths: data.deaths,
+                        map: data.map,
+                        mode: data.mode,
+                        reporter: data.reporter,
+                        confirmed: false
+                    }
+                };
+                
+                this.pendingConfirmations.push(pending);
             });
             
-            console.log(`✅ Loaded ${this.pendingConfirmations.length} pending confirmations`);
+            console.log(`✅ Loaded ${this.pendingConfirmations.length} pending confirmations for ${this.currentUser}`);
+            
+            if (this.pendingConfirmations.length > 0) {
+                console.log('Pending confirmations:', this.pendingConfirmations);
+            }
         } catch (error) {
-            console.error('Error loading pending confirmations:', error);
+            console.error('❌ Error loading pending confirmations:', error);
         }
     },
     
@@ -258,21 +283,38 @@ const RankedData = {
     // Add pending confirmation
     async addPendingConfirmation(match) {
         try {
+            // Flatten matchData to avoid nested object issues in Firestore
             const pending = {
                 matchId: match.id,
                 reporter: match.reporter,
                 opponent: match.playerA === match.reporter ? match.playerB : match.playerA,
-                matchData: match,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                // Flatten match data
+                playerA: match.playerA,
+                playerB: match.playerB,
+                winner: match.winner,
+                loser: match.loser,
+                kills: match.kills,
+                deaths: match.deaths,
+                map: match.map,
+                mode: match.mode
             };
+            
+            console.log('Adding pending confirmation:', pending);
             
             const docRef = await db.collection('pendingConfirmations').add(pending);
             pending.id = docRef.id;
             
+            // Add matchData object for local use
+            pending.matchData = match;
+            
             this.pendingConfirmations.push(pending);
+            
+            console.log('✅ Pending confirmation added:', docRef.id);
+            
             return pending;
         } catch (error) {
-            console.error('Error adding pending confirmation:', error);
+            console.error('❌ Error adding pending confirmation:', error);
             throw error;
         }
     },

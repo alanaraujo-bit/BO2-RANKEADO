@@ -2,7 +2,7 @@
 
 const MatchSystem = {
     // Submit a new match result
-    submitMatch(matchData) {
+    async submitMatch(matchData) {
         const { opponent, map, mode, kills, deaths, result } = matchData;
         const reporter = RankedData.currentUser;
         
@@ -17,7 +17,8 @@ const MatchSystem = {
         }
         
         // Validate opponent exists
-        if (!RankedData.getPlayer(opponent)) {
+        const opponentPlayer = await RankedData.getPlayer(opponent);
+        if (!opponentPlayer) {
             UI.showNotification('Jogador "' + opponent + '" nao encontrado!', 'error');
             return false;
         }
@@ -40,23 +41,29 @@ const MatchSystem = {
             confirmed: false
         };
         
-        // Add match to data
-        const savedMatch = RankedData.addMatch(match);
-        
-        // Add to pending confirmations
-        RankedData.addPendingConfirmation(savedMatch);
-        
-        UI.showNotification(
-            'Partida registrada! Aguardando confirmacao de ' + opponent + '...',
-            'success'
-        );
-        
-        // Update notifications for opponent (if they refresh)
-        if (typeof updateNotifications === 'function') {
-            updateNotifications();
+        try {
+            // Add match to data (await for Firebase)
+            const savedMatch = await RankedData.addMatch(match);
+            
+            // Add to pending confirmations (await for Firebase)
+            await RankedData.addPendingConfirmation(savedMatch);
+            
+            UI.showNotification(
+                'Partida registrada! Aguardando confirmacao de ' + opponent + '...',
+                'success'
+            );
+            
+            // Update notifications for opponent (if they refresh)
+            if (typeof updateNotifications === 'function') {
+                updateNotifications();
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Error submitting match:', error);
+            UI.showNotification('Erro ao registrar partida: ' + error.message, 'error');
+            return false;
         }
-        
-        return true;
     },
     
     // Confirm a pending match
