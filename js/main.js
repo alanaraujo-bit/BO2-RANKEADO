@@ -496,33 +496,81 @@ async function updateNotifications() {
     content.innerHTML = pending.map(p => {
         const match = p.matchData;
         const isWinner = match.winner === RankedData.currentUser;
-        const resultText = isWinner ? '✅ Vitória' : '❌ Derrota';
+        const resultText = isWinner ? '🏆 VOCÊ VENCEU' : '💀 VOCÊ PERDEU';
         const resultColor = isWinner ? 'var(--success)' : 'var(--error)';
+        const kdRatio = (match.kills / Math.max(1, match.deaths)).toFixed(2);
+        const opponentName = p.reporter;
+        
+        // Calculate estimated MMR change
+        const estimatedChange = isWinner ? '+25 a +35 MMR' : '-20 a -30 MMR';
+        const changeColor = isWinner ? 'var(--success)' : 'var(--error)';
         
         return `
             <div class="notification-item">
                 <div class="notification-title">
-                    Partida reportada por ${p.reporter}
+                    ⚔️ Partida vs ${opponentName}
                 </div>
                 <div class="notification-details">
-                    <div style="margin-bottom: 5px;">
-                        <strong>Mapa:</strong> ${match.map} | <strong>Modo:</strong> ${match.mode}
+                    <div style="margin-bottom: 8px; padding: 8px; background: rgba(255, 102, 0, 0.1); border-radius: 5px;">
+                        <div style="font-size: 1.1em; font-weight: 700; color: ${resultColor};">
+                            ${resultText}
+                        </div>
+                        <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 3px;">
+                            Reportado por ${opponentName}
+                        </div>
                     </div>
-                    <div style="margin-bottom: 5px;">
-                        <strong>Resultado:</strong> <span style="color: ${resultColor};">${resultText}</span>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px; text-align: center;">
+                            <div style="color: var(--text-secondary); font-size: 0.85em;">MAPA</div>
+                            <div style="font-weight: 700; color: var(--primary-orange);">${match.map}</div>
+                        </div>
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 5px; text-align: center;">
+                            <div style="color: var(--text-secondary); font-size: 0.85em;">MODO</div>
+                            <div style="font-weight: 700; color: var(--primary-orange);">${match.mode}</div>
+                        </div>
                     </div>
-                    <div style="margin-bottom: 5px;">
-                        <strong>K/D:</strong> ${match.kills}/${match.deaths}
+                    
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 5px; margin-bottom: 8px;">
+                        <div style="color: var(--text-secondary); font-size: 0.85em; margin-bottom: 5px;">
+                            ESTATÍSTICAS DO OPONENTE
+                        </div>
+                        <div style="display: flex; justify-content: space-around; align-items: center;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5em; font-weight: 700; color: var(--success);">${match.kills}</div>
+                                <div style="font-size: 0.8em; color: var(--text-secondary);">Kills</div>
+                            </div>
+                            <div style="font-size: 1.2em; color: var(--text-secondary);">/</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5em; font-weight: 700; color: var(--error);">${match.deaths}</div>
+                                <div style="font-size: 0.8em; color: var(--text-secondary);">Deaths</div>
+                            </div>
+                            <div style="font-size: 1.2em; color: var(--text-secondary)">=</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5em; font-weight: 700; color: var(--neon-blue);">${kdRatio}</div>
+                                <div style="font-size: 0.8em; color: var(--text-secondary);">K/D</div>
+                            </div>
+                        </div>
                     </div>
-                    <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">
-                        ${getTimeAgo(p.timestamp)}
+                    
+                    <div style="background: rgba(0, 217, 255, 0.05); padding: 8px; border-radius: 5px; border: 1px solid rgba(0, 217, 255, 0.2); margin-bottom: 8px;">
+                        <div style="font-size: 0.9em; color: var(--text-secondary);">
+                            ⚡ Mudança estimada de MMR:
+                        </div>
+                        <div style="font-weight: 700; color: ${changeColor}; font-size: 1.1em;">
+                            ${estimatedChange}
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 0.85em; color: var(--text-secondary); text-align: center; margin-top: 8px;">
+                        ⏰ ${getTimeAgo(p.timestamp)}
                     </div>
                 </div>
                 <div class="notification-actions">
-                    <button class="btn-primary" style="flex: 1;" onclick="confirmMatchNotification(${p.matchId}, true)">
+                    <button class="btn-primary" style="flex: 1;" onclick="confirmMatchNotification('${p.matchId}', true)">
                         ✅ CONFIRMAR
                     </button>
-                    <button class="btn-secondary" style="flex: 1;" onclick="confirmMatchNotification(${p.matchId}, false)">
+                    <button class="btn-secondary" style="flex: 1;" onclick="confirmMatchNotification('${p.matchId}', false)">
                         ❌ REJEITAR
                     </button>
                 </div>
