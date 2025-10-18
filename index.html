@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BO2 Plutonium Ranked System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">BO2</span>
+                <span class="logo-ranked">RANKED</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active" onclick="showPage('home')">🏠 HOME</a></li>
+                <li><a href="#play" class="nav-link" onclick="showPage('play')">🎮 JOGAR</a></li>
+                <li><a href="#profile" class="nav-link" onclick="showPage('profile')">👤 PERFIL</a></li>
+                <li><a href="#leaderboard" class="nav-link" onclick="showPage('leaderboard')">🏆 RANKING</a></li>
+                <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
+            </ul>
+            <div class="nav-user">
+                <span class="user-name" id="currentUserName">Visitante</span>
+                <button class="btn-login" id="btnLogin" onclick="showLoginModal()">LOGIN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- HOME PAGE -->
+        <div id="home" class="page active">
+            <div class="hero-section">
+                <h1 class="hero-title">SISTEMA RANKED PLUTONIUM</h1>
+                <p class="hero-subtitle">Call of Duty: Black Ops 2</p>
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalPlayers">0</div>
+                        <div class="stat-label">JOGADORES</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalMatches">0</div>
+                        <div class="stat-label">PARTIDAS</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="activeSeason">S1</div>
+                        <div class="stat-label">TEMPORADA</div>
+                    </div>
+                </div>
+                <button class="btn-primary btn-large" onclick="showPage('play')">
+                    🎮 COMEÇAR A JOGAR
+                </button>
+            </div>
+
+            <!-- Rank Tiers Display -->
+            <div class="section">
+                <h2 class="section-title">📊 SISTEMA DE RANKS</h2>
+                <div class="ranks-grid">
+                    <div class="rank-card bronze">
+                        <div class="rank-icon">🥉</div>
+                        <div class="rank-name">BRONZE</div>
+                        <div class="rank-mmr">0 - 999 MMR</div>
+                    </div>
+                    <div class="rank-card silver">
+                        <div class="rank-icon">🥈</div>
+                        <div class="rank-name">PRATA</div>
+                        <div class="rank-mmr">1000 - 1499 MMR</div>
+                    </div>
+                    <div class="rank-card gold">
+                        <div class="rank-icon">🥇</div>
+                        <div class="rank-name">OURO</div>
+                        <div class="rank-mmr">1500 - 1999 MMR</div>
+                    </div>
+                    <div class="rank-card platinum">
+                        <div class="rank-icon">💎</div>
+                        <div class="rank-name">PLATINA</div>
+                        <div class="rank-mmr">2000 - 2499 MMR</div>
+                    </div>
+                    <div class="rank-card diamond">
+                        <div class="rank-icon">💠</div>
+                        <div class="rank-name">DIAMANTE</div>
+                        <div class="rank-mmr">2500 - 2999 MMR</div>
+                    </div>
+                    <div class="rank-card master">
+                        <div class="rank-icon">👑</div>
+                        <div class="rank-name">MESTRE</div>
+                        <div class="rank-mmr">3000 - 3499 MMR</div>
+                    </div>
+                    <div class="rank-card legend">
+                        <div class="rank-icon">⚡</div>
+                        <div class="rank-name">LENDA</div>
+                        <div class="rank-mmr">3500+ MMR</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Players Preview -->
+            <div class="section">
+                <h2 class="section-title">🏆 TOP 5 JOGADORES</h2>
+                <div id="topPlayersPreview"></div>
+            </div>
+        </div>
+
+        <!-- PLAY PAGE -->
+        <div id="play" class="page">
+            <div class="section">
+                <h2 class="section-title">🎮 REGISTRAR PARTIDA RANKED</h2>
+                <div class="match-report-container">
+                    <form id="matchReportForm" class="match-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">👥 ADVERSÁRIO</label>
+                                <select class="form-input" id="opponentSelect" required>
+                                    <option value="">Selecione o adversário...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🗺️ MAPA</label>
+                                <select class="form-input" id="mapSelect" required>
+                                    <option value="">Selecione o mapa...</option>
+                                    <option value="Nuketown">Nuketown 2025</option>
+                                    <option value="Raid">Raid</option>
+                                    <option value="Standoff">Standoff</option>
+                                    <option value="Slums">Slums</option>
+                                    <option value="Hijacked">Hijacked</option>
+                                    <option value="Express">Express</option>
+                                    <option value="Yemen">Yemen</option>
+                                    <option value="Carrier">Carrier</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🎯 MODO DE JOGO</label>
+                                <select class="form-input" id="gameModeSelect" required>
+                                    <option value="">Selecione o modo...</option>
+                                    <option value="TDM">Team Deathmatch</option>
+                                    <option value="DOM">Domination</option>
+                                    <option value="SND">Search and Destroy</option>
+                                    <option value="HP">Hardpoint</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🔫 SEUS KILLS</label>
+                                <input type="number" class="form-input" id="killsInput" min="0" max="999" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">💀 SUAS DEATHS</label>
+                                <input type="number" class="form-input" id="deathsInput" min="0" max="999" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🏆 RESULTADO</label>
+                                <select class="form-input" id="resultSelect" required>
+                                    <option value="">Selecione o resultado...</option>
+                                    <option value="win">✅ VITÓRIA</option>
+                                    <option value="loss">❌ DERROTA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">📸 SCREENSHOT DO PLACAR (Opcional)</label>
+                            <input type="file" class="form-input-file" id="screenshotInput" accept="image/*">
+                            <div class="file-preview" id="filePreview"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary btn-large">
+                                🚀 ENVIAR RESULTADO
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Pending Confirmations -->
+                <div class="section" id="pendingSection" style="display: none;">
+                    <h3 class="section-subtitle">⏳ AGUARDANDO CONFIRMAÇÃO</h3>
+                    <div id="pendingMatches"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div id="profile" class="page">
+            <div id="profileContent"></div>
+        </div>
+
+        <!-- LEADERBOARD PAGE -->
+        <div id="leaderboard" class="page">
+            <div class="section">
+                <h2 class="section-title">🏆 RANKING GLOBAL</h2>
+                <div class="leaderboard-filters">
+                    <button class="filter-btn active" onclick="filterLeaderboard('global')">🌍 GLOBAL</button>
+                    <button class="filter-btn" onclick="filterLeaderboard('season')">📅 TEMPORADA</button>
+                </div>
+                <div id="leaderboardTable"></div>
+            </div>
+        </div>
+
+        <!-- HISTORY PAGE -->
+        <div id="history" class="page">
+            <div class="section">
+                <h2 class="section-title">📜 HISTÓRICO DE PARTIDAS</h2>
+                <div id="matchHistory"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODALS -->
+    
+    <!-- Login/Register Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 class="modal-title">🎮 ENTRAR NO SISTEMA</h2>
+                <button class="modal-close" onclick="closeLoginModal()">×</button>
+            </div>
+            <form id="loginForm" class="modal-form">
+                <div class="form-group">
+                    <label class="form-label">👤 NOME DE USUÁRIO</label>
+                    <input type="text" class="form-input" id="usernameInput" required maxlength="20">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeLoginModal()">CANCELAR</button>
+                    <button type="submit" class="btn-primary">ENTRAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 class="modal-title">⚠️ CONFIRMAR RESULTADO</h2>
+                <button class="modal-close" onclick="closeConfirmModal()">×</button>
+            </div>
+            <div id="confirmContent"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/ranks.js"></script>
+    <script src="js/mmr.js"></script>
+    <script src="js/matches.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

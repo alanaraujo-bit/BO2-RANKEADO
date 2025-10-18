@@ -1,0 +1,14 @@
+# Backups
+*.bak
+
+# VS Code
+.vscode/
+.github/copilot-instructions.md
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
