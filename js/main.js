@@ -61,13 +61,21 @@ async function handleLogin(event) {
     
     try {
         // Try login first
+        let isNewUser = false;
         try {
+            console.log('Tentando fazer login...');
             await RankedData.login(email, password);
             UI.showNotification('Bem-vindo de volta, ' + RankedData.currentUser + '!', 'success');
         } catch (loginError) {
-            // If login fails, try register
-            if (loginError.code === 'auth/user-not-found' || loginError.code === 'auth/wrong-password' || loginError.code === 'auth/invalid-credential') {
+            console.log('Erro no login:', loginError.code, loginError.message);
+            
+            // If login fails due to user not found or wrong credentials, try register
+            if (loginError.code === 'auth/user-not-found' || 
+                loginError.code === 'auth/wrong-password' || 
+                loginError.code === 'auth/invalid-credential' ||
+                loginError.code === 'auth/invalid-login-credentials') {
                 console.log('Usuario nao encontrado, criando novo...');
+                isNewUser = true;
                 await RankedData.createPlayer(username, email, password);
                 UI.showNotification('Bem-vindo, ' + username + '! Conta criada com sucesso!', 'success');
             } else {
