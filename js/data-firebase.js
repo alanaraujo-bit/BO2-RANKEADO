@@ -40,6 +40,7 @@ const RankedData = {
             if (user) {
                 this.currentUserId = user.uid;
                 await this.loadUserData();
+                await this.loadPendingConfirmations(); // Load pending confirmations
                 if (window.updateUserDisplay) {
                     window.updateUserDisplay();
                 }
@@ -47,6 +48,7 @@ const RankedData = {
             } else {
                 this.currentUserId = null;
                 this.currentUser = null;
+                this.pendingConfirmations = []; // Clear pending confirmations
                 console.log('User logged out');
             }
         });
@@ -69,6 +71,29 @@ const RankedData = {
             }
         } catch (error) {
             console.error('Error loading user data:', error);
+        }
+    },
+    
+    // Load pending confirmations for current user
+    async loadPendingConfirmations() {
+        if (!this.currentUser) return;
+        
+        try {
+            const querySnapshot = await db.collection('pendingConfirmations')
+                .where('opponent', '==', this.currentUser)
+                .get();
+            
+            this.pendingConfirmations = [];
+            querySnapshot.forEach((doc) => {
+                this.pendingConfirmations.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            console.log(`✅ Loaded ${this.pendingConfirmations.length} pending confirmations`);
+        } catch (error) {
+            console.error('Error loading pending confirmations:', error);
         }
     },
     
@@ -274,6 +299,31 @@ const RankedData = {
             return true;
         } catch (error) {
             console.error('Error confirming match:', error);
+            return false;
+        }
+    },
+    
+    // Reject match (remove from pending)
+    async rejectMatch(matchId) {
+        try {
+            // Remove match from matches collection
+            await db.collection('matches').doc(matchId).delete();
+            
+            // Remove from pending confirmations
+            const querySnapshot = await db.collection('pendingConfirmations')
+                .where('matchId', '==', matchId)
+                .get();
+            
+            const deletePromises = querySnapshot.docs.map(doc => doc.ref.delete());
+            await Promise.all(deletePromises);
+            
+            // Update local arrays
+            this.pendingConfirmations = this.pendingConfirmations.filter(p => p.matchId !== matchId);
+            this.matches = this.matches.filter(m => m.id !== matchId);
+            
+            return true;
+        } catch (error) {
+            console.error('Error rejecting match:', error);
             return false;
         }
     },

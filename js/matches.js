@@ -60,7 +60,7 @@ const MatchSystem = {
     },
     
     // Confirm a pending match
-    confirmMatch(matchId, confirm = true) {
+    async confirmMatch(matchId, confirm = true) {
         const pending = RankedData.pendingConfirmations.find(p => p.matchId === matchId);
         
         if (!pending) {
@@ -69,12 +69,17 @@ const MatchSystem = {
         }
         
         if (!confirm) {
-            // Reject the match
-            RankedData.pendingConfirmations = RankedData.pendingConfirmations.filter(
-                p => p.matchId !== matchId
-            );
-            RankedData.matches = RankedData.matches.filter(m => m.id !== matchId);
-            RankedData.save();
+            // Reject the match using Firebase or localStorage
+            if (typeof RankedData.rejectMatch === 'function') {
+                await RankedData.rejectMatch(matchId);
+            } else {
+                // Fallback for localStorage
+                RankedData.pendingConfirmations = RankedData.pendingConfirmations.filter(
+                    p => p.matchId !== matchId
+                );
+                RankedData.matches = RankedData.matches.filter(m => m.id !== matchId);
+                if (RankedData.save) RankedData.save();
+            }
             
             UI.showNotification('Partida rejeitada!', 'warning');
             UI.updatePendingMatches();
@@ -84,11 +89,34 @@ const MatchSystem = {
                 updateNotifications();
             }
             
-            return false;
+            return true; // Changed from false to true
         }
         
         // Confirm and process the match
-        const match = RankedData.matches.find(m => m.id === matchId);
+        let match = RankedData.matches.find(m => m.id === matchId);
+        
+        if (!match) {
+            // Try to load match from Firebase if available
+            if (window.firebaseDB) {
+                try {
+                    const matchDoc = await window.firebaseDB.collection('matches').doc(matchId).get();
+                    if (matchDoc.exists) {
+                        match = { id: matchDoc.id, ...matchDoc.data() };
+                        RankedData.matches.push(match); // Add to local cache
+                    } else {
+                        UI.showNotification('Partida nao encontrada!', 'error');
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('Error loading match:', error);
+                    UI.showNotification('Erro ao carregar partida!', 'error');
+                    return false;
+                }
+            } else {
+                UI.showNotification('Partida nao encontrada!', 'error');
+                return false;
+            }
+        }
         
         if (match) {
             match.confirmed = true;
