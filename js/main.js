@@ -580,11 +580,19 @@ async function updateNotifications() {
 }
 
 async function confirmMatchNotification(matchId, confirm) {
-    const success = await MatchSystem.confirmMatch(matchId, confirm);
+    console.log('confirmMatchNotification called:', { matchId, confirm });
     
-    if (success || !confirm) {
-        await updateNotifications();
-        await UI.updateAllViews();
+    try {
+        const success = await MatchSystem.confirmMatch(matchId, confirm);
+        console.log('confirmMatch result:', success);
+        
+        if (success || !confirm) {
+            await updateNotifications();
+            await UI.updateAllViews();
+        }
+    } catch (error) {
+        console.error('Error in confirmMatchNotification:', error);
+        UI.showNotification('Erro ao processar confirmação: ' + error.message, 'error');
     }
 }
 

@@ -68,14 +68,21 @@ const MatchSystem = {
     
     // Confirm a pending match
     async confirmMatch(matchId, confirm = true) {
+        console.log('MatchSystem.confirmMatch called:', { matchId, confirm });
+        console.log('Current pending confirmations:', RankedData.pendingConfirmations);
+        
         const pending = RankedData.pendingConfirmations.find(p => p.matchId === matchId);
         
         if (!pending) {
+            console.error('Pending match not found! matchId:', matchId);
             UI.showNotification('Partida nao encontrada!', 'error');
             return false;
         }
         
+        console.log('Found pending match:', pending);
+        
         if (!confirm) {
+            console.log('Rejecting match...');
             // Reject the match using Firebase or localStorage
             if (typeof RankedData.rejectMatch === 'function') {
                 await RankedData.rejectMatch(matchId);
@@ -99,10 +106,15 @@ const MatchSystem = {
             return true; // Changed from false to true
         }
         
+        console.log('Confirming match...');
+        
         // Confirm and process the match
         let match = RankedData.matches.find(m => m.id === matchId);
         
+        console.log('Match found in local cache:', match);
+        
         if (!match) {
+            console.log('Match not in cache, trying to load from Firebase...');
             // Try to load match from Firebase if available
             if (window.firebaseDB) {
                 try {
@@ -110,29 +122,36 @@ const MatchSystem = {
                     if (matchDoc.exists) {
                         match = { id: matchDoc.id, ...matchDoc.data() };
                         RankedData.matches.push(match); // Add to local cache
+                        console.log('Match loaded from Firebase:', match);
                     } else {
+                        console.error('Match document does not exist in Firebase');
                         UI.showNotification('Partida nao encontrada!', 'error');
                         return false;
                     }
                 } catch (error) {
-                    console.error('Error loading match:', error);
+                    console.error('Error loading match from Firebase:', error);
                     UI.showNotification('Erro ao carregar partida!', 'error');
                     return false;
                 }
             } else {
+                console.error('Firebase not available');
                 UI.showNotification('Partida nao encontrada!', 'error');
                 return false;
             }
         }
         
         if (match) {
+            console.log('Processing match confirmation...');
             match.confirmed = true;
             
             // Process MMR changes
+            console.log('Processing MMR changes...');
             const results = MMRSystem.processMatch(match);
+            console.log('MMR results:', results);
             
             // Remove from pending
-            RankedData.confirmMatch(matchId);
+            console.log('Removing from pending confirmations...');
+            await RankedData.confirmMatch(matchId);
             
             // Show results
             UI.showNotification(
