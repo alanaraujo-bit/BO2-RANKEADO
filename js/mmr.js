@@ -13,7 +13,17 @@ const MMRSystem = {
         const winnerData = RankedData.getPlayer(winner);
         const loserData = RankedData.getPlayer(loser);
         
-        if (!winnerData || !loserData) return { winnerChange: 0, loserChange: 0 };
+        if (!winnerData || !loserData) {
+            console.error('Player data not found:', { winner, loser, winnerData, loserData });
+            return { winnerChange: 0, loserChange: 0 };
+        }
+        
+        console.log('Calculating MMR change:', { 
+            winner, 
+            loser, 
+            winnerMMR: winnerData.mmr, 
+            loserMMR: loserData.mmr 
+        });
         
         // Basic ELO calculation
         const expectedWin = this.getExpectedScore(winnerData.mmr, loserData.mmr);
@@ -91,6 +101,11 @@ const MMRSystem = {
         player.rank = RankSystem.getRank(newMMR).name;
         player.lastPlayed = Date.now();
         
+        // Ensure seasonStats exists
+        if (!player.seasonStats) {
+            player.seasonStats = {};
+        }
+        
         // Update season stats
         if (!player.seasonStats[RankedData.currentSeason]) {
             player.seasonStats[RankedData.currentSeason] = {
@@ -129,22 +144,36 @@ const MMRSystem = {
     },
     
     // Process match and update MMRs
-    processMatch(matchData) {
+    async processMatch(matchData) {
+        console.log('Processing match:', matchData);
+        
         const { playerA, playerB, winner, kills, deaths, map, mode } = matchData;
         
         const loser = winner === playerA ? playerB : playerA;
         
+        console.log('Winner:', winner, 'Loser:', loser);
+        
+        // Get player data (await if using Firebase)
+        const winnerPlayer = await RankedData.getPlayer(winner);
+        const loserPlayer = await RankedData.getPlayer(loser);
+        
+        if (!winnerPlayer || !loserPlayer) {
+            console.error('Could not load player data!', { winner, loser, winnerPlayer, loserPlayer });
+            throw new Error('Dados dos jogadores não encontrados');
+        }
+        
+        console.log('Player data loaded:', { winnerPlayer, loserPlayer });
+        
         // Calculate MMR changes
         const mmrChanges = this.calculateMMRChange(winner, loser, { kills, deaths });
+        
+        console.log('MMR changes calculated:', mmrChanges);
         
         // Update both players
         const winnerResult = this.updatePlayerMMR(winner, mmrChanges.winnerChange, true);
         const loserResult = this.updatePlayerMMR(loser, mmrChanges.loserChange, false);
         
         // Update kill/death stats
-        const winnerPlayer = RankedData.getPlayer(winner);
-        const loserPlayer = RankedData.getPlayer(loser);
-        
         winnerPlayer.totalKills += kills;
         winnerPlayer.totalDeaths += deaths;
         loserPlayer.totalKills += deaths; // Loser's kills = winner's deaths

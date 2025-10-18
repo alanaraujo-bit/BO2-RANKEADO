@@ -144,9 +144,9 @@ const MatchSystem = {
             console.log('Processing match confirmation...');
             match.confirmed = true;
             
-            // Process MMR changes
+            // Process MMR changes (await for Firebase)
             console.log('Processing MMR changes...');
-            const results = MMRSystem.processMatch(match);
+            const results = await MMRSystem.processMatch(match);
             console.log('MMR results:', results);
             
             // Remove from pending
