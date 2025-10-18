@@ -236,26 +236,82 @@ const RankedData = {
                 this.players[username] = playerData;
                 return playerData;
             }
+            
+            console.warn('⚠️ Player not found in Firestore:', username);
         } catch (error) {
-            console.error('Error getting player:', error);
+            console.error('❌ Error getting player:', error);
         }
         
         return null;
     },
     
+    // Ensure player document exists (create if needed)
+    async ensurePlayerExists(username) {
+        let player = await this.getPlayer(username);
+        
+        if (!player) {
+            console.log('🔧 Creating missing player document for:', username);
+            
+            // Create basic player structure
+            const userId = username.toLowerCase().replace(/\s+/g, '-');
+            const playerData = {
+                userId: userId,
+                username: username,
+                email: `${userId}@temp.com`,
+                mmr: 1000,
+                rank: 'Prata I',
+                level: 1,
+                wins: 0,
+                losses: 0,
+                totalKills: 0,
+                totalDeaths: 0,
+                winStreak: 0,
+                bestStreak: 0,
+                gamesPlayed: 0,
+                createdAt: Date.now(),
+                lastPlayed: null,
+                achievements: [],
+                seasonStats: {
+                    [this.currentSeason]: {
+                        wins: 0,
+                        losses: 0,
+                        mmr: 1000
+                    }
+                }
+            };
+            
+            try {
+                await db.collection('players').doc(userId).set(playerData);
+                this.players[username] = playerData;
+                console.log('✅ Player document created:', username);
+                return playerData;
+            } catch (error) {
+                console.error('❌ Error creating player document:', error);
+                return null;
+            }
+        }
+        
+        return player;
+    },
+    
     // Update player
     async updatePlayer(username, updates) {
         const player = await this.getPlayer(username);
-        if (!player) return false;
+        if (!player) {
+            console.error('Player not found:', username);
+            return false;
+        }
         
         try {
-            await db.collection('players').doc(player.userId).update(updates);
+            // Use set with merge to create document if it doesn't exist
+            await db.collection('players').doc(player.userId).set(updates, { merge: true });
             
             // Update local cache
             Object.assign(this.players[username], updates);
+            console.log('✅ Player updated successfully:', username);
             return true;
         } catch (error) {
-            console.error('Error updating player:', error);
+            console.error('❌ Error updating player:', error);
             return false;
         }
     },

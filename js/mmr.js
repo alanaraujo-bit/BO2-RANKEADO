@@ -156,6 +156,10 @@ const MMRSystem = {
         
         console.log('Winner:', winner, 'Loser:', loser);
         
+        // Ensure player documents exist in Firebase
+        await RankedData.ensurePlayerExists(winner);
+        await RankedData.ensurePlayerExists(loser);
+        
         // Get player data (await if using Firebase)
         const winnerPlayer = await RankedData.getPlayer(winner);
         const loserPlayer = await RankedData.getPlayer(loser);

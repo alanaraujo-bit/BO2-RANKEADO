@@ -180,6 +180,11 @@ const MatchSystem = {
         
         if (!winner) return;
         
+        // Ensure achievements array exists
+        if (!winner.achievements) {
+            winner.achievements = [];
+        }
+        
         // First win achievement
         if (winner.wins === 1 && !winner.achievements.includes('first_win')) {
             winner.achievements.push('first_win');
