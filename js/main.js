@@ -76,13 +76,21 @@ async function handleLogin(event) {
             UI.showNotification('Bem-vindo de volta, ' + RankedData.currentUser + '!', 'success');
             success = true;
         } catch (loginError) {
-            console.log('❌ Login falhou:', loginError.code);
+            console.log('❌ Login falhou:', loginError);
+            console.log('Código do erro:', loginError.code);
+            console.log('Mensagem do erro:', loginError.message);
+            
+            // Extract error code from message if it's in the message string
+            const errorCode = loginError.code || '';
+            const errorMessage = loginError.message || '';
+            const isUserNotFound = errorCode.includes('user-not-found') || 
+                                   errorCode.includes('invalid-credential') ||
+                                   errorCode.includes('invalid-login-credentials') ||
+                                   errorMessage.includes('INVALID_LOGIN_CREDENTIALS') ||
+                                   errorMessage.includes('user-not-found');
             
             // Only try to register if user doesn't exist
-            if (loginError.code === 'auth/user-not-found' || 
-                loginError.code === 'auth/invalid-credential' ||
-                loginError.code === 'auth/invalid-login-credentials') {
-                
+            if (isUserNotFound) {
                 console.log('👤 Usuário não encontrado, criando nova conta...');
                 try {
                     isNewUser = true;
@@ -91,12 +99,12 @@ async function handleLogin(event) {
                     UI.showNotification('Bem-vindo, ' + username + '! Conta criada!', 'success');
                     success = true;
                 } catch (registerError) {
-                    console.log('❌ Erro ao criar conta:', registerError.code);
+                    console.log('❌ Erro ao criar conta:', registerError);
                     throw registerError;
                 }
-            } else if (loginError.code === 'auth/wrong-password') {
+            } else if (errorCode.includes('wrong-password') || errorMessage.includes('wrong-password')) {
                 throw new Error('Senha incorreta! Tente novamente.');
-            } else if (loginError.code === 'auth/email-already-in-use') {
+            } else if (errorCode.includes('email-already-in-use')) {
                 throw new Error('Email já cadastrado! Use a senha correta para fazer login.');
             } else {
                 throw loginError;
