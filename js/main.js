@@ -64,28 +64,47 @@ async function handleLogin(event) {
         console.log('Username:', username);
         console.log('Email:', email);
         
-        // Try login first
+        // Check if we should login or register based on error
+        let success = false;
         let isNewUser = false;
+        
         try {
-            console.log('Tentando fazer login...');
+            // Always try login first
+            console.log('📥 Tentando fazer login com credenciais existentes...');
             await RankedData.login(email, password);
             console.log('✅ Login realizado com sucesso!');
             UI.showNotification('Bem-vindo de volta, ' + RankedData.currentUser + '!', 'success');
+            success = true;
         } catch (loginError) {
-            console.log('❌ Erro no login:', loginError.code, loginError.message);
-            console.log('Erro completo:', loginError);
+            console.log('❌ Login falhou:', loginError.code);
             
-            // If login fails, try to register
-            console.log('🆕 Tentando criar nova conta...');
-            try {
-                isNewUser = true;
-                await RankedData.createPlayer(username, email, password);
-                console.log('✅ Conta criada com sucesso!');
-                UI.showNotification('Bem-vindo, ' + username + '! Conta criada com sucesso!', 'success');
-            } catch (registerError) {
-                console.log('❌ Erro ao criar conta:', registerError.code, registerError.message);
-                throw registerError;
+            // Only try to register if user doesn't exist
+            if (loginError.code === 'auth/user-not-found' || 
+                loginError.code === 'auth/invalid-credential' ||
+                loginError.code === 'auth/invalid-login-credentials') {
+                
+                console.log('👤 Usuário não encontrado, criando nova conta...');
+                try {
+                    isNewUser = true;
+                    await RankedData.createPlayer(username, email, password);
+                    console.log('✅ Conta criada com sucesso!');
+                    UI.showNotification('Bem-vindo, ' + username + '! Conta criada!', 'success');
+                    success = true;
+                } catch (registerError) {
+                    console.log('❌ Erro ao criar conta:', registerError.code);
+                    throw registerError;
+                }
+            } else if (loginError.code === 'auth/wrong-password') {
+                throw new Error('Senha incorreta! Tente novamente.');
+            } else if (loginError.code === 'auth/email-already-in-use') {
+                throw new Error('Email já cadastrado! Use a senha correta para fazer login.');
+            } else {
+                throw loginError;
             }
+        }
+        
+        if (!success) {
+            throw new Error('Falha no login/registro');
         }
         
         // Update UI
