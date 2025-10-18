@@ -39,6 +39,88 @@ function setupEventListeners() {
     }
 }
 
+// Handle Google login
+async function loginWithGoogle() {
+    try {
+        console.log('🔵 Iniciando login com Google...');
+        UI.showNotification('Abrindo janela do Google...', 'info');
+        
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+        
+        const result = await firebase.auth().signInWithPopup(provider);
+        const user = result.user;
+        
+        console.log('✅ Login com Google bem-sucedido:', user.email);
+        
+        // Extract username from email (before @)
+        const username = user.displayName || user.email.split('@')[0];
+        
+        // Check if player profile exists
+        const playerDoc = await firebase.firestore().collection('players').doc(user.uid).get();
+        
+        if (!playerDoc.exists) {
+            // Create new player profile
+            console.log('🆕 Criando perfil para novo usuário Google...');
+            const playerData = {
+                username: username,
+                email: user.email,
+                mmr: 1000,
+                wins: 0,
+                losses: 0,
+                gamesPlayed: 0,
+                winStreak: 0,
+                bestStreak: 0,
+                totalKills: 0,
+                totalDeaths: 0,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString(),
+                seasonStats: {
+                    [RankedData.currentSeason]: {
+                        wins: 0,
+                        losses: 0,
+                        mmr: 1000
+                    }
+                }
+            };
+            
+            await firebase.firestore().collection('players').doc(user.uid).set(playerData);
+            RankedData.currentUserId = user.uid;
+            RankedData.currentUser = username;
+            RankedData.players[username] = playerData;
+            
+            UI.showNotification('Bem-vindo, ' + username + '! Conta criada!', 'success');
+        } else {
+            // Load existing player data
+            const playerData = playerDoc.data();
+            RankedData.currentUserId = user.uid;
+            RankedData.currentUser = playerData.username;
+            RankedData.players[playerData.username] = playerData;
+            
+            UI.showNotification('Bem-vindo de volta, ' + playerData.username + '!', 'success');
+        }
+        
+        // Update UI
+        updateUserDisplay();
+        closeLoginModal();
+        await UI.updateAllViews();
+        showPage('profile');
+        
+    } catch (error) {
+        console.error('❌ Erro no login com Google:', error);
+        
+        if (error.code === 'auth/popup-closed-by-user') {
+            UI.showNotification('Login cancelado', 'error');
+        } else if (error.code === 'auth/popup-blocked') {
+            UI.showNotification('Pop-up bloqueado! Permita pop-ups para este site', 'error');
+        } else {
+            UI.showNotification('Erro ao fazer login com Google: ' + error.message, 'error');
+        }
+    }
+}
+
 // Handle login/register
 async function handleLogin(event) {
     event.preventDefault();
