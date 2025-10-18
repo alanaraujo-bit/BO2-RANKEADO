@@ -10,24 +10,30 @@ const firebaseConfig = {
     appId: "1:898358094429:web:c3fc9088315630abb3fbb4"
 };
 
-// Wait for Firebase SDK to load
-window.initFirebase = function() {
+// Initialize Firebase immediately when script loads
+(function() {
     try {
+        // Check if Firebase is loaded
+        if (typeof firebase === 'undefined') {
+            console.error('❌ Firebase SDK not loaded!');
+            return;
+        }
+        
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        console.log('Firebase initialized successfully');
+        console.log('🔥 Firebase initialized successfully');
         
-        // Export for use in other files
+        // Export globally
         window.firebaseApp = app;
         window.firebaseAuth = auth;
         window.firebaseDB = db;
+        window.firebaseReady = true;
         
-        return true;
     } catch (error) {
-        console.error('Firebase initialization error:', error);
-        return false;
+        console.error('❌ Firebase initialization error:', error);
+        window.firebaseReady = false;
     }
-};
+})();

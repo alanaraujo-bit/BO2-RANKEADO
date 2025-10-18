@@ -37,96 +37,113 @@ const UI = {
     },
     
     // Update all views
-    updateAllViews() {
-        this.updateStats();
-        this.updateTopPlayers();
-        this.updatePendingMatches();
+    async updateAllViews() {
+        await this.updateStats();
+        await this.updateTopPlayers();
+        await this.updatePendingMatches();
         
         // Update current page
         const activePage = document.querySelector('.page.active');
         if (activePage) {
             const pageId = activePage.id;
             if (pageId === 'profile') {
-                this.renderProfile();
+                await this.renderProfile();
             } else if (pageId === 'leaderboard') {
-                this.renderLeaderboard();
+                await this.renderLeaderboard();
             } else if (pageId === 'history') {
-                this.renderHistory();
+                await this.renderHistory();
             }
         }
     },
     
     // Update homepage stats
-    updateStats() {
-        const stats = RankedData.getStats();
-        document.getElementById('totalPlayers').textContent = stats.totalPlayers;
-        document.getElementById('totalMatches').textContent = stats.totalMatches;
-        document.getElementById('activeSeason').textContent = stats.activeSeason;
+    async updateStats() {
+        try {
+            const stats = await RankedData.getStats();
+            document.getElementById('totalPlayers').textContent = stats.totalPlayers;
+            document.getElementById('totalMatches').textContent = stats.totalMatches;
+            document.getElementById('activeSeason').textContent = 'S' + stats.activeSeason;
+        } catch (error) {
+            console.error('Error updating stats:', error);
+            document.getElementById('totalPlayers').textContent = '0';
+            document.getElementById('totalMatches').textContent = '0';
+            document.getElementById('activeSeason').textContent = 'S1';
+        }
     },
     
     // Update top players preview
-    updateTopPlayers() {
-        const leaderboard = RankedData.getLeaderboard('global').slice(0, 5);
-        const container = document.getElementById('topPlayersPreview');
+    async updateTopPlayers() {
+        try {
+            const leaderboard = await RankedData.getLeaderboard('global');
+            const topPlayers = leaderboard.slice(0, 5);
+            const container = document.getElementById('topPlayersPreview');
         
-        if (!container) return;
-        
-        if (leaderboard.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Nenhum jogador ainda. Seja o primeiro!</p>';
-            return;
-        }
-        
-        container.innerHTML = leaderboard.map((player, index) => {
-            const rank = RankSystem.getRank(player.mmr);
-            const position = index + 1;
-            const medal = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : `#${position}`;
-            const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
-            const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
+            if (!container) return;
             
-            return `
-                <div style="background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 15, 0.8) 100%); 
-                           padding: 20px; border-radius: 10px; border: 2px solid ${rank.color}; margin-bottom: 15px;
-                           display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <span style="font-size: 2em;">${medal}</span>
-                        <div>
-                            <div style="font-size: 1.5em; font-weight: 700; color: ${rank.color};">${player.username}</div>
-                            <div style="color: var(--text-secondary);">${rank.icon} ${rank.name}</div>
+            if (leaderboard.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Nenhum jogador ainda. Seja o primeiro!</p>';
+                return;
+            }
+            
+            container.innerHTML = leaderboard.map((player, index) => {
+                const rank = RankSystem.getRank(player.mmr);
+                const position = index + 1;
+                const medal = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : `#${position}`;
+                const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
+                const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
+                
+                return `
+                    <div style="background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 15, 0.8) 100%); 
+                               padding: 20px; border-radius: 10px; border: 2px solid ${rank.color}; margin-bottom: 15px;
+                               display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <span style="font-size: 2em;">${medal}</span>
+                            <div>
+                                <div style="font-size: 1.5em; font-weight: 700; color: ${rank.color};">${player.username}</div>
+                                <div style="color: var(--text-secondary);">${rank.icon} ${rank.name}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 30px; text-align: center;">
+                            <div>
+                                <div style="font-size: 1.8em; color: var(--primary-orange);">${player.mmr}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.9em;">MMR</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5em; color: var(--success);">${player.wins}W</div>
+                                <div style="color: var(--text-secondary); font-size: 0.9em;">${winRate}%</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5em; color: var(--neon-blue);">${kd}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.9em;">K/D</div>
+                            </div>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 30px; text-align: center;">
-                        <div>
-                            <div style="font-size: 1.8em; color: var(--primary-orange);">${player.mmr}</div>
-                            <div style="color: var(--text-secondary); font-size: 0.9em;">MMR</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.5em; color: var(--success);">${player.wins}W</div>
-                            <div style="color: var(--text-secondary); font-size: 0.9em;">${winRate}%</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.5em; color: var(--neon-blue);">${kd}</div>
-                            <div style="color: var(--text-secondary); font-size: 0.9em;">K/D</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('Error updating top players:', error);
+            const container = document.getElementById('topPlayersPreview');
+            if (container) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Erro ao carregar jogadores.</p>';
+            }
+        }
     },
     
     // Render profile page
-    renderProfile() {
-        if (!RankedData.currentUser) {
-            document.getElementById('profileContent').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Faça login para ver seu perfil.</p>';
-            return;
-        }
-        
-        const player = RankedData.getPlayer(RankedData.currentUser);
-        if (!player) return;
-        
-        const rank = RankSystem.getRank(player.mmr);
-        const progress = RankSystem.getRankProgress(player.mmr);
-        const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
-        const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
+    async renderProfile() {
+        try {
+            if (!RankedData.currentUser) {
+                document.getElementById('profileContent').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Faça login para ver seu perfil.</p>';
+                return;
+            }
+            
+            const player = await RankedData.getPlayer(RankedData.currentUser);
+            if (!player) return;
+            
+            const rank = RankSystem.getRank(player.mmr);
+            const progress = RankSystem.getRankProgress(player.mmr);
+            const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
+            const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
         
         document.getElementById('profileContent').innerHTML = `
             <div class="section">
@@ -183,14 +200,19 @@ const UI = {
                 </div>
             </div>
         `;
+        } catch (error) {
+            console.error('Error rendering profile:', error);
+            document.getElementById('profileContent').innerHTML = '<p style="text-align: center; color: var(--error);">Erro ao carregar perfil.</p>';
+        }
     },
     
     // Render leaderboard
-    renderLeaderboard(type = 'global') {
-        const leaderboard = RankedData.getLeaderboard(type);
-        const container = document.getElementById('leaderboardTable');
-        
-        if (!container) return;
+    async renderLeaderboard(type = 'global') {
+        try {
+            const leaderboard = await RankedData.getLeaderboard(type);
+            const container = document.getElementById('leaderboardTable');
+            
+            if (!container) return;
         
         if (leaderboard.length === 0) {
             container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Nenhum jogador no ranking ainda.</p>';
@@ -233,14 +255,22 @@ const UI = {
                 </tbody>
             </table>
         `;
+        } catch (error) {
+            console.error('Error rendering leaderboard:', error);
+            const container = document.getElementById('leaderboardTable');
+            if (container) {
+                container.innerHTML = '<p style="text-align: center; color: var(--error);">Erro ao carregar ranking.</p>';
+            }
+        }
     },
     
     // Render match history
-    renderHistory() {
-        const matches = MatchSystem.getMatchHistory(RankedData.currentUser);
-        const container = document.getElementById('matchHistory');
-        
-        if (!container) return;
+    async renderHistory() {
+        try {
+            const matches = await MatchSystem.getMatchHistory(RankedData.currentUser);
+            const container = document.getElementById('matchHistory');
+            
+            if (!container) return;
         
         if (matches.length === 0) {
             container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Nenhuma partida jogada ainda.</p>';
@@ -272,15 +302,23 @@ const UI = {
                 </div>
             `;
         }).join('');
+        } catch (error) {
+            console.error('Error rendering history:', error);
+            const container = document.getElementById('matchHistory');
+            if (container) {
+                container.innerHTML = '<p style="text-align: center; color: var(--error);">Erro ao carregar histórico.</p>';
+            }
+        }
     },
     
     // Update pending matches
-    updatePendingMatches() {
-        const pending = MatchSystem.getPendingMatches();
-        const section = document.getElementById('pendingSection');
-        const container = document.getElementById('pendingMatches');
-        
-        if (!section || !container) return;
+    async updatePendingMatches() {
+        try {
+            const pending = await MatchSystem.getPendingMatches();
+            const section = document.getElementById('pendingSection');
+            const container = document.getElementById('pendingMatches');
+            
+            if (!section || !container) return;
         
         if (pending.length === 0) {
             section.style.display = 'none';
@@ -315,19 +353,26 @@ const UI = {
                 </div>
             `;
         }).join('');
+        } catch (error) {
+            console.error('Error updating pending matches:', error);
+        }
     },
     
     // Populate opponent select
-    populateOpponentSelect() {
-        const select = document.getElementById('opponentSelect');
-        if (!select) return;
-        
-        const players = Object.values(RankedData.players)
-            .filter(p => p.username !== RankedData.currentUser)
-            .sort((a, b) => a.username.localeCompare(b.username));
-        
-        select.innerHTML = '<option value="">Selecione o adversario...</option>' +
-            players.map(p => `<option value="${p.username}">${p.username}</option>`).join('');
+    async populateOpponentSelect() {
+        try {
+            const select = document.getElementById('opponentSelect');
+            if (!select) return;
+            
+            const players = (await RankedData.getAllPlayers())
+                .filter(p => p.username !== RankedData.currentUser)
+                .sort((a, b) => a.username.localeCompare(b.username));
+            
+            select.innerHTML = '<option value="">Selecione o adversario...</option>' +
+                players.map(p => `<option value="${p.username}">${p.username}</option>`).join('');
+        } catch (error) {
+            console.error('Error populating opponent select:', error);
+        }
     },
     
     // Show notification

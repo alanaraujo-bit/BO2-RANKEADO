@@ -1,13 +1,13 @@
 // BO2 RANKED - MAIN APPLICATION
 
 // Initialize application on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Initialize data
-    RankedData.init();
+    await RankedData.init();
     
     // Update UI
     updateUserDisplay();
-    UI.updateAllViews();
+    await UI.updateAllViews();
     
     // Setup event listeners
     setupEventListeners();
@@ -101,7 +101,7 @@ async function handleLogin(event) {
 }
 
 // Handle match submission
-function handleMatchSubmit(event) {
+async function handleMatchSubmit(event) {
     event.preventDefault();
     
     if (!RankedData.currentUser) {
@@ -139,7 +139,7 @@ function handleMatchSubmit(event) {
         document.getElementById('filePreview').innerHTML = '';
         
         // Update UI
-        UI.updateAllViews();
+        await UI.updateAllViews();
     }
 }
 
@@ -229,7 +229,7 @@ function closeConfirmModal() {
 }
 
 // Filter leaderboard
-function filterLeaderboard(type) {
+async function filterLeaderboard(type) {
     // Update button styles
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -237,7 +237,7 @@ function filterLeaderboard(type) {
     event.target.classList.add('active');
     
     // Re-render leaderboard with filter
-    UI.renderLeaderboard(type);
+    await UI.renderLeaderboard(type);
 }
 
 // Show page (called from HTML)
@@ -246,8 +246,8 @@ function showPage(pageId) {
 }
 
 // Filter leaderboard (called from HTML)
-function filterLeaderboard(type) {
-    UI.renderLeaderboard(type);
+async function filterLeaderboard(type) {
+    await UI.renderLeaderboard(type);
     
     // Update button states
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -281,7 +281,7 @@ document.addEventListener('keydown', function(event) {
 // Dev tools (remove in production)
 window.devTools = {
     reset: () => RankedData.reset(),
-    addTestPlayers: () => {
+    addTestPlayers: async () => {
         const testPlayers = ['Gabriel', 'Alan', 'Filipe', 'Pedro', 'Lucas'];
         testPlayers.forEach(name => {
             if (!RankedData.getPlayer(name)) {
@@ -298,7 +298,7 @@ window.devTools = {
             }
         });
         RankedData.save();
-        UI.updateAllViews();
+        await UI.updateAllViews();
         console.log('Test players added');
     },
     getData: () => {

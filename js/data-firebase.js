@@ -3,16 +3,21 @@
 let auth, db;
 let firebaseReady = false;
 
-// Initialize Firebase when loaded
-window.addEventListener('load', () => {
-    const initialized = window.initFirebase();
-    if (initialized) {
-        auth = window.firebaseAuth;
-        db = window.firebaseDB;
-        firebaseReady = true;
-        console.log('Data layer connected to Firebase');
-    }
-});
+// Wait for Firebase to be fully loaded
+function waitForFirebase() {
+    return new Promise((resolve) => {
+        const checkFirebase = setInterval(() => {
+            if (window.firebaseAuth && window.firebaseDB) {
+                clearInterval(checkFirebase);
+                auth = window.firebaseAuth;
+                db = window.firebaseDB;
+                firebaseReady = true;
+                console.log('✅ Data layer connected to Firebase');
+                resolve(true);
+            }
+        }, 100);
+    });
+}
 
 const RankedData = {
     currentUser: null,
@@ -21,13 +26,14 @@ const RankedData = {
     matches: [],
     pendingConfirmations: [],
     currentSeason: 1,
+    initialized: false,
     
     // Initialize
     async init() {
+        if (this.initialized) return;
+        
         // Wait for Firebase to be ready
-        while (!firebaseReady) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
+        await waitForFirebase();
         
         // Listen to auth state
         auth.onAuthStateChanged(async (user) => {
@@ -37,13 +43,16 @@ const RankedData = {
                 if (window.updateUserDisplay) {
                     window.updateUserDisplay();
                 }
+                console.log('✅ User logged in:', this.currentUser);
             } else {
                 this.currentUserId = null;
                 this.currentUser = null;
+                console.log('User logged out');
             }
         });
         
-        console.log('RankedData initialized');
+        this.initialized = true;
+        console.log('✅ RankedData initialized');
     },
     
     // Load user data from Firestore
@@ -267,6 +276,21 @@ const RankedData = {
             return leaderboard;
         } catch (error) {
             console.error('Error getting leaderboard:', error);
+            return [];
+        }
+    },
+    
+    // Get all players
+    async getAllPlayers() {
+        try {
+            const querySnapshot = await db.collection('players').get();
+            const players = [];
+            querySnapshot.forEach((doc) => {
+                players.push(doc.data());
+            });
+            return players;
+        } catch (error) {
+            console.error('Error getting all players:', error);
             return [];
         }
     },

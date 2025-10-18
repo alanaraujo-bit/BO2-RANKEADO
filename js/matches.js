@@ -152,12 +152,12 @@ const MatchSystem = {
     },
     
     // Get match history for display
-    getMatchHistory(username, limit = 20) {
-        return RankedData.getPlayerMatches(username, limit);
+    async getMatchHistory(username, limit = 20) {
+        return await RankedData.getPlayerMatches(username, limit);
     },
     
     // Get pending matches for current user
-    getPendingMatches() {
+    async getPendingMatches() {
         if (!RankedData.currentUser) return [];
         
         return RankedData.pendingConfirmations.filter(
