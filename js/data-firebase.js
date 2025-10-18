@@ -122,22 +122,40 @@ const RankedData = {
     // Login
     async login(email, password) {
         try {
+            console.log('🔑 Fazendo login no Firebase Auth...');
             const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            console.log('✅ Autenticação bem-sucedida, UID:', userCredential.user.uid);
             
-            // Load player data
-            const doc = await db.collection('players').doc(userCredential.user.uid).get();
+            // Load player data with retry
+            let doc;
+            let retries = 3;
+            
+            while (retries > 0) {
+                try {
+                    console.log(`📄 Carregando dados do jogador (tentativa ${4 - retries}/3)...`);
+                    doc = await db.collection('players').doc(userCredential.user.uid).get({ source: 'server' });
+                    break;
+                } catch (docError) {
+                    console.warn(`⚠️ Erro ao carregar documento:`, docError.message);
+                    retries--;
+                    if (retries === 0) throw docError;
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1s before retry
+                }
+            }
             
             if (doc.exists) {
                 const playerData = doc.data();
                 this.currentUserId = userCredential.user.uid;
                 this.currentUser = playerData.username;
                 this.players[this.currentUser] = playerData;
+                console.log('✅ Dados do jogador carregados:', this.currentUser);
                 return true;
+            } else {
+                console.error('❌ Documento do jogador não existe');
+                return false;
             }
-            
-            return false;
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('❌ Login error:', error);
             throw error;
         }
     },

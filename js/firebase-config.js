@@ -24,6 +24,18 @@ const firebaseConfig = {
         const auth = firebase.auth();
         const db = firebase.firestore();
         
+        // Disable offline persistence to avoid "client is offline" errors
+        db.settings({
+            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+        });
+        
+        // Enable network (force online mode)
+        db.enableNetwork().then(() => {
+            console.log('🌐 Firestore network enabled');
+        }).catch((error) => {
+            console.warn('⚠️ Could not enable network:', error);
+        });
+        
         console.log('🔥 Firebase initialized successfully');
         
         // Export globally
