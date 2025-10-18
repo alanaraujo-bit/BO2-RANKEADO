@@ -160,7 +160,7 @@ const MatchSystem = {
             );
             
             // Check for achievements
-            this.checkAchievements(match);
+            await this.checkAchievements(match);
             
             // Update UI
             UI.updateAllViews();
@@ -175,8 +175,8 @@ const MatchSystem = {
     },
     
     // Check for achievements after match
-    checkAchievements(match) {
-        const winner = RankedData.getPlayer(match.winner);
+    async checkAchievements(match) {
+        const winner = await RankedData.getPlayer(match.winner);
         
         if (!winner) return;
         
@@ -218,7 +218,7 @@ const MatchSystem = {
             UI.showNotification(winner.username + ' desbloqueou: "Lendario" (100 partidas)!', 'success');
         }
         
-        RankedData.updatePlayer(winner.username, winner);
+        await RankedData.updatePlayer(winner.username, winner);
     },
     
     // Get match history for display

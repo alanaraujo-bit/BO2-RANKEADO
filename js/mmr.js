@@ -78,17 +78,20 @@ const MMRSystem = {
     },
     
     // Update player MMR after match
-    updatePlayerMMR(username, mmrChange, won) {
-        const player = RankedData.getPlayer(username);
-        if (!player) return;
+    async updatePlayerMMR(username, mmrChange, won) {
+        const player = await RankedData.getPlayer(username);
+        if (!player) {
+            console.error('Player not found:', username);
+            return null;
+        }
         
         const oldMMR = player.mmr;
         const newMMR = Math.max(0, player.mmr + mmrChange);
         
         // Update win streak
         if (won) {
-            player.winStreak++;
-            player.bestStreak = Math.max(player.bestStreak, player.winStreak);
+            player.winStreak = (player.winStreak || 0) + 1;
+            player.bestStreak = Math.max(player.bestStreak || 0, player.winStreak);
         } else {
             player.winStreak = 0;
         }
@@ -119,16 +122,16 @@ const MMRSystem = {
         seasonStats.mmr = newMMR;
         
         if (won) {
-            player.wins++;
+            player.wins = (player.wins || 0) + 1;
             seasonStats.wins++;
         } else {
-            player.losses++;
+            player.losses = (player.losses || 0) + 1;
             seasonStats.losses++;
         }
         
-        player.gamesPlayed++;
+        player.gamesPlayed = (player.gamesPlayed || 0) + 1;
         
-        RankedData.updatePlayer(username, player);
+        await RankedData.updatePlayer(username, player);
         
         // Show rank change notification if applicable
         if (rankChange.changed) {
@@ -169,18 +172,24 @@ const MMRSystem = {
         
         console.log('MMR changes calculated:', mmrChanges);
         
-        // Update both players
-        const winnerResult = this.updatePlayerMMR(winner, mmrChanges.winnerChange, true);
-        const loserResult = this.updatePlayerMMR(loser, mmrChanges.loserChange, false);
+        // Update both players (await for async operations)
+        const winnerResult = await this.updatePlayerMMR(winner, mmrChanges.winnerChange, true);
+        const loserResult = await this.updatePlayerMMR(loser, mmrChanges.loserChange, false);
+        
+        console.log('Players updated:', { winnerResult, loserResult });
+        
+        // Get fresh player data after update
+        const updatedWinner = await RankedData.getPlayer(winner);
+        const updatedLoser = await RankedData.getPlayer(loser);
         
         // Update kill/death stats
-        winnerPlayer.totalKills += kills;
-        winnerPlayer.totalDeaths += deaths;
-        loserPlayer.totalKills += deaths; // Loser's kills = winner's deaths
-        loserPlayer.totalDeaths += kills;
+        updatedWinner.totalKills = (updatedWinner.totalKills || 0) + kills;
+        updatedWinner.totalDeaths = (updatedWinner.totalDeaths || 0) + deaths;
+        updatedLoser.totalKills = (updatedLoser.totalKills || 0) + deaths; // Loser's kills = winner's deaths
+        updatedLoser.totalDeaths = (updatedLoser.totalDeaths || 0) + kills;
         
-        RankedData.updatePlayer(winner, winnerPlayer);
-        RankedData.updatePlayer(loser, loserPlayer);
+        await RankedData.updatePlayer(winner, updatedWinner);
+        await RankedData.updatePlayer(loser, updatedLoser);
         
         return {
             winner: winnerResult,
