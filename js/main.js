@@ -40,51 +40,64 @@ function setupEventListeners() {
 }
 
 // Handle login/register
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     
     const username = document.getElementById('usernameInput').value.trim();
-    console.log('Tentando login com:', username);
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value;
     
-    if (!username) {
-        UI.showNotification('Digite um nome de usuario valido!', 'error');
+    console.log('Tentando login/registro...');
+    
+    if (!username || !email || !password) {
+        UI.showNotification('Preencha todos os campos!', 'error');
         return;
     }
     
-    // Check if player exists
-    let player = RankedData.getPlayer(username);
-    console.log('Jogador encontrado:', player);
-    
-    if (!player) {
-        // Create new player
-        console.log('Criando novo jogador...');
-        const created = RankedData.createPlayer(username);
-        if (created) {
-            player = RankedData.getPlayer(username);
-            console.log('Jogador criado:', player);
-            UI.showNotification('Bem-vindo, ' + username + '! Sua jornada ranked comeca agora!', 'success');
-        } else {
-            UI.showNotification('Erro ao criar jogador!', 'error');
-            return;
-        }
-    } else {
-        console.log('Jogador ja existe, fazendo login...');
-        UI.showNotification('Bem-vindo de volta, ' + username + '!', 'success');
+    if (password.length < 6) {
+        UI.showNotification('Senha deve ter no minimo 6 caracteres!', 'error');
+        return;
     }
     
-    // Set current user
-    RankedData.currentUser = username;
-    RankedData.save();
-    console.log('Dados salvos. CurrentUser:', RankedData.currentUser);
-    
-    // Update UI
-    updateUserDisplay();
-    closeLoginModal();
-    UI.updateAllViews();
-    
-    // Show profile
-    console.log('Mostrando pagina de perfil...');
-    showPage('profile');
+    try {
+        // Try login first
+        try {
+            await RankedData.login(email, password);
+            UI.showNotification('Bem-vindo de volta, ' + RankedData.currentUser + '!', 'success');
+        } catch (loginError) {
+            // If login fails, try register
+            if (loginError.code === 'auth/user-not-found' || loginError.code === 'auth/wrong-password' || loginError.code === 'auth/invalid-credential') {
+                console.log('Usuario nao encontrado, criando novo...');
+                await RankedData.createPlayer(username, email, password);
+                UI.showNotification('Bem-vindo, ' + username + '! Conta criada com sucesso!', 'success');
+            } else {
+                throw loginError;
+            }
+        }
+        
+        // Update UI
+        updateUserDisplay();
+        closeLoginModal();
+        await UI.updateAllViews();
+        
+        // Show profile
+        console.log('Mostrando pagina de perfil...');
+        showPage('profile');
+        
+    } catch (error) {
+        console.error('Erro no login/registro:', error);
+        let message = 'Erro ao fazer login/registro!';
+        
+        if (error.code === 'auth/email-already-in-use') {
+            message = 'Email ja esta em uso! Tente fazer login.';
+        } else if (error.code === 'auth/invalid-email') {
+            message = 'Email invalido!';
+        } else if (error.code === 'auth/weak-password') {
+            message = 'Senha muito fraca!';
+        }
+        
+        UI.showNotification(message, 'error');
+    }
 }
 
 // Handle match submission
@@ -179,13 +192,12 @@ function updateUserDisplay() {
 }
 
 // Logout
-function logout() {
+async function logout() {
     if (confirm('Tem certeza que deseja sair?')) {
-        RankedData.currentUser = null;
-        RankedData.save();
+        await RankedData.logout();
         updateUserDisplay();
         showPage('home');
-        UI.updateAllViews();
+        await UI.updateAllViews();
         UI.showNotification('Ate logo!', 'info');
     }
 }
