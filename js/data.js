@@ -112,10 +112,13 @@ const RankedData = {
     
     // Add pending confirmation
     addPendingConfirmation(match) {
+        // O oponente é quem precisa confirmar (quem NÃO reportou)
+        const opponent = match.reporter === match.playerA ? match.playerB : match.playerA;
+        
         this.pendingConfirmations.push({
             matchId: match.id,
-            reporter: match.winner,
-            opponent: match.loser,
+            reporter: match.reporter,
+            opponent: opponent,
             timestamp: Date.now(),
             matchData: match
         });

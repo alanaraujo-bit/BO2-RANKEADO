@@ -314,12 +314,19 @@ function updateUserDisplay() {
         }
         btnLogin.textContent = 'SAIR';
         btnLogin.onclick = logout;
+        
+        // Update notifications
+        updateNotifications();
     } else {
         userNameEl.textContent = 'Visitante';
         userNameEl.style.cursor = 'default';
         userNameEl.onclick = null;
         btnLogin.textContent = 'LOGIN';
         btnLogin.onclick = showLoginModal;
+        
+        // Hide notification bell
+        const bell = document.getElementById('notificationBell');
+        if (bell) bell.style.display = 'none';
     }
 }
 
@@ -447,3 +454,114 @@ console.log('Dev Tools available: window.devTools');
 console.log('   - devTools.reset() - Reset all data');
 console.log('   - devTools.addTestPlayers() - Add test players');
 console.log('   - devTools.getData() - View current data');
+
+// ===== NOTIFICATION SYSTEM =====
+
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationsDropdown');
+    dropdown.classList.toggle('active');
+    
+    if (dropdown.classList.contains('active')) {
+        updateNotifications();
+    }
+}
+
+async function updateNotifications() {
+    const content = document.getElementById('notificationsContent');
+    const badge = document.getElementById('notificationBadge');
+    const bell = document.getElementById('notificationBell');
+    
+    if (!RankedData.currentUser) {
+        bell.style.display = 'none';
+        return;
+    }
+    
+    const pending = await MatchSystem.getPendingMatches();
+    
+    if (pending.length === 0) {
+        bell.style.display = 'none';
+        content.innerHTML = `
+            <p style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                Nenhuma notificação
+            </p>
+        `;
+        return;
+    }
+    
+    // Show bell with badge
+    bell.style.display = 'block';
+    badge.textContent = pending.length;
+    
+    // Render notifications
+    content.innerHTML = pending.map(p => {
+        const match = p.matchData;
+        const isWinner = match.winner === RankedData.currentUser;
+        const resultText = isWinner ? '✅ Vitória' : '❌ Derrota';
+        const resultColor = isWinner ? 'var(--success)' : 'var(--error)';
+        
+        return `
+            <div class="notification-item">
+                <div class="notification-title">
+                    Partida reportada por ${p.reporter}
+                </div>
+                <div class="notification-details">
+                    <div style="margin-bottom: 5px;">
+                        <strong>Mapa:</strong> ${match.map} | <strong>Modo:</strong> ${match.mode}
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <strong>Resultado:</strong> <span style="color: ${resultColor};">${resultText}</span>
+                    </div>
+                    <div style="margin-bottom: 5px;">
+                        <strong>K/D:</strong> ${match.kills}/${match.deaths}
+                    </div>
+                    <div style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">
+                        ${getTimeAgo(p.timestamp)}
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <button class="btn-primary" style="flex: 1;" onclick="confirmMatchNotification(${p.matchId}, true)">
+                        ✅ CONFIRMAR
+                    </button>
+                    <button class="btn-secondary" style="flex: 1;" onclick="confirmMatchNotification(${p.matchId}, false)">
+                        ❌ REJEITAR
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function confirmMatchNotification(matchId, confirm) {
+    const success = await MatchSystem.confirmMatch(matchId, confirm);
+    
+    if (success || !confirm) {
+        await updateNotifications();
+        await UI.updateAllViews();
+    }
+}
+
+function getTimeAgo(timestamp) {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'Agora mesmo';
+    if (minutes < 60) return `${minutes} minuto${minutes > 1 ? 's' : ''} atrás`;
+    if (hours < 24) return `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+    return `${days} dia${days > 1 ? 's' : ''} atrás`;
+}
+
+// Close notifications when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationsDropdown');
+    const bell = document.getElementById('notificationBell');
+    
+    if (dropdown && bell && 
+        !dropdown.contains(event.target) && 
+        !bell.contains(event.target) &&
+        dropdown.classList.contains('active')) {
+        dropdown.classList.remove('active');
+    }
+});

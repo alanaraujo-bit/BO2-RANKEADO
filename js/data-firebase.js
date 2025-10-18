@@ -313,6 +313,27 @@ const RankedData = {
         }
     },
     
+    // Get player matches (for history)
+    async getPlayerMatches(username, limit = 20) {
+        try {
+            const matchesSnapshot = await db.collection('matches')
+                .where('players', 'array-contains', username)
+                .orderBy('timestamp', 'desc')
+                .limit(limit)
+                .get();
+            
+            const matches = [];
+            matchesSnapshot.forEach((doc) => {
+                matches.push({ id: doc.id, ...doc.data() });
+            });
+            
+            return matches;
+        } catch (error) {
+            console.error('Error getting player matches:', error);
+            return [];
+        }
+    },
+    
     // Get stats
     async getStats() {
         try {

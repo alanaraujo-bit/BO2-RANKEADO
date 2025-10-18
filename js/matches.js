@@ -51,6 +51,11 @@ const MatchSystem = {
             'success'
         );
         
+        // Update notifications for opponent (if they refresh)
+        if (typeof updateNotifications === 'function') {
+            updateNotifications();
+        }
+        
         return true;
     },
     
@@ -73,6 +78,12 @@ const MatchSystem = {
             
             UI.showNotification('Partida rejeitada!', 'warning');
             UI.updatePendingMatches();
+            
+            // Update notifications
+            if (typeof updateNotifications === 'function') {
+                updateNotifications();
+            }
+            
             return false;
         }
         
@@ -99,6 +110,11 @@ const MatchSystem = {
             
             // Update UI
             UI.updateAllViews();
+            
+            // Update notifications
+            if (typeof updateNotifications === 'function') {
+                updateNotifications();
+            }
         }
         
         return true;

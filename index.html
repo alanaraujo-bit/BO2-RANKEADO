@@ -28,11 +28,29 @@
                 <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
             </ul>
             <div class="nav-user">
+                <!-- Notification Bell -->
+                <div class="notification-bell" id="notificationBell" onclick="toggleNotifications()" style="display: none;">
+                    🔔
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </div>
                 <span class="user-name" id="currentUserName">Visitante</span>
                 <button class="btn-login" id="btnLogin" onclick="showLoginModal()">LOGIN</button>
             </div>
         </div>
     </nav>
+
+    <!-- Notifications Dropdown -->
+    <div class="notifications-dropdown" id="notificationsDropdown">
+        <div class="notifications-header">
+            <h3>🔔 Notificações</h3>
+            <button onclick="toggleNotifications()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2em;">✕</button>
+        </div>
+        <div class="notifications-content" id="notificationsContent">
+            <p style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                Nenhuma notificação
+            </p>
+        </div>
+    </div>
 
     <!-- Main Container -->
     <div class="main-container">
