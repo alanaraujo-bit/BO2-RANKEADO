@@ -245,55 +245,6 @@ const RankedData = {
         return null;
     },
     
-    // Ensure player document exists (create if needed)
-    async ensurePlayerExists(username) {
-        let player = await this.getPlayer(username);
-        
-        if (!player) {
-            console.log('🔧 Creating missing player document for:', username);
-            
-            // Create basic player structure
-            const userId = username.toLowerCase().replace(/\s+/g, '-');
-            const playerData = {
-                userId: userId,
-                username: username,
-                email: `${userId}@temp.com`,
-                mmr: 1000,
-                rank: 'Prata I',
-                level: 1,
-                wins: 0,
-                losses: 0,
-                totalKills: 0,
-                totalDeaths: 0,
-                winStreak: 0,
-                bestStreak: 0,
-                gamesPlayed: 0,
-                createdAt: Date.now(),
-                lastPlayed: null,
-                achievements: [],
-                seasonStats: {
-                    [this.currentSeason]: {
-                        wins: 0,
-                        losses: 0,
-                        mmr: 1000
-                    }
-                }
-            };
-            
-            try {
-                await db.collection('players').doc(userId).set(playerData);
-                this.players[username] = playerData;
-                console.log('✅ Player document created:', username);
-                return playerData;
-            } catch (error) {
-                console.error('❌ Error creating player document:', error);
-                return null;
-            }
-        }
-        
-        return player;
-    },
-    
     // Update player
     async updatePlayer(username, updates) {
         const player = await this.getPlayer(username);
