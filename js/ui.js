@@ -140,6 +140,16 @@ const UI = {
             const player = await RankedData.getPlayer(RankedData.currentUser);
             if (!player) return;
             
+            // Garantir valores válidos
+            player.mmr = player.mmr || 1000;
+            player.wins = player.wins || 0;
+            player.losses = player.losses || 0;
+            player.gamesPlayed = player.gamesPlayed || 0;
+            player.totalKills = player.totalKills || 0;
+            player.totalDeaths = player.totalDeaths || 0;
+            player.winStreak = player.winStreak || 0;
+            player.bestStreak = player.bestStreak || 0;
+            
             const rank = RankSystem.getRank(player.mmr);
             const progress = RankSystem.getRankProgress(player.mmr);
             const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';

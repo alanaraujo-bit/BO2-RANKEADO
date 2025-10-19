@@ -28,6 +28,10 @@ const RankSystem = {
     
     // Get rank based on MMR
     getRank(mmr) {
+        // Validar MMR
+        mmr = mmr || 1000;
+        if (isNaN(mmr)) mmr = 1000;
+        
         for (let i = this.ranks.length - 1; i >= 0; i--) {
             const rank = this.ranks[i];
             if (mmr >= rank.min && mmr <= rank.max) {
@@ -44,6 +48,10 @@ const RankSystem = {
     
     // Get progress to next rank
     getRankProgress(mmr) {
+        // Validar MMR
+        mmr = mmr || 1000;
+        if (isNaN(mmr)) mmr = 1000;
+        
         const currentRank = this.getRank(mmr);
         const currentIndex = this.ranks.findIndex(r => r.name === currentRank.name);
         
