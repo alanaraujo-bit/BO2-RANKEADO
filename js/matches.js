@@ -153,6 +153,11 @@ const MatchSystem = {
             console.log('Removing from pending confirmations...');
             await RankedData.confirmMatch(matchId);
             
+            // Force refresh player data from Firebase
+            console.log('🔄 Refreshing player data from Firebase...');
+            await RankedData.getPlayer(match.winner, true);
+            await RankedData.getPlayer(match.loser, true);
+            
             // Show results
             UI.showNotification(
                 'Partida confirmada! ' + match.winner + ' (+' + results.winner.change + ' MMR) | ' + match.loser + ' (' + results.loser.change + ' MMR)',

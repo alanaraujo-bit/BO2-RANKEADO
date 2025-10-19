@@ -219,9 +219,9 @@ const RankedData = {
     },
     
     // Get player
-    async getPlayer(username) {
-        // Check local cache first
-        if (this.players[username]) {
+    async getPlayer(username, forceRefresh = false) {
+        // Check local cache first (unless forcing refresh)
+        if (!forceRefresh && this.players[username]) {
             return this.players[username];
         }
         
@@ -246,20 +246,25 @@ const RankedData = {
     },
     
     // Update player
-    async updatePlayer(username, updates) {
-        const player = await this.getPlayer(username);
-        if (!player) {
-            console.error('Player not found:', username);
+    async updatePlayer(username, playerData) {
+        if (!playerData || !playerData.userId) {
+            console.error('❌ Invalid player data:', username, playerData);
             return false;
         }
         
         try {
-            // Use set with merge to create document if it doesn't exist
-            await db.collection('players').doc(player.userId).set(updates, { merge: true });
+            console.log('🔄 Updating player in Firebase:', username, playerData);
             
-            // Update local cache
-            Object.assign(this.players[username], updates);
-            console.log('✅ Player updated successfully:', username);
+            // Update in Firebase (complete overwrite)
+            await db.collection('players').doc(playerData.userId).set(playerData);
+            
+            // Force refresh cache - remove old data
+            delete this.players[username];
+            
+            // Set new data in cache
+            this.players[username] = playerData;
+            
+            console.log('✅ Player updated successfully:', username, 'MMR:', playerData.mmr);
             return true;
         } catch (error) {
             console.error('❌ Error updating player:', error);
