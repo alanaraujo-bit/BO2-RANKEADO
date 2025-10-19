@@ -247,13 +247,23 @@ const RankedData = {
     
     // Update player
     async updatePlayer(username, playerData) {
-        if (!playerData || !playerData.userId) {
-            console.error('❌ Invalid player data:', username, playerData);
+        if (!playerData) {
+            console.error('❌ Invalid player data:', username);
             return false;
         }
         
         try {
-            console.log('🔄 Updating player in Firebase:', username, playerData);
+            // Get the current player to find userId
+            const currentPlayer = await this.getPlayer(username);
+            if (!currentPlayer || !currentPlayer.userId) {
+                console.error('❌ Player not found or missing userId:', username);
+                return false;
+            }
+            
+            // Ensure userId is in the data to be saved
+            playerData.userId = currentPlayer.userId;
+            
+            console.log('🔄 Updating player in Firebase:', username, 'MMR:', playerData.mmr);
             
             // Update in Firebase (complete overwrite)
             await db.collection('players').doc(playerData.userId).set(playerData);
@@ -264,7 +274,7 @@ const RankedData = {
             // Set new data in cache
             this.players[username] = playerData;
             
-            console.log('✅ Player updated successfully:', username, 'MMR:', playerData.mmr);
+            console.log('✅ Player updated successfully:', username, 'New MMR:', playerData.mmr);
             return true;
         } catch (error) {
             console.error('❌ Error updating player:', error);
