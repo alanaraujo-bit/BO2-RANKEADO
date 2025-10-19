@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - BO2 Ranked</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #FF6600;
+            border-radius: 10px;
+        }
+        
+        .admin-title {
+            color: #FF6600;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #FF6600;
+        }
+        
+        .admin-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid #00D4FF;
+            border-radius: 5px;
+        }
+        
+        .admin-section h3 {
+            color: #00D4FF;
+            margin-bottom: 15px;
+        }
+        
+        .admin-btn {
+            background: linear-gradient(135deg, #FF6600, #FF8833);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 102, 0, 0.5);
+        }
+        
+        .admin-btn.danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+        
+        .admin-btn.danger:hover {
+            box-shadow: 0 5px 20px rgba(220, 53, 69, 0.5);
+        }
+        
+        .log-area {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .log-area:empty::before {
+            content: 'Aguardando operação...';
+            color: #666;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #00D4FF;
+        }
+        
+        .stat-card .label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .stat-card .value {
+            color: #FF6600;
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1 class="admin-title">🛠️ PAINEL DE ADMINISTRAÇÃO</h1>
+        
+        <div class="admin-section">
+            <h3>📊 Estatísticas do Sistema</h3>
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="label">Total de Jogadores</div>
+                    <div class="value" id="totalPlayers">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total de Partidas</div>
+                    <div class="value" id="totalMatches">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Pendentes</div>
+                    <div class="value" id="totalPending">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Duplicatas</div>
+                    <div class="value" id="totalDuplicates">-</div>
+                </div>
+            </div>
+            <button class="admin-btn" onclick="loadStats()">🔄 Atualizar Estatísticas</button>
+        </div>
+        
+        <div class="admin-section">
+            <h3>🧹 Limpeza de Duplicatas</h3>
+            <p>Remove jogadores duplicados mantendo o documento com maior MMR ou mais antigo.</p>
+            <button class="admin-btn danger" onclick="cleanupDuplicates()">🗑️ Limpar Duplicatas</button>
+            <button class="admin-btn" onclick="listDuplicates()">👁️ Listar Duplicatas</button>
+        </div>
+        
+        <div class="admin-section">
+            <h3>🗃️ Gerenciar Dados</h3>
+            <button class="admin-btn" onclick="listAllPlayers()">👥 Listar Todos os Jogadores</button>
+            <button class="admin-btn" onclick="listPendingMatches()">⏳ Listar Partidas Pendentes</button>
+        </div>
+        
+        <div class="admin-section">
+            <h3>📋 Console de Logs</h3>
+            <div class="log-area" id="logArea"></div>
+            <button class="admin-btn" onclick="clearLogs()">🧽 Limpar Logs</button>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    
+    <script>
+        let auth, db;
+        
+        // Wait for Firebase
+        window.addEventListener('load', async () => {
+            await new Promise(resolve => {
+                const check = setInterval(() => {
+                    if (window.firebaseAuth && window.firebaseDB) {
+                        clearInterval(check);
+                        auth = window.firebaseAuth;
+                        db = window.firebaseDB;
+                        log('✅ Conectado ao Firebase', 'success');
+                        loadStats();
+                        resolve();
+                    }
+                }, 100);
+            });
+        });
+        
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = {
+                'info': '#0ff',
+                'success': '#0f0',
+                'warning': '#ff0',
+                'error': '#f00'
+            }[type] || '#0ff';
+            
+            logArea.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logArea.scrollTop = logArea.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            document.getElementById('logArea').innerHTML = '';
+        }
+        
+        async function loadStats() {
+            log('📊 Carregando estatísticas...');
+            
+            try {
+                // Total de jogadores
+                const playersSnapshot = await db.collection('players').get();
+                document.getElementById('totalPlayers').textContent = playersSnapshot.size;
+                
+                // Total de partidas
+                const matchesSnapshot = await db.collection('matches').get();
+                document.getElementById('totalMatches').textContent = matchesSnapshot.size;
+                
+                // Pendentes
+                const pendingSnapshot = await db.collection('pendingConfirmations').get();
+                document.getElementById('totalPending').textContent = pendingSnapshot.size;
+                
+                // Contar duplicatas
+                const playersByUsername = {};
+                playersSnapshot.forEach(doc => {
+                    const username = doc.data().username;
+                    if (!playersByUsername[username]) {
+                        playersByUsername[username] = [];
+                    }
+                    playersByUsername[username].push(doc);
+                });
+                
+                let duplicates = 0;
+                for (const [username, docs] of Object.entries(playersByUsername)) {
+                    if (docs.length > 1) duplicates++;
+                }
+                
+                document.getElementById('totalDuplicates').textContent = duplicates;
+                
+                log(`✅ Estatísticas carregadas: ${playersSnapshot.size} jogadores, ${duplicates} duplicatas`, 'success');
+            } catch (error) {
+                log(`❌ Erro ao carregar estatísticas: ${error.message}`, 'error');
+            }
+        }
+        
+        async function listDuplicates() {
+            log('🔍 Buscando duplicatas...');
+            
+            try {
+                const snapshot = await db.collection('players').get();
+                const playersByUsername = {};
+                
+                snapshot.forEach(doc => {
+                    const username = doc.data().username;
+                    if (!playersByUsername[username]) {
+                        playersByUsername[username] = [];
+                    }
+                    playersByUsername[username].push({
+                        id: doc.id,
+                        data: doc.data()
+                    });
+                });
+                
+                let found = 0;
+                for (const [username, docs] of Object.entries(playersByUsername)) {
+                    if (docs.length > 1) {
+                        found++;
+                        log(`⚠️ ${username}: ${docs.length} documentos`, 'warning');
+                        docs.forEach(doc => {
+                            log(`   - ID: ${doc.id} | MMR: ${doc.data.mmr || 'N/A'} | Criado: ${new Date(doc.data.createdAt).toLocaleString()}`, 'info');
+                        });
+                    }
+                }
+                
+                if (found === 0) {
+                    log('✨ Nenhuma duplicata encontrada!', 'success');
+                } else {
+                    log(`📊 Total: ${found} usernames com duplicatas`, 'warning');
+                }
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        async function cleanupDuplicates() {
+            if (!confirm('⚠️ Tem certeza que deseja remover as duplicatas? Esta ação não pode ser desfeita!')) {
+                return;
+            }
+            
+            log('🧹 Iniciando limpeza de duplicatas...');
+            
+            try {
+                const snapshot = await db.collection('players').get();
+                log(`📊 Total de documentos: ${snapshot.size}`);
+                
+                const players = [];
+                snapshot.forEach(doc => {
+                    players.push({
+                        id: doc.id,
+                        data: doc.data()
+                    });
+                });
+                
+                // Agrupar por username
+                const playersByUsername = {};
+                players.forEach(player => {
+                    const username = player.data.username;
+                    if (!playersByUsername[username]) {
+                        playersByUsername[username] = [];
+                    }
+                    playersByUsername[username].push(player);
+                });
+                
+                let duplicatesFound = 0;
+                let documentsToDelete = [];
+                
+                for (const [username, docs] of Object.entries(playersByUsername)) {
+                    if (docs.length > 1) {
+                        log(`⚠️ Duplicata: ${username} (${docs.length} docs)`, 'warning');
+                        duplicatesFound++;
+                        
+                        // Ordenar por MMR (maior primeiro) ou data (mais antigo)
+                        docs.sort((a, b) => {
+                            const mmrA = a.data.mmr || 0;
+                            const mmrB = b.data.mmr || 0;
+                            if (mmrA !== mmrB) return mmrB - mmrA;
+                            return (a.data.createdAt || 0) - (b.data.createdAt || 0);
+                        });
+                        
+                        const toKeep = docs[0];
+                        const toDelete = docs.slice(1);
+                        
+                        log(`  ✅ Mantendo: ${toKeep.id} (MMR: ${toKeep.data.mmr})`, 'success');
+                        toDelete.forEach(doc => {
+                            log(`  ❌ Deletando: ${doc.id} (MMR: ${doc.data.mmr})`, 'error');
+                            documentsToDelete.push(doc.id);
+                        });
+                    }
+                }
+                
+                if (documentsToDelete.length === 0) {
+                    log('✨ Nenhuma duplicata encontrada!', 'success');
+                    return;
+                }
+                
+                log(`🗑️ Deletando ${documentsToDelete.length} documentos...`, 'warning');
+                
+                // Deletar em lote
+                const batch = db.batch();
+                documentsToDelete.forEach(docId => {
+                    batch.delete(db.collection('players').doc(docId));
+                });
+                
+                await batch.commit();
+                
+                log(`✅ Limpeza concluída!`, 'success');
+                log(`✅ ${duplicatesFound} usernames tinham duplicatas`, 'success');
+                log(`✅ ${documentsToDelete.length} documentos deletados`, 'success');
+                
+                // Atualizar estatísticas
+                await loadStats();
+                
+                alert('✅ Limpeza concluída com sucesso!');
+                
+            } catch (error) {
+                log(`❌ Erro durante limpeza: ${error.message}`, 'error');
+                alert('❌ Erro: ' + error.message);
+            }
+        }
+        
+        async function listAllPlayers() {
+            log('👥 Listando todos os jogadores...');
+            
+            try {
+                const snapshot = await db.collection('players').get();
+                log(`📊 Total: ${snapshot.size} jogadores`);
+                
+                const players = [];
+                snapshot.forEach(doc => {
+                    players.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Ordenar por MMR
+                players.sort((a, b) => (b.mmr || 0) - (a.mmr || 0));
+                
+                players.forEach((player, index) => {
+                    log(`${index + 1}. ${player.username} | MMR: ${player.mmr || 'N/A'} | V/D: ${player.wins || 0}/${player.losses || 0}`, 'info');
+                });
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        async function listPendingMatches() {
+            log('⏳ Listando partidas pendentes...');
+            
+            try {
+                const snapshot = await db.collection('pendingConfirmations').get();
+                log(`📊 Total: ${snapshot.size} pendentes`);
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    log(`${data.winner} vs ${data.loser} | Reportado por: ${data.reporter}`, 'info');
+                });
+                
+                if (snapshot.size === 0) {
+                    log('✨ Nenhuma partida pendente!', 'success');
+                }
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
