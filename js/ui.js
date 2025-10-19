@@ -33,6 +33,11 @@ const UI = {
         } else if (pageId === 'play') {
             this.updatePendingMatches();
             this.populateOpponentSelect();
+        } else if (pageId === 'friends' && RankedData.currentUser) {
+            // Initialize friends system on page load
+            if (typeof friendsSystem !== 'undefined') {
+                friendsSystem.init();
+            }
         }
     },
     

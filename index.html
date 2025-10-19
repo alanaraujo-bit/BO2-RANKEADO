@@ -24,6 +24,7 @@
                 <li><a href="#home" class="nav-link active" onclick="showPage('home')">🏠 HOME</a></li>
                 <li><a href="#play" class="nav-link" onclick="showPage('play')">🎮 JOGAR</a></li>
                 <li><a href="#profile" class="nav-link" onclick="showPage('profile')">👤 PERFIL</a></li>
+                <li><a href="#friends" class="nav-link" onclick="showPage('friends')">👥 AMIGOS</a></li>
                 <li><a href="#leaderboard" class="nav-link" onclick="showPage('leaderboard')">🏆 RANKING</a></li>
                 <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
             </ul>
@@ -215,6 +216,37 @@
             <div id="profileContent"></div>
         </div>
 
+        <!-- FRIENDS PAGE -->
+        <div id="friends" class="page">
+            <div class="section">
+                <h2 class="section-title">👥 AMIGOS & REDE SOCIAL</h2>
+                
+                <!-- Search Bar -->
+                <div class="friends-search">
+                    <input type="text" id="playerSearchInput" class="form-input" placeholder="🔍 Buscar jogador por username..." oninput="searchPlayers(this.value)">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+
+                <!-- Friend Requests -->
+                <div class="friends-section" id="friendRequestsSection" style="display: none;">
+                    <h3 class="subsection-title">📬 SOLICITAÇÕES PENDENTES</h3>
+                    <div id="friendRequestsList" class="friends-grid"></div>
+                </div>
+
+                <!-- Friends List -->
+                <div class="friends-section">
+                    <h3 class="subsection-title">✅ MEUS AMIGOS (<span id="friendsCount">0</span>)</h3>
+                    <div id="friendsList" class="friends-grid"></div>
+                </div>
+
+                <!-- Suggested Friends -->
+                <div class="friends-section">
+                    <h3 class="subsection-title">💡 SUGESTÕES</h3>
+                    <div id="suggestedFriends" class="friends-grid"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- LEADERBOARD PAGE -->
         <div id="leaderboard" class="page">
             <div class="section">
@@ -296,6 +328,65 @@
         </div>
     </div>
 
+    <!-- Player Profile Modal -->
+    <div class="modal-overlay" id="playerProfileModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 class="modal-title" id="profileModalTitle">PERFIL DO JOGADOR</h2>
+                <button class="modal-close" onclick="closePlayerProfile()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Profile Header -->
+                <div class="profile-header-card">
+                    <div class="profile-avatar-large">
+                        <div class="rank-icon-profile" id="profileRankIcon">🎖️</div>
+                    </div>
+                    <div class="profile-info-main">
+                        <h1 id="profileUsername" class="profile-username-display">USERNAME</h1>
+                        <div class="profile-rank-badge" id="profileRankBadge">BRONZE I</div>
+                        <div class="profile-mmr-display">
+                            <span style="color: var(--primary-orange); font-weight: 600;">MMR:</span>
+                            <span id="profileMMR" style="font-weight: bold; font-size: 1.3em;">1000</span>
+                        </div>
+                    </div>
+                    <div class="profile-action-buttons" id="profileActionButtons">
+                        <!-- Buttons added dynamically -->
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="profile-stats-container">
+                    <div class="profile-stat-card">
+                        <div class="stat-icon">🎮</div>
+                        <div class="stat-value" id="profileTotalMatches">0</div>
+                        <div class="stat-label">PARTIDAS</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-value" id="profileWins">0</div>
+                        <div class="stat-label">VITÓRIAS</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="stat-icon">💔</div>
+                        <div class="stat-value" id="profileLosses">0</div>
+                        <div class="stat-label">DERROTAS</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="profileWinrate">0%</div>
+                        <div class="stat-label">WINRATE</div>
+                    </div>
+                </div>
+
+                <!-- Match History -->
+                <div class="profile-history-section">
+                    <h3 class="profile-section-title">📜 HISTÓRICO RECENTE (Últimas 10 partidas)</h3>
+                    <div id="profileMatchHistory" class="profile-matches-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- RANK UP MODAL -->
     <div class="rank-up-overlay" id="rankUpOverlay">
         <div class="rank-up-waves">
@@ -332,6 +423,7 @@
     <script src="js/mmr.js"></script>
     <script src="js/anti-abuse.js"></script>
     <script src="js/data-firebase.js"></script>
+    <script src="js/friends.js"></script>
     <script src="js/matches.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>

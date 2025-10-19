@@ -210,6 +210,11 @@ async function handleLogin(event) {
         closeLoginModal();
         await UI.updateAllViews();
         
+        // Initialize friends system
+        if (typeof friendsSystem !== 'undefined') {
+            await friendsSystem.init();
+        }
+        
         // Show profile
         console.log('Mostrando pagina de perfil...');
         showPage('profile');
