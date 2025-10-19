@@ -2,7 +2,24 @@
 
 Sistema de ranqueamento competitivo para Call of Duty: Black Ops 2 no Plutonium. Um sistema completo de MMR/ELO com ranks visuais, leaderboards, histórico de partidas e sistema de confirmação semi-automático.
 
-![BO2 Ranked](https://img.shields.io/badge/Version-1.0.0-orange) ![Status](https://img.shields.io/badge/Status-Active-success)
+![BO2 Ranked](https://img.shields.io/badge/Version-2.0.0-orange) ![Status](https://img.shields.io/badge/Status-Active-success) ![Design](https://img.shields.io/badge/Design-BO2_Inspired-FF7A00)
+
+## ✨ NOVO: DESIGN SYSTEM PROFISSIONAL
+
+**Agora com visual completo inspirado no Call of Duty: Black Ops 2!**
+
+🎨 **Design Highlights:**
+- Paleta laranja neon (#FF7A00) + fundo ultra escuro (#0A0A0A)
+- Tipografia militar: Orbitron (títulos) + Rajdhana (corpo)
+- Cards metálicos com backdrop-filter blur
+- Botões com shine effect e animações
+- Partículas animadas no background
+- HUD elements com glow pulsante
+- Scrollbar e cursor customizados
+- Transições suaves em todos elementos
+- 100% responsivo
+
+📄 **[Ver documentação completa do Design System](DESIGN-SYSTEM.md)**
 
 ---
 

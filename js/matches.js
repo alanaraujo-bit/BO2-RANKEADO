@@ -149,6 +149,9 @@ const MatchSystem = {
             const results = await MMRSystem.processMatch(match);
             console.log('MMR results:', results);
             
+            // Check for rank up
+            this.checkRankUp(match.winner, results.winner);
+            
             // Run anti-abuse detection (async, non-blocking)
             console.log('🔍 Running anti-abuse checks...');
             Promise.all([
@@ -270,5 +273,24 @@ const MatchSystem = {
             kd,
             performance
         };
+    },
+    
+    // Check if player ranked up
+    checkRankUp(username, results) {
+        if (!results.rankUp) return;
+        
+        const player = RankedData.players[username];
+        if (!player) return;
+        
+        const newRank = RankSystem.getRank(player.mmr);
+        
+        // Show rank up animation
+        if (window.RankUpAnimation) {
+            RankUpAnimation.show({
+                icon: newRank.icon,
+                name: newRank.name,
+                mmr: player.mmr
+            });
+        }
     }
 };

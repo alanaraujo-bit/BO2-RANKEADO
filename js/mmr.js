@@ -358,8 +358,14 @@ const MMRSystem = {
         console.log('Players updated:', { winnerResult, loserResult });
         
         return {
-            winner: winnerResult,
-            loser: loserResult
+            winner: {
+                ...winnerResult,
+                rankUp: winnerResult.rankChange?.rankUp || false
+            },
+            loser: {
+                ...loserResult,
+                rankUp: false // Loser nunca sobe de rank
+            }
         };
     },
     

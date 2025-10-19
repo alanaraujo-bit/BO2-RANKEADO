@@ -104,9 +104,16 @@ async function loginWithGoogle() {
         
         // Update UI
         updateUserDisplay();
-        closeLoginModal();
+        
+        // Mostrar "ACCESS GRANTED" antes de fechar modal
+        showAccessGranted();
+        
+        setTimeout(() => {
+            closeLoginModal();
+            showPage('profile');
+        }, 800);
+        
         await UI.updateAllViews();
-        showPage('profile');
         
     } catch (error) {
         console.error('❌ Erro no login com Google:', error);
@@ -347,6 +354,30 @@ function showLoginModal() {
     if (modal) {
         modal.classList.add('active');
         document.getElementById('usernameInput').focus();
+        
+        // Adicionar texto terminal ao modal
+        addTerminalEffect();
+    }
+}
+
+// Adicionar efeito terminal ao modal de login
+function addTerminalEffect() {
+    const modalForm = document.querySelector('#loginModal .modal-form');
+    
+    // Verificar se já tem o texto terminal
+    if (!modalForm.querySelector('.terminal-text')) {
+        const terminalText = document.createElement('div');
+        terminalText.className = 'terminal-text';
+        terminalText.innerHTML = `
+            SYSTEM INITIALIZING...<br>
+            PLUTONIUM RANKED NETWORK v2.0<br>
+            ENTER CREDENTIALS TO ACCESS<br>
+            <span class="terminal-cursor"></span>
+        `;
+        
+        // Inserir antes do formulário
+        const formGroup = modalForm.querySelector('.form-group');
+        modalForm.insertBefore(terminalText, formGroup);
     }
 }
 
@@ -358,6 +389,20 @@ function closeLoginModal() {
         document.getElementById('loginForm').reset();
     }
 }
+
+// Mostrar "ACCESS GRANTED" ao fazer login com sucesso
+function showAccessGranted() {
+    const accessGranted = document.getElementById('accessGranted');
+    if (accessGranted) {
+        accessGranted.classList.add('active');
+        
+        // Remover após 1.5s
+        setTimeout(() => {
+            accessGranted.classList.remove('active');
+        }, 1500);
+    }
+}
+
 
 // Close confirm modal
 function closeConfirmModal() {
