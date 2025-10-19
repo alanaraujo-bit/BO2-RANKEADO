@@ -78,7 +78,7 @@ const MMRSystem = {
     },
     
     // Update player MMR after match
-    async updatePlayerMMR(username, mmrChange, won) {
+    async updatePlayerMMR(username, mmrChange, won, kills = 0, deaths = 0) {
         const player = await RankedData.getPlayer(username);
         if (!player) {
             console.error('Player not found:', username);
@@ -103,6 +103,10 @@ const MMRSystem = {
         player.mmr = newMMR;
         player.rank = RankSystem.getRank(newMMR).name;
         player.lastPlayed = Date.now();
+        
+        // Update kill/death stats
+        player.totalKills = (player.totalKills || 0) + kills;
+        player.totalDeaths = (player.totalDeaths || 0) + deaths;
         
         // Ensure seasonStats exists
         if (!player.seasonStats) {
@@ -172,24 +176,11 @@ const MMRSystem = {
         
         console.log('MMR changes calculated:', mmrChanges);
         
-        // Update both players (await for async operations)
-        const winnerResult = await this.updatePlayerMMR(winner, mmrChanges.winnerChange, true);
-        const loserResult = await this.updatePlayerMMR(loser, mmrChanges.loserChange, false);
+        // Update both players with kills/deaths in one operation
+        const winnerResult = await this.updatePlayerMMR(winner, mmrChanges.winnerChange, true, kills, deaths);
+        const loserResult = await this.updatePlayerMMR(loser, mmrChanges.loserChange, false, deaths, kills);
         
         console.log('Players updated:', { winnerResult, loserResult });
-        
-        // Get fresh player data after update
-        const updatedWinner = await RankedData.getPlayer(winner);
-        const updatedLoser = await RankedData.getPlayer(loser);
-        
-        // Update kill/death stats
-        updatedWinner.totalKills = (updatedWinner.totalKills || 0) + kills;
-        updatedWinner.totalDeaths = (updatedWinner.totalDeaths || 0) + deaths;
-        updatedLoser.totalKills = (updatedLoser.totalKills || 0) + deaths; // Loser's kills = winner's deaths
-        updatedLoser.totalDeaths = (updatedLoser.totalDeaths || 0) + kills;
-        
-        await RankedData.updatePlayer(winner, updatedWinner);
-        await RankedData.updatePlayer(loser, updatedLoser);
         
         return {
             winner: winnerResult,
