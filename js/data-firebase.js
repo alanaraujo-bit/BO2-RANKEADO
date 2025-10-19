@@ -222,6 +222,7 @@ const RankedData = {
     async getPlayer(username, forceRefresh = false) {
         // Check local cache first (unless forcing refresh)
         if (!forceRefresh && this.players[username]) {
+            console.log('📦 Getting player from cache:', username, 'userId:', this.players[username].userId);
             return this.players[username];
         }
         
@@ -232,7 +233,16 @@ const RankedData = {
                 .get();
             
             if (!querySnapshot.empty) {
-                const playerData = querySnapshot.docs[0].data();
+                const doc = querySnapshot.docs[0];
+                const playerData = doc.data();
+                
+                // Ensure userId is set (use document ID if not in data)
+                if (!playerData.userId) {
+                    playerData.userId = doc.id;
+                    console.warn('⚠️ Player missing userId, using doc.id:', doc.id);
+                }
+                
+                console.log('🔥 Getting player from Firebase:', username, 'userId:', playerData.userId);
                 this.players[username] = playerData;
                 return playerData;
             }
@@ -248,22 +258,22 @@ const RankedData = {
     // Update player
     async updatePlayer(username, playerData) {
         if (!playerData) {
-            console.error('❌ Invalid player data:', username);
+            console.error('❌ No player data provided for:', username);
             return false;
         }
         
         try {
-            // Get the current player to find userId
-            const currentPlayer = await this.getPlayer(username);
-            if (!currentPlayer || !currentPlayer.userId) {
-                console.error('❌ Player not found or missing userId:', username);
-                return false;
+            // Ensure we have userId (get from current player if needed)
+            if (!playerData.userId) {
+                const currentPlayer = await this.getPlayer(username, true); // Force refresh
+                if (!currentPlayer || !currentPlayer.userId) {
+                    console.error('❌ Cannot find userId for player:', username);
+                    return false;
+                }
+                playerData.userId = currentPlayer.userId;
             }
             
-            // Ensure userId is in the data to be saved
-            playerData.userId = currentPlayer.userId;
-            
-            console.log('🔄 Updating player in Firebase:', username, 'MMR:', playerData.mmr);
+            console.log('🔄 Updating player in Firebase:', username, 'userId:', playerData.userId, 'MMR:', playerData.mmr);
             
             // Update in Firebase (complete overwrite)
             await db.collection('players').doc(playerData.userId).set(playerData);
@@ -277,7 +287,7 @@ const RankedData = {
             console.log('✅ Player updated successfully:', username, 'New MMR:', playerData.mmr);
             return true;
         } catch (error) {
-            console.error('❌ Error updating player:', error);
+            console.error('❌ Error updating player:', error, error.stack);
             return false;
         }
     },
