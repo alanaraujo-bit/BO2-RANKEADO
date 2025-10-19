@@ -149,6 +149,22 @@ const MatchSystem = {
             const results = await MMRSystem.processMatch(match);
             console.log('MMR results:', results);
             
+            // Run anti-abuse detection (async, non-blocking)
+            console.log('🔍 Running anti-abuse checks...');
+            Promise.all([
+                AntiAbuseSystem.comprehensiveCheck(match.winner),
+                AntiAbuseSystem.comprehensiveCheck(match.loser)
+            ]).then(([winnerCheck, loserCheck]) => {
+                if (winnerCheck.suspicious) {
+                    console.warn('⚠️ Suspicious activity on winner:', winnerCheck);
+                    AntiAbuseSystem.submitAbuseReport(winnerCheck);
+                }
+                if (loserCheck.suspicious) {
+                    console.warn('⚠️ Suspicious activity on loser:', loserCheck);
+                    AntiAbuseSystem.submitAbuseReport(loserCheck);
+                }
+            }).catch(err => console.error('Anti-abuse check failed:', err));
+            
             // Remove from pending
             console.log('Removing from pending confirmations...');
             await RankedData.confirmMatch(matchId);
