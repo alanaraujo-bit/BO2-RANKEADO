@@ -147,6 +147,15 @@
         </div>
         
         <div class="admin-section">
+            <h3>⚠️ ZONA DE PERIGO</h3>
+            <p style="color: #ff0; margin-bottom: 15px;">⚠️ Estas ações são IRREVERSÍVEIS e deletam dados permanentemente!</p>
+            <button class="admin-btn danger" onclick="resetAllPlayerStats()">🔄 Zerar Estatísticas (Manter Contas)</button>
+            <button class="admin-btn danger" onclick="deleteAllMatches()">🗑️ Deletar Todas as Partidas</button>
+            <button class="admin-btn danger" onclick="deleteAllPending()">❌ Deletar Pendentes</button>
+            <button class="admin-btn danger" onclick="nukeEverything()" style="background: linear-gradient(135deg, #8b0000, #ff0000);">☢️ DELETAR TUDO (NUCLEAR)</button>
+        </div>
+        
+        <div class="admin-section">
             <h3>📋 Console de Logs</h3>
             <div class="log-area" id="logArea"></div>
             <button class="admin-btn" onclick="clearLogs()">🧽 Limpar Logs</button>
@@ -407,6 +416,169 @@
                 
             } catch (error) {
                 log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        // ============ ZONA DE PERIGO ============
+        
+        async function resetAllPlayerStats() {
+            const confirmed = confirm('⚠️ ATENÇÃO! Esta ação irá ZERAR todas as estatísticas de TODOS os jogadores (MMR, vitórias, derrotas, K/D, etc).\n\nAs contas (login/senha) serão mantidas.\n\nDeseja continuar?');
+            if (!confirmed) return;
+            
+            const doubleCheck = prompt('Digite "ZERAR TUDO" para confirmar:');
+            if (doubleCheck !== 'ZERAR TUDO') {
+                log('❌ Ação cancelada', 'warning');
+                return;
+            }
+            
+            log('🔄 Zerando estatísticas de todos os jogadores...');
+            
+            try {
+                const snapshot = await db.collection('players').get();
+                log(`📊 Encontrados ${snapshot.size} jogadores`);
+                
+                const batch = db.batch();
+                let count = 0;
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const resetData = {
+                        ...data,
+                        mmr: 1000,
+                        rank: 'Prata III',
+                        wins: 0,
+                        losses: 0,
+                        totalKills: 0,
+                        totalDeaths: 0,
+                        winStreak: 0,
+                        bestStreak: 0,
+                        gamesPlayed: 0,
+                        achievements: [],
+                        seasonStats: {
+                            1: {
+                                wins: 0,
+                                losses: 0,
+                                mmr: 1000
+                            }
+                        }
+                    };
+                    
+                    batch.set(doc.ref, resetData);
+                    count++;
+                    log(`  ✅ ${data.username} resetado`, 'success');
+                });
+                
+                await batch.commit();
+                
+                log(`✅ ${count} jogadores resetados com sucesso!`, 'success');
+                await loadStats();
+                alert('✅ Estatísticas resetadas com sucesso!');
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+                alert('❌ Erro ao resetar: ' + error.message);
+            }
+        }
+        
+        async function deleteAllMatches() {
+            const confirmed = confirm('⚠️ ATENÇÃO! Esta ação irá DELETAR TODAS as partidas do histórico.\n\nEsta ação NÃO pode ser desfeita!\n\nDeseja continuar?');
+            if (!confirmed) return;
+            
+            log('🗑️ Deletando todas as partidas...');
+            
+            try {
+                const snapshot = await db.collection('matches').get();
+                log(`📊 Encontradas ${snapshot.size} partidas`);
+                
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+                
+                log(`✅ ${snapshot.size} partidas deletadas!`, 'success');
+                await loadStats();
+                alert('✅ Partidas deletadas com sucesso!');
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        async function deleteAllPending() {
+            const confirmed = confirm('⚠️ Deletar todas as confirmações pendentes?');
+            if (!confirmed) return;
+            
+            log('🗑️ Deletando confirmações pendentes...');
+            
+            try {
+                const snapshot = await db.collection('pendingConfirmations').get();
+                log(`📊 Encontradas ${snapshot.size} pendentes`);
+                
+                const batch = db.batch();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+                
+                log(`✅ ${snapshot.size} pendentes deletadas!`, 'success');
+                await loadStats();
+                alert('✅ Pendentes deletadas com sucesso!');
+                
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error');
+            }
+        }
+        
+        async function nukeEverything() {
+            const confirmed = confirm('☢️ ATENÇÃO MÁXIMA! ☢️\n\nEsta ação irá DELETAR:\n- TODOS os jogadores\n- TODAS as partidas\n- TODAS as confirmações pendentes\n\nO SISTEMA SERÁ COMPLETAMENTE LIMPO!\n\nEsta ação NÃO PODE SER DESFEITA!\n\nTem ABSOLUTA CERTEZA?');
+            if (!confirmed) return;
+            
+            const doubleCheck = prompt('Digite "DESTRUIR TUDO" para confirmar a destruição total:');
+            if (doubleCheck !== 'DESTRUIR TUDO') {
+                log('❌ Ação cancelada', 'warning');
+                return;
+            }
+            
+            const tripleCheck = confirm('ÚLTIMA CONFIRMAÇÃO: Deletar TUDO permanentemente?');
+            if (!tripleCheck) return;
+            
+            log('☢️ INICIANDO DESTRUIÇÃO NUCLEAR...', 'error');
+            
+            try {
+                // Deletar jogadores
+                log('🗑️ Deletando jogadores...');
+                const playersSnapshot = await db.collection('players').get();
+                const playersBatch = db.batch();
+                playersSnapshot.forEach(doc => playersBatch.delete(doc.ref));
+                await playersBatch.commit();
+                log(`✅ ${playersSnapshot.size} jogadores deletados`, 'success');
+                
+                // Deletar partidas
+                log('🗑️ Deletando partidas...');
+                const matchesSnapshot = await db.collection('matches').get();
+                const matchesBatch = db.batch();
+                matchesSnapshot.forEach(doc => matchesBatch.delete(doc.ref));
+                await matchesBatch.commit();
+                log(`✅ ${matchesSnapshot.size} partidas deletadas`, 'success');
+                
+                // Deletar pendentes
+                log('🗑️ Deletando pendentes...');
+                const pendingSnapshot = await db.collection('pendingConfirmations').get();
+                const pendingBatch = db.batch();
+                pendingSnapshot.forEach(doc => pendingBatch.delete(doc.ref));
+                await pendingBatch.commit();
+                log(`✅ ${pendingSnapshot.size} pendentes deletadas`, 'success');
+                
+                log('☢️ DESTRUIÇÃO NUCLEAR COMPLETA!', 'error');
+                await loadStats();
+                alert('☢️ Sistema completamente limpo! Todos os dados foram deletados.');
+                
+            } catch (error) {
+                log(`❌ Erro durante destruição: ${error.message}`, 'error');
+                alert('❌ Erro: ' + error.message);
             }
         }
     </script>
