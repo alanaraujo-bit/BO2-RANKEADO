@@ -9,9 +9,9 @@ const MMRSystem = {
     kFactor: 32,
     
     // Calculate MMR change based on match result
-    calculateMMRChange(winner, loser, matchData) {
-        const winnerData = RankedData.getPlayer(winner);
-        const loserData = RankedData.getPlayer(loser);
+    async calculateMMRChange(winner, loser, matchData) {
+        const winnerData = await RankedData.getPlayer(winner);
+        const loserData = await RankedData.getPlayer(loser);
         
         if (!winnerData || !loserData) {
             console.error('Player data not found:', { winner, loser, winnerData, loserData });
@@ -172,7 +172,7 @@ const MMRSystem = {
         console.log('Player data loaded:', { winnerPlayer, loserPlayer });
         
         // Calculate MMR changes
-        const mmrChanges = this.calculateMMRChange(winner, loser, { kills, deaths });
+        const mmrChanges = await this.calculateMMRChange(winner, loser, { kills, deaths });
         
         console.log('MMR changes calculated:', mmrChanges);
         
