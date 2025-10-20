@@ -1,0 +1,258 @@
+/* ============================================================================
+   BO2 RANKED - MELHORIAS INCREMENTAIS (Clean Design)
+   Aplica melhorias sem quebrar o layout existente
+   ============================================================================ */
+
+/* ===== MELHORIAS NA HERO SECTION ===== */
+.hero-section {
+    padding: 80px 40px !important;
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.05) 0%, rgba(0, 217, 255, 0.05) 100%) !important;
+    border: 1px solid rgba(255, 122, 0, 0.2) !important;
+    border-radius: 16px !important;
+    margin-bottom: 60px !important;
+}
+
+.hero-title {
+    font-size: 3.2em !important;
+    margin-bottom: 16px !important;
+    letter-spacing: 0.08em !important;
+}
+
+.hero-subtitle {
+    font-size: 1.5em !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 50px !important;
+    font-weight: 400 !important;
+}
+
+.hero-stats {
+    gap: 30px !important;
+    margin-bottom: 50px !important;
+}
+
+.stat-box {
+    padding: 32px 48px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 122, 0, 0.2) !important;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(255, 122, 0, 0.15) !important;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(15, 15, 15, 0.9)) !important;
+}
+
+.stat-box:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(255, 122, 0, 0.4) !important;
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(255, 122, 0, 0.3) !important;
+}
+
+.stat-value {
+    font-size: 2.5em !important;
+    margin-bottom: 8px !important;
+}
+
+.stat-label {
+    font-size: 0.95em !important;
+    letter-spacing: 0.15em !important;
+}
+
+/* ===== MELHORIAS NOS RANK CARDS ===== */
+.section {
+    margin-bottom: 60px !important;
+}
+
+.section-title {
+    font-size: 2em !important;
+    margin-bottom: 32px !important;
+    letter-spacing: 0.05em !important;
+}
+
+.ranks-grid {
+    gap: 24px !important;
+}
+
+.rank-card {
+    padding: 32px !important;
+    border-radius: 12px !important;
+    border-width: 1px !important;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.rank-card:hover {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow: 
+        0 12px 32px rgba(0, 0, 0, 0.4),
+        0 0 40px currentColor !important;
+}
+
+.rank-icon {
+    font-size: 3em !important;
+    margin-bottom: 16px !important;
+}
+
+.rank-name {
+    font-size: 1.4em !important;
+    margin-bottom: 8px !important;
+    font-weight: 700 !important;
+}
+
+.rank-mmr {
+    font-size: 1em !important;
+    opacity: 0.8 !important;
+}
+
+/* ===== MELHORIAS NOS BOTÕES ===== */
+.btn-primary {
+    padding: 16px 40px !important;
+    border-radius: 12px !important;
+    font-size: 1.1em !important;
+    font-weight: 600 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 
+        0 4px 16px rgba(255, 122, 0, 0.4),
+        0 0 20px rgba(255, 122, 0, 0.2) !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 
+        0 8px 24px rgba(255, 122, 0, 0.5),
+        0 0 40px rgba(255, 122, 0, 0.4) !important;
+}
+
+.btn-large {
+    font-size: 1.2em !important;
+    padding: 18px 48px !important;
+}
+
+/* ===== MELHORIAS NA NAVBAR ===== */
+.navbar {
+    border-bottom-width: 1px !important;
+    box-shadow: 
+        0 2px 12px rgba(255, 122, 0, 0.2),
+        0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.nav-link {
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.nav-link:hover {
+    background: rgba(255, 122, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+.nav-link.active {
+    background: rgba(255, 122, 0, 0.15) !important;
+}
+
+/* ===== ESPAÇAMENTO GERAL MAIS CLEAN ===== */
+.main-container {
+    padding: 40px 20px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+}
+
+/* ===== SUAVIZAR ANIMAÇÕES ===== */
+@keyframes glowPulse {
+    from { 
+        text-shadow: 
+            0 0 20px rgba(255, 122, 0, 0.6), 
+            0 0 30px rgba(255, 122, 0, 0.3);
+    }
+    to { 
+        text-shadow: 
+            0 0 30px rgba(255, 122, 0, 0.8), 
+            0 0 50px rgba(255, 122, 0, 0.4);
+    }
+}
+
+/* ===== MELHORIAS NO TOP 3 ===== */
+.top-players {
+    gap: 24px !important;
+    margin-top: 32px !important;
+}
+
+.top-player-card {
+    padding: 32px !important;
+    border-radius: 12px !important;
+    border-width: 1px !important;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.top-player-card:hover {
+    transform: translateY(-6px) !important;
+}
+
+.player-position {
+    font-size: 2.5em !important;
+    margin-bottom: 12px !important;
+}
+
+.player-avatar {
+    width: 100px !important;
+    height: 100px !important;
+    margin-bottom: 16px !important;
+    border-width: 3px !important;
+}
+
+.player-username {
+    font-size: 1.3em !important;
+    margin-bottom: 12px !important;
+}
+
+.player-rank {
+    margin-bottom: 12px !important;
+}
+
+.player-mmr {
+    font-size: 1.8em !important;
+    margin-bottom: 12px !important;
+}
+
+.player-stats {
+    gap: 16px !important;
+    margin-top: 16px !important;
+}
+
+/* ===== REDUZIR GLOWS EXCESSIVOS ===== */
+.stat-box::before {
+    opacity: 0.3 !important;
+}
+
+.rank-card::before {
+    opacity: 0.3 !important;
+}
+
+/* ===== MELHORAR LEGIBILIDADE ===== */
+body {
+    letter-spacing: 0.01em !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3 !important;
+}
+
+p {
+    line-height: 1.7 !important;
+}
+
+/* ===== SUAVIZAR BACKGROUND ===== */
+body::before {
+    opacity: 0.7 !important;
+}
+
+.particles {
+    opacity: 0.6 !important;
+}
+
+.particles::before {
+    filter: blur(1px) !important;
+}
