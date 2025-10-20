@@ -98,7 +98,7 @@ const UI = {
                 const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
                 
                 return `
-                    <div onclick="friendsSystem.openPlayerProfile('${player.username}')" 
+                    <div onclick="openPlayerProfile('${player.username}')" 
                          style="background: linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(15, 15, 15, 0.8) 100%); 
                                padding: 20px; border-radius: 10px; border: 2px solid ${rank.color}; margin-bottom: 15px;
                                display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s ease;"
@@ -259,7 +259,7 @@ const UI = {
                         const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
                         
                         return `
-                            <tr onclick="friendsSystem.openPlayerProfile('${player.username}')" 
+                            <tr onclick="openPlayerProfile('${player.username}')" 
                                 style="border-bottom: 1px solid #333; background: ${position <= 3 ? 'rgba(255, 102, 0, 0.05)' : 'transparent'}; cursor: pointer; transition: all 0.3s ease;"
                                 onmouseover="this.style.background='rgba(255, 102, 0, 0.15)'; this.style.transform='translateX(5px)';"
                                 onmouseout="this.style.background='${position <= 3 ? 'rgba(255, 102, 0, 0.05)' : 'transparent'}'; this.style.transform='translateX(0)';">

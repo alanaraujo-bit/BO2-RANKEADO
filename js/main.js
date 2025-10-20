@@ -659,6 +659,104 @@ function getTimeAgo(timestamp) {
     return `${days} dia${days > 1 ? 's' : ''} atrás`;
 }
 
+// Global function to open player profile (works with both Firebase and LocalStorage)
+async function openPlayerProfile(username) {
+    try {
+        // Check if friendsSystem is available (LocalStorage mode)
+        if (typeof friendsSystem !== 'undefined' && friendsSystem.openPlayerProfile) {
+            await friendsSystem.openPlayerProfile(username);
+            return;
+        }
+        
+        // Fallback: Open profile modal manually (Firebase mode or when friendsSystem not loaded)
+        console.log('Opening profile for:', username);
+        
+        // Get player data
+        const playerData = await getUserData(username);
+        if (!playerData) {
+            alert('Jogador não encontrado!');
+            return;
+        }
+
+        const rankData = getRankFromMMR(playerData.mmr || 1000);
+        const winrate = playerData.wins && playerData.gamesPlayed
+            ? ((playerData.wins / playerData.gamesPlayed) * 100).toFixed(1)
+            : '0';
+
+        // Update modal content
+        document.getElementById('profileModalTitle').textContent = `PERFIL DE ${username.toUpperCase()}`;
+        document.getElementById('profileUsername').textContent = username;
+        document.getElementById('profileRankBadge').textContent = rankData.name;
+        document.getElementById('profileRankIcon').textContent = rankData.icon;
+        document.getElementById('profileMMR').textContent = playerData.mmr || 1000;
+        document.getElementById('profileTotalMatches').textContent = playerData.gamesPlayed || 0;
+        document.getElementById('profileWins').textContent = playerData.wins || 0;
+        document.getElementById('profileLosses').textContent = playerData.losses || 0;
+        document.getElementById('profileWinrate').textContent = winrate + '%';
+
+        // Action buttons
+        const actionButtons = document.getElementById('profileActionButtons');
+        const currentUser = RankedData.currentUser;
+        
+        if (username === currentUser) {
+            actionButtons.innerHTML = '<button class="btn-primary" onclick="showPage(\'profile\'); closePlayerProfile();">📝 EDITAR PERFIL</button>';
+        } else {
+            actionButtons.innerHTML = `<button class="btn-primary" onclick="alert(\'Sistema de amigos em desenvolvimento!\')">➕ ADICIONAR AMIGO</button>`;
+        }
+
+        // Load match history
+        await loadPlayerMatchHistory(username);
+
+        // Show modal
+        document.getElementById('playerProfileModal').classList.add('active');
+        
+    } catch (error) {
+        console.error('Error opening player profile:', error);
+        alert('Erro ao carregar perfil!');
+    }
+}
+
+// Load player match history for profile modal
+async function loadPlayerMatchHistory(username) {
+    try {
+        const allMatches = await getAllMatches();
+        const playerMatches = allMatches
+            .filter(match => match.winner === username || match.loser === username)
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .slice(0, 10);
+
+        const historyDiv = document.getElementById('profileMatchHistory');
+        
+        if (playerMatches.length === 0) {
+            historyDiv.innerHTML = '<div class="empty-state">Nenhuma partida registrada</div>';
+            return;
+        }
+
+        historyDiv.innerHTML = playerMatches.map(match => {
+            const isWinner = match.winner === username;
+            const opponent = isWinner ? match.loser : match.winner;
+            const mmrChange = isWinner ? `+${match.mmrGain || 25}` : `-${match.mmrLoss || 25}`;
+            const resultClass = isWinner ? 'match-win' : 'match-loss';
+            const date = new Date(match.timestamp).toLocaleDateString('pt-BR');
+
+            return `
+                <div class="profile-match-item ${resultClass}">
+                    <div class="match-result-icon">${isWinner ? '🏆' : '💔'}</div>
+                    <div class="match-details">
+                        <div class="match-opponent">${isWinner ? 'VITÓRIA' : 'DERROTA'} vs ${opponent}</div>
+                        <div class="match-date">${date}</div>
+                    </div>
+                    <div class="match-mmr ${isWinner ? 'mmr-gain' : 'mmr-loss'}">${mmrChange} MMR</div>
+                </div>
+            `;
+        }).join('');
+        
+    } catch (error) {
+        console.error('Error loading match history:', error);
+        document.getElementById('profileMatchHistory').innerHTML = '<div class="error-state">Erro ao carregar histórico</div>';
+    }
+}
+
 // Close notifications when clicking outside
 document.addEventListener('click', function(event) {
     const dropdown = document.getElementById('notificationsDropdown');
