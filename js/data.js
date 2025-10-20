@@ -140,6 +140,41 @@ const RankedData = {
         this.save();
         return true;
     },
+
+    // Append a match entry to a player's personal history
+    addMatchToHistory(username, entry) {
+        const player = this.players[username];
+        if (!player) return false;
+
+        // Ensure structure exists
+        if (!player.matchHistory) player.matchHistory = [];
+
+        // Basic normalization
+        const normalized = {
+            result: entry.result, // 'win' | 'loss' | 'draw'
+            opponent: entry.opponent,
+            map: entry.map,
+            gameMode: entry.gameMode || entry.mode,
+            kills: Number(entry.kills) || 0,
+            deaths: Number(entry.deaths) || 0,
+            mmrChange: Number(entry.mmrChange) || 0,
+            matchId: entry.matchId,
+            season: entry.season || this.currentSeason,
+            date: entry.date || Date.now(),
+            timestamp: entry.timestamp || Date.now(),
+            confirmed: entry.confirmed !== undefined ? entry.confirmed : true
+        };
+
+        player.matchHistory.push(normalized);
+
+        // Keep last 100 entries to avoid bloat
+        if (player.matchHistory.length > 100) {
+            player.matchHistory = player.matchHistory.slice(-100);
+        }
+
+        this.save();
+        return true;
+    },
     
     // Add match to history
     addMatch(matchData) {

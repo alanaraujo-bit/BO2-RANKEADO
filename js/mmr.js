@@ -354,6 +354,40 @@ const MMRSystem = {
         // Update both players with kills/deaths in one operation
         const winnerResult = await this.updatePlayerMMR(winner, mmrChanges.winnerChange, true, kills, deaths);
         const loserResult = await this.updatePlayerMMR(loser, mmrChanges.loserChange, false, deaths, kills);
+
+        // Persist match history to both profiles (winner and loser)
+        try {
+            const baseEntry = {
+                matchId: matchData.id,
+                map,
+                gameMode: mode,
+                season: matchData.season,
+                timestamp: matchData.timestamp || Date.now(),
+                confirmed: true
+            };
+
+            // Winner perspective
+            RankedData.addMatchToHistory(winner, {
+                ...baseEntry,
+                result: 'win',
+                opponent: loser,
+                kills: kills,
+                deaths: deaths,
+                mmrChange: winnerResult?.change ?? mmrChanges.winnerChange
+            });
+
+            // Loser perspective (invert K/D)
+            RankedData.addMatchToHistory(loser, {
+                ...baseEntry,
+                result: 'loss',
+                opponent: winner,
+                kills: deaths,
+                deaths: kills,
+                mmrChange: loserResult?.change ?? mmrChanges.loserChange
+            });
+        } catch (e) {
+            console.error('Failed to append match history to players:', e);
+        }
         
         console.log('Players updated:', { winnerResult, loserResult });
         

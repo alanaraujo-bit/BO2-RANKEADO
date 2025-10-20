@@ -457,6 +457,50 @@ const RankedData = {
             return [];
         }
     },
+
+    // Append a match entry to a player's personal history and persist to Firestore
+    async addMatchToHistory(username, entry) {
+        try {
+            // Ensure player is loaded
+            let player = this.players[username];
+            if (!player) {
+                player = await this.getPlayer(username, true);
+            }
+            if (!player) {
+                console.error('❌ Player not found for history append:', username);
+                return false;
+            }
+
+            if (!player.matchHistory) player.matchHistory = [];
+
+            const normalized = {
+                result: entry.result,
+                opponent: entry.opponent,
+                map: entry.map,
+                gameMode: entry.gameMode || entry.mode,
+                kills: Number(entry.kills) || 0,
+                deaths: Number(entry.deaths) || 0,
+                mmrChange: Number(entry.mmrChange) || 0,
+                matchId: entry.matchId,
+                season: entry.season || this.currentSeason,
+                date: entry.date || Date.now(),
+                timestamp: entry.timestamp || Date.now(),
+                confirmed: entry.confirmed !== undefined ? entry.confirmed : true
+            };
+
+            player.matchHistory.push(normalized);
+            if (player.matchHistory.length > 100) {
+                player.matchHistory = player.matchHistory.slice(-100);
+            }
+
+            // Persist full player document
+            await this.updatePlayer(username, player);
+            return true;
+        } catch (error) {
+            console.error('❌ Error adding match to history (Firebase):', error);
+            return false;
+        }
+    },
     
     // Get stats
     async getStats() {

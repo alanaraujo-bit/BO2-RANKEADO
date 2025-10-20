@@ -1,5 +1,18 @@
 # 📜 MATCH REGISTRATION PAGE - CHANGELOG
 
+## 🩹 Versão 1.0.1 - Correção de Histórico (Outubro 2025)
+
+### Corrigido
+- Agora, quando uma partida é confirmada, o histórico é gravado para AMBOS os jogadores:
+  - Vencedor recebe a entrada como vitória (com K/D e MMR ganhos)
+  - Perdedor recebe a entrada como derrota (com K/D invertido e MMR perdido)
+- O perfil do oponente derrotado passa a exibir a partida no `matchHistory` corretamente.
+
+### Detalhes Técnicos
+- Adicionada função `RankedData.addMatchToHistory` (camadas Local e Firebase) para normalizar e persistir entradas de histórico.
+- `MMRSystem.processMatch` agora chama `addMatchToHistory` para vencedor e perdedor após a confirmação de partida e processamento de MMR.
+- Limite de 100 entradas por jogador para evitar crescimento desnecessário.
+
 ## 🎯 Versão 1.0.0 - Implementação Completa (Janeiro 2025)
 
 ### ✨ **NOVA FUNCIONALIDADE:** Página de Registro de Partidas BO2
