@@ -3248,3 +3248,644 @@ select.form-input,
     }
 }
 
+
+/* ============================================================================
+   RANKS PAGE - BO2 THEMED
+   ============================================================================ */
+
+/* 1️⃣ RANKS HERO BANNER */
+.ranks-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-20) var(--space-8);
+    margin-bottom: var(--space-16);
+    overflow: hidden;
+    border: 2px solid #2A2A2A;
+}
+
+.ranks-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        #FF6600 20%,
+        #FFD700 50%,
+        #FF6600 80%,
+        transparent 100%
+    );
+    animation: scanline 3s linear infinite;
+}
+
+.ranks-hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ranks-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(255, 102, 0, 0.1);
+    border: 1px solid rgba(255, 102, 0, 0.3);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-4);
+}
+
+.ranks-badge .badge-icon {
+    font-size: var(--text-xl);
+}
+
+.ranks-badge .badge-text {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: #FF6600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.ranks-hero-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+}
+
+.ranks-hero-title .title-highlight {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-black);
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.ranks-hero-title .title-main {
+    font-family: var(--font-display);
+    font-size: var(--text-5xl);
+    font-weight: var(--font-black);
+    color: #FFFFFF;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.ranks-hero-description {
+    font-size: var(--text-xl);
+    color: #999999;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* 2️⃣ PLAYER RANK PROGRESS */
+.player-rank-progress {
+    background: rgba(10, 10, 10, 0.6);
+    border: 2px solid #2A2A2A;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-12);
+    margin-bottom: var(--space-16);
+}
+
+.current-rank-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    margin-bottom: var(--space-10);
+}
+
+.current-rank-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    background: radial-gradient(circle, rgba(255, 102, 0, 0.15) 0%, rgba(10, 10, 10, 0.8) 100%);
+    border: 3px solid #FF6600;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 0 40px rgba(255, 102, 0, 0.4);
+}
+
+.rank-icon-large {
+    font-size: 6rem;
+    filter: drop-shadow(0 0 30px #FF6600);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.rank-info-large {
+    text-align: left;
+}
+
+.rank-label-large {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: var(--space-1);
+}
+
+.rank-name-huge {
+    font-family: var(--font-display);
+    font-size: var(--text-5xl);
+    font-weight: var(--font-black);
+    color: #FFD700;
+    text-transform: uppercase;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    margin-bottom: var(--space-3);
+}
+
+.rank-mmr-large {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.mmr-value-large {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: var(--font-black);
+    color: #FFFFFF;
+    text-shadow: 0 0 15px rgba(255, 102, 0, 0.6);
+}
+
+.mmr-label-large {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+    color: #FF6600;
+    text-transform: uppercase;
+}
+
+.progress-arrow {
+    font-size: var(--text-6xl);
+    color: #FF6600;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.next-rank-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: rgba(20, 20, 20, 0.6);
+    border: 2px solid #3A3A3A;
+    border-radius: var(--radius-lg);
+}
+
+.rank-icon-medium {
+    font-size: 4rem;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+}
+
+.rank-info-medium {
+    text-align: left;
+}
+
+.rank-label-medium {
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-1);
+}
+
+.rank-name-medium {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-black);
+    color: #CCCCCC;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: var(--space-2);
+}
+
+.mmr-needed-display {
+    font-size: var(--text-base);
+    color: #999999;
+    font-weight: var(--font-semibold);
+}
+
+.mmr-needed-display span {
+    color: #FF6600;
+    font-weight: var(--font-black);
+}
+
+.progress-bar-section {
+    margin-top: var(--space-8);
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+}
+
+.progress-current {
+    color: #FF6600;
+}
+
+.progress-percentage-display {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-black);
+    color: #FFD700;
+}
+
+.progress-target {
+    color: #999999;
+}
+
+.progress-bar-container-large {
+    position: relative;
+    height: 40px;
+    background: rgba(10, 10, 10, 0.8);
+    border: 2px solid #2A2A2A;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.progress-bar-fill-large {
+    height: 100%;
+    background: linear-gradient(90deg, #FF4500 0%, #FF6600 50%, #FFD700 100%);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 0 25px rgba(255, 102, 0, 0.8);
+}
+
+.progress-shine-effect {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, 
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    animation: progressShine 2s linear infinite;
+}
+
+.progress-stripes {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.05) 10px,
+        rgba(255, 255, 255, 0.05) 20px
+    );
+}
+
+/* 3️⃣ RANKS GRID */
+.ranks-table-section {
+    margin-bottom: var(--space-16);
+}
+
+.ranks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-6);
+}
+
+.rank-card {
+    background: rgba(10, 10, 10, 0.8);
+    border: 2px solid #2A2A2A;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.rank-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+.rank-card:hover {
+    transform: translateY(-5px);
+    border-color: #3A3A3A;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.rank-card:hover::before {
+    opacity: 1;
+}
+
+/* Rank Colors */
+.rank-card.rank-bronze::before {
+    background: linear-gradient(90deg, transparent, #CD7F32, transparent);
+}
+
+.rank-card.rank-silver::before {
+    background: linear-gradient(90deg, transparent, #C0C0C0, transparent);
+}
+
+.rank-card.rank-gold::before {
+    background: linear-gradient(90deg, transparent, #FFD700, transparent);
+}
+
+.rank-card.rank-platinum::before {
+    background: linear-gradient(90deg, transparent, #E5E4E2, transparent);
+}
+
+.rank-card.rank-diamond::before {
+    background: linear-gradient(90deg, transparent, #B9F2FF, transparent);
+}
+
+.rank-card.rank-master::before {
+    background: linear-gradient(90deg, transparent, #FFD700, transparent);
+}
+
+.rank-card.rank-legend::before {
+    background: linear-gradient(90deg, transparent, #FF6600, transparent);
+}
+
+.rank-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5);
+    background: rgba(20, 20, 20, 0.6);
+    border-bottom: 1px solid #2A2A2A;
+}
+
+.rank-card-icon {
+    font-size: var(--text-5xl);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.rank-card-badge {
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: var(--font-black);
+    color: #999999;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: var(--space-1) var(--space-3);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+}
+
+.rank-card-body {
+    padding: var(--space-6);
+}
+
+.rank-card-name {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-black);
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+}
+
+.rank-card-mmr {
+    margin-bottom: var(--space-4);
+}
+
+.mmr-range {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: #FF6600;
+    text-shadow: 0 0 10px rgba(255, 102, 0, 0.4);
+}
+
+.rank-card-description {
+    font-size: var(--text-sm);
+    color: #AAAAAA;
+    line-height: 1.6;
+}
+
+.rank-card-footer {
+    padding: var(--space-3) var(--space-6);
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid #2A2A2A;
+    text-align: center;
+}
+
+.rank-tier {
+    font-family: var(--font-display);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* 4️⃣ TIPS SECTION */
+.ranks-tips-section {
+    margin-bottom: var(--space-16);
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4);
+}
+
+.tip-card {
+    background: rgba(10, 10, 10, 0.6);
+    border: 2px solid #2A2A2A;
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 102, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.2);
+}
+
+.tip-icon {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-3);
+    filter: drop-shadow(0 0 10px rgba(255, 102, 0, 0.5));
+}
+
+.tip-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: #FFFFFF;
+    margin-bottom: var(--space-3);
+    text-transform: uppercase;
+}
+
+.tip-description {
+    font-size: var(--text-sm);
+    color: #AAAAAA;
+    line-height: 1.6;
+}
+
+/* 5️⃣ RANKS CTA */
+.ranks-cta {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+    border: 2px solid #FF6600;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-16);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(255, 102, 0, 0.3);
+}
+
+.ranks-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 102, 0, 0.1) 0%, transparent 70%);
+    animation: ctaGlow 4s ease-in-out infinite;
+}
+
+.ranks-cta-content {
+    position: relative;
+    z-index: 1;
+}
+
+.cta-icon-large {
+    font-size: 6rem;
+    margin-bottom: var(--space-4);
+    filter: drop-shadow(0 0 30px rgba(255, 102, 0, 0.8));
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.cta-title-large {
+    font-family: var(--font-display);
+    font-size: var(--text-5xl);
+    font-weight: var(--font-black);
+    color: #FFD700;
+    text-transform: uppercase;
+    margin-bottom: var(--space-4);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.cta-description-large {
+    font-size: var(--text-xl);
+    color: #CCCCCC;
+    max-width: 700px;
+    margin: 0 auto var(--space-8);
+    line-height: 1.6;
+}
+
+.cta-buttons-large {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+.btn-cta-primary-large,
+.btn-cta-secondary-large {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-8);
+    border-radius: var(--radius-lg);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-black);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    letter-spacing: 0.05em;
+}
+
+.btn-cta-primary-large {
+    background: linear-gradient(135deg, #FF6600 0%, #FF4500 100%);
+    color: #FFFFFF;
+    box-shadow: 0 10px 30px rgba(255, 102, 0, 0.5);
+}
+
+.btn-cta-primary-large:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 102, 0, 0.7);
+}
+
+.btn-cta-secondary-large {
+    background: transparent;
+    border: 2px solid #FF6600;
+    color: #FF6600;
+}
+
+.btn-cta-secondary-large:hover {
+    background: rgba(255, 102, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 102, 0, 0.3);
+}
+
+/* RESPONSIVE - RANKS PAGE */
+@media (max-width: 768px) {
+    .ranks-hero-title .title-highlight {
+        font-size: var(--text-2xl);
+    }
+    
+    .ranks-hero-title .title-main {
+        font-size: var(--text-3xl);
+    }
+    
+    .current-rank-display {
+        flex-direction: column;
+        gap: var(--space-6);
+    }
+    
+    .current-rank-card,
+    .next-rank-card {
+        width: 100%;
+    }
+    
+    .progress-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .rank-icon-large {
+        font-size: 4rem;
+    }
+    
+    .rank-name-huge {
+        font-size: var(--text-4xl);
+    }
+    
+    .ranks-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons-large {
+        flex-direction: column;
+    }
+    
+    .btn-cta-primary-large,
+    .btn-cta-secondary-large {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

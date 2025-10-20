@@ -25,6 +25,7 @@
                 <li><a href="#play" class="nav-link" onclick="showPage('play')">🎮 JOGAR</a></li>
                 <li><a href="#profile" class="nav-link" onclick="showPage('profile')">👤 PERFIL</a></li>
                 <li><a href="#friends" class="nav-link" onclick="showPage('friends')">👥 AMIGOS</a></li>
+                <li><a href="#ranks" class="nav-link" onclick="showPage('ranks')">🎖️ RANKS</a></li>
                 <li><a href="#leaderboard" class="nav-link" onclick="showPage('leaderboard')">🏆 RANKING</a></li>
                 <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
             </ul>
@@ -719,6 +720,364 @@
                     <h3 class="subsection-title">💡 SUGESTÕES DE AMIZADE</h3>
                     <p class="subsection-description">Jogadores com MMR similar ao seu</p>
                     <div id="suggestedFriends" class="friends-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKS PAGE -->
+        <div id="ranks" class="page">
+            <!-- 1️⃣ BANNER / HERO -->
+            <div class="ranks-hero">
+                <div class="ranks-hero-content">
+                    <div class="ranks-badge">
+                        <span class="badge-icon">⚡</span>
+                        <span class="badge-text">SISTEMA DE PROGRESSÃO</span>
+                    </div>
+                    <h1 class="ranks-hero-title">
+                        <span class="title-highlight">SUBA DE PATENTE</span>
+                        <span class="title-main">E DOMINE O CAMPO DE BATALHA</span>
+                    </h1>
+                    <p class="ranks-hero-description">
+                        Cada partida conta! Ganhe MMR, evolua nas patentes e mostre quem é o melhor operador do BO2 Ranked.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2️⃣ PROGRESSO DO JOGADOR (Se logado) -->
+            <div class="player-rank-progress" id="playerRankProgress" style="display: none;">
+                <div class="section-header">
+                    <span class="section-badge">📊</span>
+                    <h2 class="section-title">SEU PROGRESSO ATUAL</h2>
+                    <p class="section-subtitle">Acompanhe sua evolução rumo ao topo</p>
+                </div>
+
+                <div class="current-rank-display">
+                    <div class="current-rank-card">
+                        <div class="rank-icon-large" id="currentRankIcon">🥉</div>
+                        <div class="rank-info-large">
+                            <div class="rank-label-large">PATENTE ATUAL</div>
+                            <div class="rank-name-huge" id="currentRankName">BRONZE I</div>
+                            <div class="rank-mmr-large">
+                                <span class="mmr-value-large" id="currentMMRValue">150</span>
+                                <span class="mmr-label-large">MMR</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-arrow">➜</div>
+
+                    <div class="next-rank-card">
+                        <div class="rank-icon-medium" id="nextRankIcon">🥈</div>
+                        <div class="rank-info-medium">
+                            <div class="rank-label-medium">PRÓXIMA PATENTE</div>
+                            <div class="rank-name-medium" id="nextRankName">PRATA I</div>
+                            <div class="mmr-needed-display">
+                                <span id="mmrNeededValue">150</span> MMR restantes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-bar-section">
+                    <div class="progress-labels">
+                        <span class="progress-current" id="progressCurrentMMR">0 MMR</span>
+                        <span class="progress-percentage-display" id="progressPercentageDisplay">0%</span>
+                        <span class="progress-target" id="progressTargetMMR">300 MMR</span>
+                    </div>
+                    <div class="progress-bar-container-large">
+                        <div class="progress-bar-fill-large" id="progressBarFillLarge" style="width: 0%">
+                            <div class="progress-shine-effect"></div>
+                            <div class="progress-stripes"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3️⃣ TABELA DE RANKS -->
+            <div class="ranks-table-section">
+                <div class="section-header">
+                    <span class="section-badge">🎖️</span>
+                    <h2 class="section-title">TODAS AS PATENTES</h2>
+                    <p class="section-subtitle">Conheça todos os ranks e seus requisitos de MMR</p>
+                </div>
+
+                <div class="ranks-grid">
+                    <!-- Bronze Ranks -->
+                    <div class="rank-card rank-bronze">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">🥉</div>
+                            <div class="rank-card-badge">BRONZE</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">BRONZE I</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">0 - 299 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Iniciante no campo de batalha. Complete suas primeiras missões e prove seu valor.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 1</span>
+                        </div>
+                    </div>
+
+                    <div class="rank-card rank-bronze">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">🥉</div>
+                            <div class="rank-card-badge">BRONZE</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">BRONZE II</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">300 - 499 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Seus primeiros passos estão sólidos. Continue avançando com consistência.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 1</span>
+                        </div>
+                    </div>
+
+                    <!-- Silver Ranks -->
+                    <div class="rank-card rank-silver">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">🥈</div>
+                            <div class="rank-card-badge">PRATA</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">PRATA I</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">500 - 799 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Operador competente. Sua habilidade está sendo reconhecida no campo.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 2</span>
+                        </div>
+                    </div>
+
+                    <div class="rank-card rank-silver">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">🥈</div>
+                            <div class="rank-card-badge">PRATA</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">PRATA II</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">800 - 1099 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Táticas avançadas começam a fazer a diferença. Continue evoluindo.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 2</span>
+                        </div>
+                    </div>
+
+                    <!-- Gold Ranks -->
+                    <div class="rank-card rank-gold">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">🥇</div>
+                            <div class="rank-card-badge">OURO</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">OURO I</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">1100 - 1499 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Elite em formação. Suas estratégias são dignas de respeito.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 3</span>
+                        </div>
+                    </div>
+
+                    <div class="rank-card rank-gold">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">🥇</div>
+                            <div class="rank-card-badge">OURO</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">OURO II</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">1500 - 1799 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Operador de alto nível. O topo está cada vez mais próximo.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 3</span>
+                        </div>
+                    </div>
+
+                    <!-- Platinum Ranks -->
+                    <div class="rank-card rank-platinum">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">💠</div>
+                            <div class="rank-card-badge">PLATINA</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">PLATINA</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">1800 - 2099 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Veterano experiente. Poucos alcançam este patamar de excelência.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 4</span>
+                        </div>
+                    </div>
+
+                    <!-- Diamond Rank -->
+                    <div class="rank-card rank-diamond">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">💎</div>
+                            <div class="rank-card-badge">DIAMANTE</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">DIAMANTE</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">2100 - 2399 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Puro brilho. Apenas os mais dedicados chegam aqui. A lenda está próxima.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 5</span>
+                        </div>
+                    </div>
+
+                    <!-- Master Rank -->
+                    <div class="rank-card rank-master">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">👑</div>
+                            <div class="rank-card-badge">MESTRE</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">MESTRE</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">2400 - 2499 MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                Maestria absoluta. Você domina todas as táticas e estratégias do combate.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 6</span>
+                        </div>
+                    </div>
+
+                    <!-- Legend Rank -->
+                    <div class="rank-card rank-legend">
+                        <div class="rank-card-header">
+                            <div class="rank-card-icon">⚡</div>
+                            <div class="rank-card-badge">LENDA</div>
+                        </div>
+                        <div class="rank-card-body">
+                            <h3 class="rank-card-name">LENDA</h3>
+                            <div class="rank-card-mmr">
+                                <span class="mmr-range">2500+ MMR</span>
+                            </div>
+                            <p class="rank-card-description">
+                                A elite do BO2 Ranked. Somente os melhores operadores sobrevivem aqui. Você é lenda.
+                            </p>
+                        </div>
+                        <div class="rank-card-footer">
+                            <span class="rank-tier">Tier 7 - ELITE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4️⃣ DICAS E ESTRATÉGIAS -->
+            <div class="ranks-tips-section">
+                <div class="section-header">
+                    <span class="section-badge">💡</span>
+                    <h2 class="section-title">DICAS PARA EVOLUIR MAIS RÁPIDO</h2>
+                    <p class="section-subtitle">Estratégias comprovadas para dominar o ranked</p>
+                </div>
+
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-icon">🎯</div>
+                        <h3 class="tip-title">Foque em Objetivos</h3>
+                        <p class="tip-description">
+                            Em modos como Domination e Hardpoint, capture pontos estrategicamente. Kills não valem nada sem controle de mapa.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🔫</div>
+                        <h3 class="tip-title">Domine Seu Loadout</h3>
+                        <p class="tip-description">
+                            Use armas e perks que complementam seu estilo. AN-94, MSMC e DSR-50 são meta. Hardline e Toughness são essenciais.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🗺️</div>
+                        <h3 class="tip-title">Conheça os Mapas</h3>
+                        <p class="tip-description">
+                            Estude spawn points, rotas de flank e power positions. Conhecimento de mapa é metade da vitória.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">👥</div>
+                        <h3 class="tip-title">Jogue em Equipe</h3>
+                        <p class="tip-description">
+                            Comunique-se, cubra companheiros e coordene streaks. Trabalho em equipe vence partidas ranqueadas.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">📊</div>
+                        <h3 class="tip-title">Analise Seus Erros</h3>
+                        <p class="tip-description">
+                            Revise partidas perdidas. Identifique padrões de morte e ajuste seu posicionamento e timing.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">⏱️</div>
+                        <h3 class="tip-title">Consistência > Grind</h3>
+                        <p class="tip-description">
+                            Melhor jogar 3 partidas focado que 10 cansado. Mantenha performance constante para subir ranks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5️⃣ CALL TO ACTION -->
+            <div class="ranks-cta">
+                <div class="ranks-cta-content">
+                    <div class="cta-icon-large">⚔️</div>
+                    <h2 class="cta-title-large">PRONTO PARA A BATALHA?</h2>
+                    <p class="cta-description-large">
+                        Coloque seu treinamento em prática. Registre suas vitórias e comece sua jornada rumo ao topo.
+                    </p>
+                    <div class="cta-buttons-large">
+                        <button class="btn-cta-primary-large" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span>REGISTRAR BATALHA</span>
+                        </button>
+                        <button class="btn-cta-secondary-large" onclick="showPage('profile')">
+                            <span class="btn-icon">📊</span>
+                            <span>VER MEU PERFIL</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
