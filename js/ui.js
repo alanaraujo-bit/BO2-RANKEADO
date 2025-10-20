@@ -30,6 +30,8 @@ const UI = {
             this.renderLeaderboard();
         } else if (pageId === 'history' && RankedData.currentUser) {
             this.renderHistory();
+        } else if (pageId === 'ranks') {
+            this.renderRanks();
         } else if (pageId === 'play') {
             this.updatePendingMatches();
             this.populateOpponentSelect();
@@ -498,6 +500,67 @@ const UI = {
             console.error('Error updating podium:', error);
         }
     }
+};
+
+// Render ranks grid dynamically from RankSystem
+UI.renderRanks = function() {
+    const grid = document.querySelector('#ranks .ranks-grid');
+    if (!grid || typeof RankSystem === 'undefined') return;
+
+    const ranks = RankSystem.getAllRanks();
+
+    const tierBadge = (name) => {
+        const tier = RankSystem.getRankTier(name);
+        const label = {
+            bronze: 'BRONZE',
+            silver: 'PRATA',
+            gold: 'OURO',
+            platinum: 'PLATINA',
+            diamond: 'DIAMANTE',
+            master: 'MESTRE',
+            legend: 'LENDA'
+        }[tier] || 'RANK';
+        const icon = {
+            bronze: '🥉',
+            silver: '🥈',
+            gold: '🥇',
+            platinum: '💠',
+            diamond: '💎',
+            master: '👑',
+            legend: '⚡'
+        }[tier] || '🎖️';
+        return { tier, label, icon };
+    };
+
+    const formatRange = (min, max) => {
+        const maxText = max === Infinity ? '+' : `- ${max}`;
+        return `${min} ${max === Infinity ? '' : ''}${max === Infinity ? '+' : `- ${max}`} MMR`;
+    };
+
+    grid.innerHTML = ranks.map(r => {
+        const { tier, label, icon } = tierBadge(r.name);
+        const mmrRange = r.max === Infinity ? `${r.min}+ MMR` : `${r.min} - ${r.max} MMR`;
+        return `
+            <div class="rank-card rank-${tier}">
+                <div class="rank-card-header">
+                    <div class="rank-card-icon">${icon}</div>
+                    <div class="rank-card-badge">${label}</div>
+                </div>
+                <div class="rank-card-body">
+                    <h3 class="rank-card-name">${r.name.toUpperCase()}</h3>
+                    <div class="rank-card-mmr">
+                        <span class="mmr-range">${mmrRange}</span>
+                    </div>
+                    <p class="rank-card-description">
+                        ${label === 'LENDA' ? 'A elite do BO2 Ranked. Somente os melhores operadores sobrevivem aqui. Você é lenda.' : 'Continue evoluindo e provando seu valor no campo.'}
+                    </p>
+                </div>
+                <div class="rank-card-footer">
+                    <span class="rank-tier">${label === 'LENDA' ? 'ELITE' : `Tier ${['bronze','silver','gold','platinum','diamond','master','legend'].indexOf(tier)+1}`}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
 };
 
 // CSS animations for notifications
