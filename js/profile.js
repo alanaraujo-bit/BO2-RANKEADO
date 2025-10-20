@@ -37,41 +37,43 @@ const ProfileManager = {
 
     // 1️⃣ Update Basic Profile Info
     updateBasicInfo(player) {
+        const container = document.getElementById('profileContent');
         const rank = RankSystem.getRank(player.mmr);
         const progress = RankSystem.getRankProgress(player.mmr);
 
         // Avatar
-        document.getElementById('profileAvatarIcon').textContent = rank.icon;
+        container.querySelector('#profileAvatarIcon').textContent = rank.icon;
 
         // Level (based on total games)
         const level = Math.floor(player.gamesPlayed / 10) + 1;
-        document.getElementById('profileLevel').textContent = level;
+    container.querySelector('#profileLevel').textContent = level;
 
         // Name and ID
-        document.getElementById('profileName').textContent = player.username;
-        document.getElementById('profileId').textContent = `#${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+    container.querySelector('#profileName').textContent = player.username;
+    container.querySelector('#profileId').textContent = `#${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
 
         // Rank
-        document.getElementById('profileRankIcon').textContent = rank.icon;
-        document.getElementById('profileRankName').textContent = rank.name;
+    container.querySelector('#profileRankIcon').textContent = rank.icon;
+    container.querySelector('#profileRankName').textContent = rank.name;
 
         // MMR
-        document.getElementById('profileMMR').textContent = player.mmr;
+    container.querySelector('#profileMMR').textContent = player.mmr;
 
         // Progress Bar
-        const progressSection = document.getElementById('rankProgressSection');
-        const maxRankMessage = document.getElementById('maxRankMessage');
+    const progressSection = container.querySelector('#rankProgressSection');
+    const maxRankMessage = container.querySelector('#maxRankMessage');
 
         if (progress.next) {
             progressSection.style.display = 'block';
             maxRankMessage.style.display = 'none';
 
-            document.getElementById('nextRankName').textContent = progress.next.name;
-            document.getElementById('mmrNeeded').textContent = progress.mmrNeeded;
-            document.getElementById('progressPercentage').textContent = progress.progress + '%';
-            document.getElementById('progressBarFill').style.width = progress.progress + '%';
-            document.getElementById('currentRankMMR').textContent = rank.minMMR + ' MMR';
-            document.getElementById('nextRankMMR').textContent = progress.next.minMMR + ' MMR';
+            container.querySelector('#nextRankName').textContent = progress.next.name;
+            container.querySelector('#mmrNeeded').textContent = progress.mmrNeeded;
+            container.querySelector('#progressPercentage').textContent = progress.progress + '%';
+            container.querySelector('#progressBarFill').style.width = progress.progress + '%';
+            // Use correct properties from RankSystem (min/max)
+            container.querySelector('#currentRankMMR').textContent = (typeof rank.min !== 'undefined' ? rank.min : 0) + ' MMR';
+            container.querySelector('#nextRankMMR').textContent = (typeof progress.next.min !== 'undefined' ? progress.next.min : 0) + ' MMR';
         } else {
             progressSection.style.display = 'none';
             maxRankMessage.style.display = 'flex';
