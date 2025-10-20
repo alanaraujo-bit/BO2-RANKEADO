@@ -585,7 +585,8 @@ UI.renderRanks = function() {
     }).join('');
 
     // Update player's current/next rank progress (top of ranks page)
-    const progressSection = document.getElementById('playerRankProgress');
+    const ranksPage = document.getElementById('ranks');
+    const progressSection = ranksPage ? ranksPage.querySelector('#playerRankProgress') : null;
     if (!progressSection) return;
 
     if (!RankedData.currentUser) {
@@ -602,25 +603,28 @@ UI.renderRanks = function() {
     const prog = RankSystem.getRankProgress(player.mmr);
 
     // Current rank card
-    const currentIconEl = document.getElementById('currentRankIcon');
-    const currentNameEl = document.getElementById('currentRankName');
+    const currentIconEl = ranksPage.querySelector('#currentRankIcon');
+    const currentNameEl = ranksPage.querySelector('#currentRankName');
     if (currentIconEl) currentIconEl.textContent = current.icon;
     if (currentNameEl) currentNameEl.textContent = current.name.toUpperCase();
 
     // Next rank card (if exists)
-    const nextIconEl = document.getElementById('nextRankIcon');
-    const nextNameEl = document.getElementById('nextRankName');
+    const nextIconEl = ranksPage.querySelector('#nextRankIcon');
+    const nextNameEl = ranksPage.querySelector('#nextRankName');
+    const mmrNeededEl = ranksPage.querySelector('#mmrNeededValue');
     if (prog.next) {
         const nextRank = RankSystem.getRankByName(prog.next.name) || prog.next;
         if (nextIconEl) nextIconEl.textContent = nextRank.icon || '⚡';
         if (nextNameEl) nextNameEl.textContent = nextRank.name.toUpperCase();
+        if (mmrNeededEl) mmrNeededEl.textContent = prog.mmrNeeded;
     } else {
         if (nextIconEl) nextIconEl.textContent = '⚡';
         if (nextNameEl) nextNameEl.textContent = 'LENDA';
+        if (mmrNeededEl) mmrNeededEl.textContent = '0';
     }
 
     // Progress bar large
-    const progressFillLarge = document.getElementById('progressBarFillLarge');
+    const progressFillLarge = ranksPage.querySelector('#progressBarFillLarge');
     if (progressFillLarge) progressFillLarge.style.width = Math.max(0, Math.min(100, prog.progress)) + '%';
 };
 
