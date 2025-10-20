@@ -561,6 +561,45 @@ UI.renderRanks = function() {
             </div>
         `;
     }).join('');
+
+    // Update player's current/next rank progress (top of ranks page)
+    const progressSection = document.getElementById('playerRankProgress');
+    if (!progressSection) return;
+
+    if (!RankedData.currentUser) {
+        progressSection.style.display = 'none';
+        return;
+    }
+
+    progressSection.style.display = 'block';
+    // Get player data and compute progress
+    const player = RankedData.getPlayer(RankedData.currentUser);
+    if (!player) return;
+
+    const current = RankSystem.getRank(player.mmr);
+    const prog = RankSystem.getRankProgress(player.mmr);
+
+    // Current rank card
+    const currentIconEl = document.getElementById('currentRankIcon');
+    const currentNameEl = document.getElementById('currentRankName');
+    if (currentIconEl) currentIconEl.textContent = current.icon;
+    if (currentNameEl) currentNameEl.textContent = current.name.toUpperCase();
+
+    // Next rank card (if exists)
+    const nextIconEl = document.getElementById('nextRankIcon');
+    const nextNameEl = document.getElementById('nextRankName');
+    if (prog.next) {
+        const nextRank = RankSystem.getRankByName(prog.next.name) || prog.next;
+        if (nextIconEl) nextIconEl.textContent = nextRank.icon || '⚡';
+        if (nextNameEl) nextNameEl.textContent = nextRank.name.toUpperCase();
+    } else {
+        if (nextIconEl) nextIconEl.textContent = '⚡';
+        if (nextNameEl) nextNameEl.textContent = 'LENDA';
+    }
+
+    // Progress bar large
+    const progressFillLarge = document.getElementById('progressBarFillLarge');
+    if (progressFillLarge) progressFillLarge.style.width = Math.max(0, Math.min(100, prog.progress)) + '%';
 };
 
 // CSS animations for notifications
