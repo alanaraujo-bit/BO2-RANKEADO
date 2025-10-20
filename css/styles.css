@@ -4988,6 +4988,53 @@ select.form-input,
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* Seasons: status pill and dates */
+.season-status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.season-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    background: rgba(0, 255, 0, 0.12);
+    border: 1px solid rgba(0, 255, 0, 0.35);
+    color: #7CFF7C;
+}
+
+.season-dates {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+}
+
+/* Seasons: rank progress section reuse */
+.season-rank-progress .progress-header,
+.season-rank-progress .progress-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.season-rank-progress .progress-current {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.season-rank-progress .progress-next {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+}
+
 /* 4 SEASON LEADERBOARD */
 .season-leaderboard-section {
     background: rgba(10, 10, 10, 0.6);

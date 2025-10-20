@@ -31,6 +31,37 @@ const SeasonsUI = {
         const descEl = document.getElementById('activeSeasonDescription');
         if (descEl) descEl.textContent = season.description;
         
+        // Update status pill and dates
+        const statusPill = document.getElementById('seasonStatusPill');
+        const datesEl = document.getElementById('seasonDates');
+        if (datesEl) {
+            const start = new Date(season.startDate).toLocaleDateString('pt-BR');
+            const end = new Date(season.endDate).toLocaleDateString('pt-BR');
+            datesEl.textContent = `${start} • ${end}`;
+        }
+        if (statusPill) {
+            const now = Date.now();
+            let text = 'EM BREVE';
+            let bg = 'rgba(255, 255, 0, 0.12)';
+            let bd = 'rgba(255, 255, 0, 0.35)';
+            let color = '#FFF385';
+            if (now >= season.startDate && now <= season.endDate && season.active) {
+                text = 'AO VIVO';
+                bg = 'rgba(0, 255, 0, 0.12)';
+                bd = 'rgba(0, 255, 0, 0.35)';
+                color = '#7CFF7C';
+            } else if (now > season.endDate || !season.active) {
+                text = 'ENCERRADA';
+                bg = 'rgba(255, 0, 0, 0.12)';
+                bd = 'rgba(255, 0, 0, 0.35)';
+                color = '#FF8A8A';
+            }
+            statusPill.textContent = text;
+            statusPill.style.background = bg;
+            statusPill.style.borderColor = bd;
+            statusPill.style.color = color;
+        }
+
         // Update timer
         this.updateTimer();
         
@@ -131,6 +162,49 @@ const SeasonsUI = {
             } else {
                 qualInfo.textContent = `${gamesPlayed} / ${minGames} partidas jogadas`;
             }
+        }
+
+        // Goal hint: suggest Top 10% based on qualified count
+        const goalHint = document.getElementById('seasonGoalHint');
+        if (goalHint) {
+            const fullLb = SeasonData.getSeasonLeaderboard(season.id, 10000);
+            const qualifiedCount = fullLb.length;
+            if (qualifiedCount > 0) {
+                const goalPos = Math.max(1, Math.ceil(qualifiedCount * 0.1));
+                goalHint.textContent = `Meta sugerida: ficar no Top ${Math.round(qualifiedCount * 0.1)} (${goalPos}º ou melhor)`;
+            } else {
+                goalHint.textContent = '';
+            }
+        }
+
+        // Rank progress to next
+        const rs = RankSystem.getRankProgress(progress.mmr);
+        const currentRank = rs.current;
+        const nextRank = rs.next;
+        const fill = document.getElementById('seasonProgressBarFill');
+        const curIcon = document.getElementById('seasonProgressCurrentIcon');
+        const curName = document.getElementById('seasonProgressCurrentName');
+        const nextIcon = document.getElementById('seasonProgressNextIcon');
+        const nextName = document.getElementById('seasonProgressNextName');
+        const mmrNeededEl = document.getElementById('seasonProgressMMRNeeded');
+        const minEl = document.getElementById('seasonProgressMin');
+        const maxEl = document.getElementById('seasonProgressMax');
+        const pctEl = document.getElementById('seasonProgressPercent');
+        
+        if (curIcon) curIcon.textContent = currentRank.icon || '🎖️';
+        if (curName) curName.textContent = currentRank.name;
+        if (fill) fill.style.width = `${rs.progress}%`;
+        if (minEl) minEl.textContent = currentRank.min;
+        if (pctEl) pctEl.textContent = `${rs.progress}%`;
+        if (maxEl) maxEl.textContent = currentRank.max === Infinity ? `${currentRank.min}+` : currentRank.max;
+        
+        if (nextRank) {
+            if (nextIcon) nextIcon.textContent = nextRank.icon || '';
+            if (nextName) nextName.textContent = nextRank.name;
+            if (mmrNeededEl) mmrNeededEl.textContent = rs.mmrNeeded;
+        } else {
+            if (nextName) nextName.textContent = 'Máximo';
+            if (mmrNeededEl) mmrNeededEl.textContent = 0;
         }
     },
     

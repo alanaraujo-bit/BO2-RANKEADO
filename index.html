@@ -1127,6 +1127,10 @@
                         <span class="badge-icon">🏆</span>
                         <span class="badge-text">TEMPORADA RANQUEADA</span>
                     </div>
+                    <div class="season-status-row">
+                        <span class="season-status-pill" id="seasonStatusPill">AO VIVO</span>
+                        <span class="season-dates" id="seasonDates">--/--/---- • --/--/----</span>
+                    </div>
                     <h1 class="season-hero-title" id="activeSeasonName">
                         <span class="title-highlight">SEASON 1:</span>
                         <span class="title-main">GENESIS</span>
@@ -1140,6 +1144,16 @@
                             <div class="timer-label">Tempo Restante</div>
                             <div class="timer-value" id="timerValue">45 dias</div>
                         </div>
+                    </div>
+                    <div class="season-hero-actions" style="margin-top:12px; display:flex; gap:12px; flex-wrap: wrap;">
+                        <button class="btn-hero-secondary" onclick="showPage('leaderboard')">
+                            <span class="btn-icon">🏆</span>
+                            <span class="btn-text">VER RANKING DA TEMPORADA</span>
+                        </button>
+                        <button class="btn-hero-primary" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span class="btn-text">REGISTRAR PARTIDA</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1274,6 +1288,30 @@
                     </div>
                     <div class="qualification-info" id="qualificationInfo">
                         0 / 10 partidas jogadas
+                    </div>
+                    <div class="season-goal-hint" id="seasonGoalHint" style="margin-top: 8px; color: rgba(255,255,255,0.7); font-size: 0.9rem;"></div>
+                </div>
+
+                <!-- Rank Progress to Next Rank -->
+                <div class="progress-bar-section season-rank-progress">
+                    <div class="progress-header">
+                        <div class="progress-current">
+                            <span class="progress-rank-icon" id="seasonProgressCurrentIcon">🥉</span>
+                            <span class="progress-rank-name" id="seasonProgressCurrentName">Bronze I</span>
+                        </div>
+                        <div class="progress-next">
+                            Próximo: <span id="seasonProgressNextIcon">🥉</span>
+                            <span id="seasonProgressNextName">Bronze II</span>
+                            • MMR restantes: <span id="seasonProgressMMRNeeded">0</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container-large">
+                        <div class="progress-bar-fill-large" id="seasonProgressBarFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-footer">
+                        <span id="seasonProgressMin">0</span>
+                        <span id="seasonProgressPercent">0%</span>
+                        <span id="seasonProgressMax">0</span>
                     </div>
                 </div>
             </div>
