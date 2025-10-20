@@ -1,5 +1,15 @@
 // BO2 RANKED - MAIN APPLICATION
 
+// Global wrapper function for compatibility between Firebase and LocalStorage
+async function getUserData(username) {
+    try {
+        return await RankedData.getPlayer(username);
+    } catch (error) {
+        console.error('Error getting user data:', error);
+        return null;
+    }
+}
+
 // Initialize application on page load
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize data
