@@ -10,9 +10,30 @@ async function getUserData(username) {
     }
 }
 
+async function updateUserData(username, data) {
+    try {
+        const playerData = await RankedData.getPlayer(username);
+        if (!playerData) return false;
+        
+        // Merge the data
+        const updatedData = { ...playerData, ...data };
+        return await RankedData.updatePlayer(username, updatedData);
+    } catch (error) {
+        console.error('Error updating user data:', error);
+        return false;
+    }
+}
+
 function getRankFromMMR(mmr) {
     return RankSystem.getRank(mmr);
 }
+
+// Make currentUser accessible globally via getter (dynamic)
+Object.defineProperty(window, 'currentUser', {
+    get: function() {
+        return RankedData.currentUser;
+    }
+});
 
 // Initialize application on page load
 document.addEventListener('DOMContentLoaded', async function() {
