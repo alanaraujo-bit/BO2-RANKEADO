@@ -2,35 +2,41 @@
 
 const RankSystem = {
     ranks: [
-        { name: 'Bronze III', icon: '🥉', min: 0, max: 399, color: '#CD7F32' },
-        { name: 'Bronze II', icon: '🥉', min: 400, max: 599, color: '#CD7F32' },
-        { name: 'Bronze I', icon: '🥉', min: 600, max: 999, color: '#CD7F32' },
-        
-        { name: 'Prata III', icon: '🥈', min: 1000, max: 1199, color: '#C0C0C0' },
-        { name: 'Prata II', icon: '🥈', min: 1200, max: 1399, color: '#C0C0C0' },
-        { name: 'Prata I', icon: '🥈', min: 1400, max: 1499, color: '#C0C0C0' },
-        
-        { name: 'Ouro III', icon: '🥇', min: 1500, max: 1699, color: '#FFD700' },
-        { name: 'Ouro II', icon: '🥇', min: 1700, max: 1899, color: '#FFD700' },
-        { name: 'Ouro I', icon: '🥇', min: 1900, max: 1999, color: '#FFD700' },
-        
-        { name: 'Platina III', icon: '💎', min: 2000, max: 2199, color: '#E5E4E2' },
-        { name: 'Platina II', icon: '💎', min: 2200, max: 2399, color: '#E5E4E2' },
-        { name: 'Platina I', icon: '💎', min: 2400, max: 2499, color: '#E5E4E2' },
-        
-        { name: 'Diamante III', icon: '💠', min: 2500, max: 2699, color: '#B9F2FF' },
-        { name: 'Diamante II', icon: '💠', min: 2700, max: 2899, color: '#B9F2FF' },
-        { name: 'Diamante I', icon: '💠', min: 2900, max: 2999, color: '#B9F2FF' },
-        
-        { name: 'Mestre', icon: '👑', min: 3000, max: 3499, color: '#9370DB' },
-        { name: 'Lenda', icon: '⚡', min: 3500, max: Infinity, color: '#FF1493' }
+        // Bronze (início padrão em 999)
+        { name: 'Bronze I',   icon: '🥉', min: 999,  max: 1099, color: '#CD7F32' },
+        { name: 'Bronze II',  icon: '🥉', min: 1100, max: 1199, color: '#CD7F32' },
+        { name: 'Bronze III', icon: '🥉', min: 1200, max: 1299, color: '#CD7F32' },
+
+        // Prata
+        { name: 'Prata I',    icon: '🥈', min: 1300, max: 1399, color: '#C0C0C0' },
+        { name: 'Prata II',   icon: '🥈', min: 1400, max: 1499, color: '#C0C0C0' },
+        { name: 'Prata III',  icon: '🥈', min: 1500, max: 1599, color: '#C0C0C0' },
+
+        // Ouro
+        { name: 'Ouro I',     icon: '🥇', min: 1600, max: 1699, color: '#FFD700' },
+        { name: 'Ouro II',    icon: '🥇', min: 1700, max: 1799, color: '#FFD700' },
+        { name: 'Ouro III',   icon: '🥇', min: 1800, max: 1899, color: '#FFD700' },
+
+        // Platina
+        { name: 'Platina I',  icon: '💎', min: 1900, max: 1999, color: '#E5E4E2' },
+        { name: 'Platina II', icon: '💎', min: 2000, max: 2099, color: '#E5E4E2' },
+        { name: 'Platina III',icon: '💎', min: 2100, max: 2199, color: '#E5E4E2' },
+
+        // Diamante
+        { name: 'Diamante I', icon: '💠', min: 2200, max: 2299, color: '#B9F2FF' },
+        { name: 'Diamante II',icon: '💠', min: 2300, max: 2399, color: '#B9F2FF' },
+        { name: 'Diamante III',icon:'💠', min: 2400, max: 2499, color: '#B9F2FF' },
+
+        // Tiers finais
+        { name: 'Mestre', icon: '👑', min: 2500, max: 2999, color: '#9370DB' },
+        { name: 'Lenda',  icon: '⚡', min: 3000, max: Infinity, color: '#FF1493' }
     ],
     
     // Get rank based on MMR
     getRank(mmr) {
         // Validar MMR
-        mmr = mmr || 1000;
-        if (isNaN(mmr)) mmr = 1000;
+    mmr = mmr || 999;
+    if (isNaN(mmr)) mmr = 999;
         
         for (let i = this.ranks.length - 1; i >= 0; i--) {
             const rank = this.ranks[i];
@@ -49,8 +55,8 @@ const RankSystem = {
     // Get progress to next rank
     getRankProgress(mmr) {
         // Validar MMR
-        mmr = mmr || 1000;
-        if (isNaN(mmr)) mmr = 1000;
+    mmr = mmr || 999;
+    if (isNaN(mmr)) mmr = 999;
         
         const currentRank = this.getRank(mmr);
         const currentIndex = this.ranks.findIndex(r => r.name === currentRank.name);

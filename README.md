@@ -36,7 +36,7 @@ Sistema de ranqueamento competitivo para Call of Duty: Black Ops 2 no Plutonium.
   - ⚡ Lenda
 
 - **Sistema MMR (Match Making Rating):**
-  - MMR inicial: 1000
+  - MMR inicial: 999
   - Ganho por vitória: 15-50 MMR (baseado em performance)
   - Perda por derrota: 10-40 MMR
   - Bônus por win streak
@@ -94,7 +94,7 @@ Sistema de ranqueamento competitivo para Call of Duty: Black Ops 2 no Plutonium.
 1. Clique em **LOGIN** no canto superior direito
 2. Digite seu nome de usuário
 3. Clique em **ENTRAR**
-4. Seu perfil será criado com 1000 MMR (Silver I)
+4. Seu perfil será criado com 999 MMR (Bronze I)
 
 ### 🎮 Registrar uma Partida
 1. Vá na aba **JOGAR**

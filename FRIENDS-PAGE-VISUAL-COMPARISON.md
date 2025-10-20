@@ -48,7 +48,7 @@
 ║  └──────────────────────────────────────────────────────────┘        ║
 ║     ↓ (Dropdown ao digitar)                                          ║
 ║     ┌────────────────────────────────────────────────────┐           ║
-║     │ ○ JOGADOR1  Bronze - 1000 MMR  [➕ ADICIONAR]    │           ║
+║     │ ○ JOGADOR1  Bronze - 999 MMR  [➕ ADICIONAR]    │           ║
 ║     │ ○ JOGADOR2  Prata - 1500 MMR   [➕ ADICIONAR]    │           ║
 ║     └────────────────────────────────────────────────────┘           ║
 ║                                                                       ║
@@ -84,7 +84,7 @@
 ║                                                                       ║
 ║  🏆 RANKING ENTRE AMIGOS                                             ║
 ║  ┌───────────────────────────────────────────────┐                   ║
-║  │ 🥇 ○ JOGADOR1  Bronze  1000 MMR  (Gradient)   │                   ║
+║  │ 🥇 ○ JOGADOR1  Bronze  999 MMR  (Gradient)   │                   ║
 ║  │ 🥈 ○ JOGADOR2  Bronze   950 MMR  (Gradient)   │                   ║
 ║  │ 🥉 ○ JOGADOR3  Bronze   900 MMR  (Gradient)   │                   ║
 ║  └───────────────────────────────────────────────┘                   ║

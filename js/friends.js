@@ -178,9 +178,12 @@ class FriendsSystem {
      * Create search result card
      */
     createSearchResultCard(player) {
-        const rankData = getRankFromMMR(player.mmr || 1000);
+        const rankData = getRankFromMMR(player.mmr || 999);
         const isFriend = this.friends.includes(player.username);
-        const hasPendingRequest = this.friendRequests.some(req => req.from === player.username);
+        const hasPendingRequest = (
+            (this.friendRequests?.sent || []).some(req => req.to === player.username) ||
+            (this.friendRequests?.received || []).some(req => req.from === player.username)
+        );
         
         let actionButton = '';
         if (isFriend) {
@@ -197,7 +200,7 @@ class FriendsSystem {
                     <div class="rank-icon-small">${rankData.icon}</div>
                     <div>
                         <div class="search-result-username">${player.username}</div>
-                        <div class="search-result-rank">${rankData.name} - ${player.mmr || 1000} MMR</div>
+                        <div class="search-result-rank">${rankData.name} - ${player.mmr || 999} MMR</div>
                     </div>
                 </div>
                 <div class="search-result-action" onclick="event.stopPropagation()">
@@ -444,7 +447,7 @@ class FriendsSystem {
         const playerData = await getUserData(request.from);
         if (!playerData) return '';
 
-        const rankData = getRankFromMMR(playerData.mmr || 1000);
+    const rankData = getRankFromMMR(playerData.mmr || 999);
         const timeAgo = this.getTimeAgo(request.timestamp);
         const avatarUrl = playerData.avatarUrl || `https://robohash.org/${request.from}?set=set4&size=200x200`;
 
@@ -458,7 +461,7 @@ class FriendsSystem {
                     <div class="friend-username" onclick="friendsSystem.openPlayerProfile('${request.from}')">${request.from}</div>
                     <div class="friend-user-id">${playerData.userId || 'BO2#0000'}</div>
                     <div class="friend-rank">${rankData.name}</div>
-                    <div class="friend-mmr">🏆 ${playerData.mmr || 1000} MMR</div>
+                    <div class="friend-mmr">🏆 ${playerData.mmr || 999} MMR</div>
                     <div class="friend-time">⏰ ${timeAgo}</div>
                 </div>
                 <div class="friend-actions">
@@ -476,7 +479,7 @@ class FriendsSystem {
         const playerData = await getUserData(username);
         if (!playerData) return '';
 
-        const rankData = getRankFromMMR(playerData.mmr || 1000);
+    const rankData = getRankFromMMR(playerData.mmr || 999);
         const winrate = playerData.wins && playerData.totalMatches 
             ? ((playerData.wins / playerData.totalMatches) * 100).toFixed(1)
             : '0';
@@ -499,7 +502,7 @@ class FriendsSystem {
                     <div class="friend-stats">
                         <span>🎮 ${playerData.totalMatches || 0}</span>
                         <span>📊 ${winrate}%</span>
-                        <span>🏆 ${playerData.mmr || 1000}</span>
+                        <span>🏆 ${playerData.mmr || 999}</span>
                     </div>
                 </div>
                 <div class="friend-quick-actions">
@@ -517,7 +520,7 @@ class FriendsSystem {
         try {
             const allPlayers = await getAllPlayers();
             const userData = await getUserData(currentUser);
-            const currentMMR = userData?.mmr || 1000;
+            const currentMMR = userData?.mmr || 999;
             
             const suggested = allPlayers
                 .filter(player => 
@@ -526,8 +529,8 @@ class FriendsSystem {
                 )
                 // Sort by similar MMR
                 .sort((a, b) => {
-                    const diffA = Math.abs((a.mmr || 1000) - currentMMR);
-                    const diffB = Math.abs((b.mmr || 1000) - currentMMR);
+                    const diffA = Math.abs((a.mmr || 999) - currentMMR);
+                    const diffB = Math.abs((b.mmr || 999) - currentMMR);
                     return diffA - diffB;
                 })
                 .slice(0, 6);
@@ -550,7 +553,7 @@ class FriendsSystem {
      * Create suggested friend card
      */
     async createSuggestedCard(player) {
-        const rankData = getRankFromMMR(player.mmr || 1000);
+    const rankData = getRankFromMMR(player.mmr || 999);
         const avatarUrl = player.avatarUrl || `https://robohash.org/${player.username}?set=set4&size=200x200`;
 
         return `
@@ -563,7 +566,7 @@ class FriendsSystem {
                     <div class="friend-username">${player.username}</div>
                     <div class="friend-user-id">${player.userId || 'BO2#0000'}</div>
                     <div class="friend-rank">${rankData.name}</div>
-                    <div class="friend-mmr">🏆 ${player.mmr || 1000} MMR</div>
+                    <div class="friend-mmr">🏆 ${player.mmr || 999} MMR</div>
                 </div>
                 <button class="btn-friend-add-small" onclick="event.stopPropagation(); friendsSystem.sendFriendRequest('${player.username}')">➕ ADICIONAR</button>
             </div>
@@ -581,7 +584,7 @@ class FriendsSystem {
                 return;
             }
 
-            const rankData = getRankFromMMR(playerData.mmr || 1000);
+            const rankData = getRankFromMMR(playerData.mmr || 999);
             const winrate = playerData.wins && playerData.totalMatches
                 ? ((playerData.wins / playerData.totalMatches) * 100).toFixed(1)
                 : '0';
@@ -591,7 +594,7 @@ class FriendsSystem {
             document.getElementById('profileUsername').textContent = username;
             document.getElementById('profileRankBadge').textContent = rankData.name;
             document.getElementById('profileRankIcon').textContent = rankData.icon;
-            document.getElementById('profileMMR').textContent = playerData.mmr || 1000;
+            document.getElementById('profileMMR').textContent = playerData.mmr || 999;
             document.getElementById('profileTotalMatches').textContent = playerData.totalMatches || 0;
             document.getElementById('profileWins').textContent = playerData.wins || 0;
             document.getElementById('profileLosses').textContent = playerData.losses || 0;
@@ -778,11 +781,11 @@ class FriendsSystem {
             }
 
             // Sort by MMR
-            friendsData.sort((a, b) => (b.mmr || 1000) - (a.mmr || 1000));
+            friendsData.sort((a, b) => (b.mmr || 999) - (a.mmr || 999));
 
             // Create ranking HTML
             const rankingHTML = friendsData.map((player, index) => {
-                const rankData = getRankFromMMR(player.mmr || 1000);
+                const rankData = getRankFromMMR(player.mmr || 999);
                 const isCurrentUser = player.username === currentUser;
                 const winrate = player.wins && player.totalMatches 
                     ? ((player.wins / player.totalMatches) * 100).toFixed(1)
@@ -804,7 +807,7 @@ class FriendsSystem {
                                 ${rankData.icon} ${rankData.name} • ${winrate}% WR
                             </div>
                         </div>
-                        <div class="ranking-mmr">${player.mmr || 1000} <span>MMR</span></div>
+                        <div class="ranking-mmr">${player.mmr || 999} <span>MMR</span></div>
                     </div>
                 `;
             }).join('');

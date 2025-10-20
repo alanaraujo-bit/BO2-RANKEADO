@@ -607,6 +607,8 @@ UI.renderRanks = function() {
     const currentNameEl = ranksPage.querySelector('#currentRankName');
     if (currentIconEl) currentIconEl.textContent = current.icon;
     if (currentNameEl) currentNameEl.textContent = current.name.toUpperCase();
+    const currentMMREl = ranksPage.querySelector('#currentMMRValue');
+    if (currentMMREl) currentMMREl.textContent = player.mmr;
 
     // Next rank card (if exists)
     const nextIconEl = ranksPage.querySelector('#nextRankIcon');
@@ -626,6 +628,12 @@ UI.renderRanks = function() {
     // Progress bar large
     const progressFillLarge = ranksPage.querySelector('#progressBarFillLarge');
     if (progressFillLarge) progressFillLarge.style.width = Math.max(0, Math.min(100, prog.progress)) + '%';
+    const progressCurrentMMR = ranksPage.querySelector('#progressCurrentMMR');
+    const progressTargetMMR = ranksPage.querySelector('#progressTargetMMR');
+    const progressPct = ranksPage.querySelector('#progressPercentageDisplay');
+    if (progressCurrentMMR) progressCurrentMMR.textContent = (typeof current.min !== 'undefined' ? current.min : 0) + ' MMR';
+    if (progressTargetMMR) progressTargetMMR.textContent = (prog.next && typeof prog.next.min !== 'undefined' ? prog.next.min : player.mmr) + ' MMR';
+    if (progressPct) progressPct.textContent = Math.max(0, Math.min(100, prog.progress)) + '%';
 };
 
 // CSS animations for notifications

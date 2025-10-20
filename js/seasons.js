@@ -123,7 +123,7 @@ const SeasonData = {
                 playerId: playerId,
                 seasonId: seasonId,
                 seasonName: season ? season.name : 'Unknown Season',
-                mmr: 1000,
+                mmr: 999,
                 rank: 'Bronze I',
                 wins: 0,
                 losses: 0,
@@ -200,25 +200,15 @@ const SeasonData = {
         return true;
     },
     
-    // Calculate rank from MMR (same as existing system)
+    // Calculate rank from MMR using centralized RankSystem
     calculateRankFromMMR(mmr) {
-        if (mmr >= 2400) return 'Legend';
-        if (mmr >= 2200) return 'Master';
-        if (mmr >= 2000) return 'Diamond I';
-        if (mmr >= 1900) return 'Diamond II';
-        if (mmr >= 1800) return 'Diamond III';
-        if (mmr >= 1700) return 'Platinum I';
-        if (mmr >= 1600) return 'Platinum II';
-        if (mmr >= 1500) return 'Platinum III';
-        if (mmr >= 1400) return 'Gold I';
-        if (mmr >= 1300) return 'Gold II';
-        if (mmr >= 1200) return 'Gold III';
-        if (mmr >= 1100) return 'Silver I';
-        if (mmr >= 1000) return 'Silver II';
-        if (mmr >= 900) return 'Silver III';
-        if (mmr >= 800) return 'Bronze I';
-        if (mmr >= 700) return 'Bronze II';
-        return 'Bronze III';
+        try {
+            const rank = RankSystem.getRank(mmr);
+            return rank.name;
+        } catch (e) {
+            console.error('RankSystem not available, fallback to Bronze I', e);
+            return 'Bronze I';
+        }
     },
     
     // Get season leaderboard

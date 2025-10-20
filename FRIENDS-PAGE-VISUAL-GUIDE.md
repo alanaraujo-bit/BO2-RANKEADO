@@ -121,7 +121,7 @@ Botão convidar: Glow pulsante
      │
      └──> Dropdown (max-height: 400px)
           ┌────────────────────────────────────┐
-          │ ○ JOGADOR1  Bronze - 1000 MMR  [➕]│
+          │ ○ JOGADOR1  Bronze - 999 MMR  [➕]│
           │ ○ JOGADOR2  Prata - 1500 MMR   [➕]│
           │ ○ JOGADOR3  Ouro - 2000 MMR    [➕]│
           └────────────────────────────────────┘
@@ -165,7 +165,7 @@ ATIVO:
 
 ```
 ┌──────────────────────────────────────────┐
-│  🥇  ○  JOGADOR1  Bronze  1000 MMR      │ <- Gradient dourado
+│  🥇  ○  JOGADOR1  Bronze  999 MMR      │ <- Gradient dourado
 ├──────────────────────────────────────────┤
 │  🥈  ○  JOGADOR2  Bronze   950 MMR      │ <- Gradient prata
 ├──────────────────────────────────────────┤

@@ -134,7 +134,7 @@ const RankedData = {
                 userId: userId,
                 username: username,
                 email: email,
-                mmr: 1000,
+                mmr: 999,
                 rank: 'Silver I',
                 level: 1,
                 wins: 0,
@@ -151,7 +151,7 @@ const RankedData = {
                     [this.currentSeason]: {
                         wins: 0,
                         losses: 0,
-                        mmr: 1000
+                        mmr: 999
                     }
                 }
             };

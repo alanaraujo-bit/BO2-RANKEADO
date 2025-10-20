@@ -524,7 +524,8 @@ window.devTools = {
             if (!RankedData.getPlayer(name)) {
                 RankedData.createPlayer(name);
                 const player = RankedData.getPlayer(name);
-                player.mmr = 1000 + Math.floor(Math.random() * 1000);
+                // Keep player MMR stable (do not randomize) to maintain clear progression from 999 upwards
+                player.mmr = player.mmr || 999;
                 player.wins = Math.floor(Math.random() * 20);
                 player.losses = Math.floor(Math.random() * 20);
                 player.totalKills = Math.floor(Math.random() * 500);
@@ -726,7 +727,7 @@ async function openPlayerProfile(username) {
             return;
         }
 
-        const rankData = RankSystem.getRank(playerData.mmr || 1000);
+    const rankData = RankSystem.getRank(playerData.mmr || 999);
         const winrate = playerData.wins && playerData.gamesPlayed
             ? ((playerData.wins / playerData.gamesPlayed) * 100).toFixed(1)
             : '0';
@@ -746,7 +747,7 @@ async function openPlayerProfile(username) {
         if (profileUsername) profileUsername.textContent = username;
         if (profileRankBadge) profileRankBadge.textContent = rankData.name;
         if (profileRankIcon) profileRankIcon.textContent = rankData.icon;
-        if (profileMMR) profileMMR.textContent = playerData.mmr || 1000;
+    if (profileMMR) profileMMR.textContent = playerData.mmr || 999;
         if (profileTotalMatches) profileTotalMatches.textContent = playerData.gamesPlayed || 0;
         if (profileWins) profileWins.textContent = playerData.wins || 0;
         if (profileLosses) profileLosses.textContent = playerData.losses || 0;

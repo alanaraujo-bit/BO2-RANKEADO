@@ -14,7 +14,7 @@ const MMRSystem = {
         decayDays: 30,
         decayPerWeek: 10,
         minMMR: 0,
-        startingMMR: 1000
+    startingMMR: 999
     },
     
     /**

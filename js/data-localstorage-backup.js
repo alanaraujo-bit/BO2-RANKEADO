@@ -55,7 +55,7 @@ const RankedData = {
         
         this.players[username] = {
             username: username,
-            mmr: 1000, // Starting MMR
+            mmr: 999, // Starting MMR
             rank: 'Silver I',
             level: 1,
             wins: 0,
@@ -72,7 +72,7 @@ const RankedData = {
                 [this.currentSeason]: {
                     wins: 0,
                     losses: 0,
-                    mmr: 1000
+                    mmr: 999
                 }
             }
         };
