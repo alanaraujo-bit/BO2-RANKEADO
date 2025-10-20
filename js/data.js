@@ -47,6 +47,18 @@ const RankedData = {
         }
     },
     
+    // Generate unique user ID
+    generateUserId() {
+        const num = Math.floor(1000 + Math.random() * 9000);
+        return `BO2#${num}`;
+    },
+
+    // Generate random avatar URL (or use default)
+    generateAvatar(username) {
+        // Using RoboHash for unique avatars based on username
+        return `https://robohash.org/${username}?set=set4&size=200x200`;
+    },
+
     // Create new player
     createPlayer(username) {
         if (this.players[username]) {
@@ -55,6 +67,10 @@ const RankedData = {
         
         this.players[username] = {
             username: username,
+            userId: this.generateUserId(),
+            avatarUrl: this.generateAvatar(username),
+            status: 'offline', // online, offline, in-match
+            lastOnline: Date.now(),
             mmr: 1000, // Starting MMR
             rank: 'Silver I',
             level: 1,
@@ -68,6 +84,11 @@ const RankedData = {
             createdAt: Date.now(),
             lastPlayed: null,
             achievements: [],
+            friends: [],
+            friendRequests: {
+                sent: [],
+                received: []
+            },
             seasonStats: {
                 [this.currentSeason]: {
                     wins: 0,
@@ -83,7 +104,32 @@ const RankedData = {
     
     // Get player data
     getPlayer(username) {
-        return this.players[username];
+        const player = this.players[username];
+        
+        // Migrate old players to new structure
+        if (player && !player.userId) {
+            player.userId = this.generateUserId();
+            player.avatarUrl = this.generateAvatar(username);
+            player.status = 'offline';
+            player.lastOnline = Date.now();
+            player.friends = player.friends || [];
+            player.friendRequests = player.friendRequests || { sent: [], received: [] };
+            
+            // Fix old friendRequests format
+            if (Array.isArray(player.friendRequests)) {
+                player.friendRequests = {
+                    sent: [],
+                    received: player.friendRequests.map(req => ({
+                        from: req.from,
+                        timestamp: req.timestamp
+                    }))
+                };
+            }
+            
+            this.save();
+        }
+        
+        return player;
     },
     
     // Update player stats

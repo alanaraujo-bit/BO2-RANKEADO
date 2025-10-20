@@ -4,6 +4,132 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ---
 
+## [2.1.0] - 2025-10-20
+
+### 👥 SISTEMA DE AMIGOS MELHORADO
+
+#### ✨ Novidades Principais
+- **ID Único de Jogador** (`BO2#XXXX`): Cada jogador agora tem um identificador único
+- **Avatares Personalizados**: Integração com RoboHash para avatares únicos por username
+- **Status em Tempo Real**: Sistema de status online/offline/em partida com atualização automática
+- **Ranking Entre Amigos**: Lista ordenada por MMR com destaque visual
+- **Feed de Atividades**: Últimas partidas dos amigos com variação de MMR
+- **Filtros Avançados**: Filtrar amigos por status (todos/online/jogando)
+
+#### 🎨 Melhorias Visuais
+- **Friend Cards Redesenhadas:**
+  - Avatar circular com imagem real
+  - Glow animado para amigos online (verde neon pulsante)
+  - Badge de rank sobreposto no canto do avatar
+  - Badges de status coloridos (verde/azul/cinza)
+  - Informações detalhadas: userId, rank, MMR, winrate
+  - Botões de ação contextuais (Convidar se online)
+
+- **Efeitos de Animação:**
+  - Avatar pulse animation para amigos online
+  - Status pulse para "Em Partida"
+  - Hover effects com translateY e glow
+  - Smooth transitions em todos os elementos
+  - Backdrop blur nos cards principais
+
+- **Paleta de Status:**
+  - 🟢 Online: `#00FF64` com glow verde
+  - 🎮 Em Partida: `#00AAFF` com pulse azul
+  - ⚫ Offline: Cinza com tempo decorrido
+
+#### 🔧 Estrutura de Dados
+- **friendRequests reformulado:**
+  ```javascript
+  friendRequests: {
+    sent: [{ to: username, timestamp }],
+    received: [{ from: username, timestamp }]
+  }
+  ```
+- **Novos campos de jogador:**
+  - `userId`: ID único formato `BO2#XXXX`
+  - `avatarUrl`: URL do avatar personalizado
+  - `status`: 'online' | 'offline' | 'in-match'
+  - `lastOnline`: timestamp da última atividade
+
+#### 🚀 Funcionalidades Novas
+
+**Ranking Entre Amigos:**
+- Lista todos os amigos + você ordenados por MMR
+- Medalhas para top 3 (🥇🥈🥉)
+- Destaque visual para o jogador atual
+- Avatares pequenos e estatísticas resumidas
+- Click para ver perfil completo
+
+**Feed de Atividades:**
+- Últimas 10 partidas dos amigos
+- Ícone de vitória (🏆) ou derrota (💔)
+- Mostra oponente e resultado
+- Variação de MMR com cores (+verde / -vermelho)
+- Timestamp relativo ("5 min atrás")
+
+**Filtros de Amigos:**
+- Botões toggle: TODOS / ONLINE / JOGANDO
+- Atualização dinâmica da lista
+- Estado ativo visual (botão laranja)
+- Empty state quando filtro não retorna resultados
+
+**Sugestões Inteligentes:**
+- Baseadas em MMR similar ao jogador atual
+- Mostra 6 sugestões máximo
+- Ordenadas por proximidade de skill
+- Avatares e botão de adicionar rápido
+
+#### 🔄 Sistema de Migração
+- Migração automática de jogadores antigos
+- Geração de `userId` para profiles sem ID
+- Conversão de `friendRequests` array para objeto
+- Criação de `avatarUrl` baseado no username
+- Inicialização de `status` e `lastOnline`
+- Preservação total de dados existentes
+
+#### 🎯 Interatividade
+- **Busca melhorada**: Buscar por username OU userId
+- **Notificações**: Badge numérico no sino com count de solicitações
+- **Convites de partida**: Botão "🎮 CONVIDAR" para amigos online
+- **Status simulation**: Atualização a cada 10s simulando mudanças de status
+- **Cleanup automático**: Limpa interval ao sair da página
+
+#### 📱 Componentes UI
+
+**Novos Elementos CSS:**
+```css
+.friend-avatar-container     → Container com glow animado
+.rank-badge-overlay          → Badge de rank no avatar
+.avatar-glow                 → Glow pulsante (online)
+.status-badge                → Badge de status com cores
+.ranking-item                → Item do ranking
+.activity-item               → Item do feed
+.filter-btn-small            → Botão de filtro
+.subsection-header           → Header com botões
+```
+
+#### 🐛 Correções
+- Fix: Solicitações duplicadas agora são bloqueadas
+- Fix: Remoção bidirecional de amigos funcionando
+- Fix: Badge de notificação oculta quando count = 0
+- Fix: Friend requests agora removidas ao aceitar/rejeitar em ambos os lados
+- Fix: Compatibilidade com dados antigos mantida
+
+#### 📊 Melhorias de Performance
+- Debounce de 300ms na busca de jogadores
+- Carregamento assíncrono de dados de amigos
+- Cache de resultados de busca
+- Atualização seletiva de UI (apenas partes necessárias)
+
+#### 🎨 Tema Visual Aprimorado
+- Design 100% fiel ao tema BO2 futurista
+- HUD metálico com bordas angulares
+- Efeitos de glow mais intensos
+- Gradientes diagonais sutis
+- Scrollbar customizado (laranja neon)
+
+---
+
 ## [2.0.0] - 2025-10-19
 
 ### 🎨 DESIGN SYSTEM COMPLETO - BREAKING CHANGES
