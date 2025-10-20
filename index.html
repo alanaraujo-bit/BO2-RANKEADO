@@ -25,6 +25,7 @@
                 <li><a href="#play" class="nav-link" onclick="showPage('play')">🎮 JOGAR</a></li>
                 <li><a href="#profile" class="nav-link" onclick="showPage('profile')">👤 PERFIL</a></li>
                 <li><a href="#friends" class="nav-link" onclick="showPage('friends')">👥 AMIGOS</a></li>
+                <li><a href="#seasons" class="nav-link" onclick="showPage('seasons')">🏆 TEMPORADAS</a></li>
                 <li><a href="#ranks" class="nav-link" onclick="showPage('ranks')">🎖️ RANKS</a></li>
                 <li><a href="#leaderboard" class="nav-link" onclick="showPage('leaderboard')">🏆 RANKING</a></li>
                 <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
@@ -1271,6 +1272,222 @@
             </div>
         </div>
 
+        <!-- SEASONS PAGE -->
+        <div id="seasons" class="page">
+            <!-- Active Season Hero -->
+            <div class="season-hero">
+                <div class="season-hero-content">
+                    <div class="season-badge">
+                        <span class="badge-icon">🏆</span>
+                        <span class="badge-text">TEMPORADA RANQUEADA</span>
+                    </div>
+                    <h1 class="season-hero-title" id="activeSeasonName">
+                        <span class="title-highlight">SEASON 1:</span>
+                        <span class="title-main">GENESIS</span>
+                    </h1>
+                    <p class="season-hero-description" id="activeSeasonDescription">
+                        A primeira temporada ranqueada. Prove seu valor e conquiste seu lugar no topo!
+                    </p>
+                    <div class="season-timer" id="seasonTimer">
+                        <div class="timer-icon">⏰</div>
+                        <div class="timer-content">
+                            <div class="timer-label">Tempo Restante</div>
+                            <div class="timer-value" id="timerValue">45 dias</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Season Rewards Section -->
+            <div class="season-rewards-section">
+                <div class="section-header">
+                    <span class="section-badge">🎁</span>
+                    <h2 class="section-title">RECOMPENSAS DA TEMPORADA</h2>
+                    <p class="section-subtitle">Conquiste seu lugar no pódio e ganhe badges exclusivas</p>
+                </div>
+
+                <div class="rewards-grid">
+                    <!-- Top 1 -->
+                    <div class="reward-card reward-top1">
+                        <div class="reward-rank">🥇 1º LUGAR</div>
+                        <div class="reward-icon">👑</div>
+                        <div class="reward-title">LEGEND SUPREME</div>
+                        <div class="reward-description">
+                            Badge dourada exclusiva + título permanente
+                        </div>
+                        <div class="reward-badge-preview">🏆 LEGEND SUPREME</div>
+                    </div>
+
+                    <!-- Top 2 -->
+                    <div class="reward-card reward-top2">
+                        <div class="reward-rank">🥈 2º LUGAR</div>
+                        <div class="reward-icon">💎</div>
+                        <div class="reward-title">ELITE MASTER</div>
+                        <div class="reward-description">
+                            Badge prateada exclusiva + título permanente
+                        </div>
+                        <div class="reward-badge-preview">🥈 ELITE MASTER</div>
+                    </div>
+
+                    <!-- Top 3 -->
+                    <div class="reward-card reward-top3">
+                        <div class="reward-rank">🥉 3º LUGAR</div>
+                        <div class="reward-icon">⭐</div>
+                        <div class="reward-title">TACTICAL EXPERT</div>
+                        <div class="reward-description">
+                            Badge bronze exclusiva + título permanente
+                        </div>
+                        <div class="reward-badge-preview">🥉 TACTICAL EXPERT</div>
+                    </div>
+
+                    <!-- Participation -->
+                    <div class="reward-card reward-participation">
+                        <div class="reward-rank">🎖️ PARTICIPAÇÃO</div>
+                        <div class="reward-icon">⚔️</div>
+                        <div class="reward-title">SEASON 1 VETERAN</div>
+                        <div class="reward-description">
+                            Badge de veterano (mínimo 10 partidas)
+                        </div>
+                        <div class="reward-badge-preview">🎖️ SEASON 1 VETERAN</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Progress Section -->
+            <div class="season-progress-section" id="seasonProgressSection">
+                <div class="section-header">
+                    <span class="section-badge">📊</span>
+                    <h2 class="section-title">SEU PROGRESSO NA TEMPORADA</h2>
+                    <p class="section-subtitle">Acompanhe suas estatísticas e progresso no ranking</p>
+                </div>
+
+                <div class="progress-stats-grid">
+                    <!-- MMR Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-label">MMR Atual</div>
+                            <div class="stat-value" id="seasonMMR">1000</div>
+                        </div>
+                    </div>
+
+                    <!-- Rank Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">🏅</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Rank da Temporada</div>
+                            <div class="stat-value" id="seasonRank">Bronze I</div>
+                        </div>
+                    </div>
+
+                    <!-- Win/Loss Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">⚔️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Vitórias / Derrotas</div>
+                            <div class="stat-value" id="seasonWinLoss">0 / 0</div>
+                        </div>
+                    </div>
+
+                    <!-- Win Rate Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Taxa de Vitória</div>
+                            <div class="stat-value" id="seasonWinRate">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- K/D Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">💀</div>
+                        <div class="stat-content">
+                            <div class="stat-label">K/D Ratio</div>
+                            <div class="stat-value" id="seasonKD">0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Leaderboard Position Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Posição no Ranking</div>
+                            <div class="stat-value" id="seasonPosition">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qualification Progress -->
+                <div class="qualification-progress" id="qualificationProgress">
+                    <div class="qualification-header">
+                        <span class="qualification-icon">🎯</span>
+                        <span class="qualification-text">Progresso de Qualificação</span>
+                    </div>
+                    <div class="qualification-bar-container">
+                        <div class="qualification-bar" id="qualificationBar"></div>
+                    </div>
+                    <div class="qualification-info" id="qualificationInfo">
+                        0 / 10 partidas jogadas
+                    </div>
+                </div>
+            </div>
+
+            <!-- Season Leaderboard Section -->
+            <div class="season-leaderboard-section">
+                <div class="section-header">
+                    <span class="section-badge">🏆</span>
+                    <h2 class="section-title">TOP 10 DA TEMPORADA</h2>
+                    <p class="section-subtitle">Os melhores jogadores da temporada atual</p>
+                </div>
+
+                <div class="season-leaderboard-table" id="seasonLeaderboardTable">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <div class="view-full-leaderboard">
+                    <button class="btn-view-full" onclick="showPage('leaderboard')">
+                        <span class="btn-icon">📊</span>
+                        <span>VER RANKING COMPLETO</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Past Seasons Section -->
+            <div class="past-seasons-section">
+                <div class="section-header">
+                    <span class="section-badge">📜</span>
+                    <h2 class="section-title">TEMPORADAS ANTERIORES</h2>
+                    <p class="section-subtitle">Histórico de temporadas e campeões</p>
+                </div>
+
+                <div class="past-seasons-grid" id="pastSeasonsGrid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Season CTA -->
+            <div class="season-cta">
+                <div class="season-cta-content">
+                    <div class="cta-icon-season">⚔️</div>
+                    <h2 class="cta-title-season">DOMINE A TEMPORADA</h2>
+                    <p class="cta-description-season">
+                        Cada partida conta! Suba no ranking, conquiste recompensas exclusivas e prove que você é o melhor.
+                    </p>
+                    <div class="cta-buttons-season">
+                        <button class="btn-cta-primary-season" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span>JOGAR AGORA</span>
+                        </button>
+                        <button class="btn-cta-secondary-season" onclick="showPage('ranks')">
+                            <span class="btn-icon">🎖️</span>
+                            <span>VER RANKS</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- HISTORY PAGE -->
         <div id="history" class="page">
             <div class="section">
@@ -1436,6 +1653,8 @@
     <script src="js/anti-abuse.js"></script>
     <script src="js/data-firebase.js"></script>
     <script src="js/friends.js"></script>
+    <script src="js/seasons.js"></script>
+    <script src="js/seasons-ui.js"></script>
     <script src="js/matches.js"></script>
     <script src="js/match-registration.js"></script>
     <script src="js/profile.js"></script>

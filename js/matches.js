@@ -149,6 +149,20 @@ const MatchSystem = {
             const results = await MMRSystem.processMatch(match);
             console.log('MMR results:', results);
             
+            // Register match in active season
+            if (typeof SeasonData !== 'undefined') {
+                console.log('📊 Registering match in active season...');
+                SeasonData.registerSeasonMatch({
+                    winner: match.winner,
+                    loser: match.loser,
+                    winnerKills: match.kills || 0,
+                    winnerDeaths: match.deaths || 0,
+                    loserKills: 0, // Would need to be added to match data
+                    loserDeaths: 0, // Would need to be added to match data
+                    mmrChange: Math.abs(results.winner.change)
+                });
+            }
+            
             // Check for rank up
             this.checkRankUp(match.winner, results.winner);
             

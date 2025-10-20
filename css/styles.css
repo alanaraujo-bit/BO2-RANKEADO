@@ -4691,3 +4691,696 @@ select.form-input,
     }
 }
 
+
+/* ===================================================================
+   SEASONS PAGE - BO2 THEMED
+   Complete season system with ranking, rewards and progress tracking
+   ================================================================ */
+
+/* 1 SEASON HERO */
+.season-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 100%);
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    border-radius: 12px;
+    padding: var(--space-16) var(--space-8);
+    margin-bottom: var(--space-12);
+    overflow: hidden;
+}
+
+.season-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #FF6600 50%, transparent 100%);
+    animation: scanline 3s linear infinite;
+}
+
+.season-hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.season-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: rgba(255, 102, 0, 0.1);
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    border-radius: 8px;
+    padding: var(--space-4) var(--space-6);
+    margin-top: var(--space-6);
+}
+
+.timer-icon {
+    font-size: 1.5rem;
+}
+
+.timer-label {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: #FF6600;
+    text-transform: uppercase;
+}
+
+.timer-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FFD700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* 2 SEASON REWARDS */
+.season-rewards-section {
+    background: rgba(10, 10, 10, 0.6);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 12px;
+    padding: var(--space-8);
+    margin-bottom: var(--space-12);
+}
+
+.rewards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+}
+
+.reward-card {
+    position: relative;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    border-radius: 8px;
+    padding: var(--space-6);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.reward-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 102, 0, 0.3);
+}
+
+.reward-top1 {
+    border-color: #FFD700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.reward-top2 {
+    border-color: #C0C0C0;
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.reward-top3 {
+    border-color: #CD7F32;
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.reward-rank {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    color: #FF6600;
+    margin-bottom: var(--space-3);
+}
+
+.reward-icon {
+    font-size: 3rem;
+    margin: var(--space-4) 0;
+    filter: drop-shadow(0 0 10px rgba(255, 102, 0, 0.5));
+}
+
+.reward-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+}
+
+.reward-description {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+}
+
+.reward-badge-preview {
+    display: inline-block;
+    background: rgba(255, 102, 0, 0.1);
+    border: 1px solid rgba(255, 102, 0, 0.3);
+    border-radius: 20px;
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: #FF6600;
+}
+
+/* 3 PLAYER PROGRESS */
+.season-progress-section {
+    background: rgba(10, 10, 10, 0.6);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 12px;
+    padding: var(--space-8);
+    margin-bottom: var(--space-12);
+}
+
+.progress-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.progress-stat-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 6px;
+    padding: var(--space-4);
+    transition: all 0.3s ease;
+}
+
+.progress-stat-card:hover {
+    border-color: #FF6600;
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 5px rgba(255, 102, 0, 0.4));
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: var(--space-1);
+}
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FFD700;
+}
+
+/* Qualification Progress */
+.qualification-progress {
+    background: rgba(255, 102, 0, 0.05);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 8px;
+    padding: var(--space-6);
+}
+
+.qualification-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.qualification-icon {
+    font-size: 1.5rem;
+}
+
+.qualification-text {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #FF6600;
+    text-transform: uppercase;
+}
+
+.qualification-bar-container {
+    height: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+}
+
+.qualification-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #FF6600, #FF8800);
+    border-radius: 13px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+}
+
+.qualification-info {
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 4 SEASON LEADERBOARD */
+.season-leaderboard-section {
+    background: rgba(10, 10, 10, 0.6);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 12px;
+    padding: var(--space-8);
+    margin-bottom: var(--space-12);
+}
+
+.season-leaderboard-table {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.leaderboard-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 2fr;
+    align-items: center;
+    gap: var(--space-4);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 6px;
+    padding: var(--space-4);
+    transition: all 0.3s ease;
+}
+
+.leaderboard-row:hover {
+    border-color: #FF6600;
+    transform: translateX(5px);
+}
+
+.leaderboard-row.current-user {
+    border-color: #00FF00;
+    background: rgba(0, 255, 0, 0.05);
+}
+
+.lb-position {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: #FF6600;
+}
+
+.position-1 .lb-position {
+    font-size: 2rem;
+    color: #FFD700;
+}
+
+.position-2 .lb-position {
+    font-size: 1.8rem;
+    color: #C0C0C0;
+}
+
+.position-3 .lb-position {
+    font-size: 1.6rem;
+    color: #CD7F32;
+}
+
+.lb-player {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.lb-player-name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.lb-player-rank {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.lb-stats {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.lb-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lb-stat-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lb-stat-value {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #FFD700;
+}
+
+.empty-leaderboard {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+}
+
+.empty-text {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--space-2);
+}
+
+.empty-hint {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.view-full-leaderboard {
+    text-align: center;
+    margin-top: var(--space-6);
+}
+
+.btn-view-full {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    background: rgba(255, 102, 0, 0.1);
+    border: 2px solid #FF6600;
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #FF6600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-view-full:hover {
+    background: rgba(255, 102, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.3);
+}
+
+/* 5 PAST SEASONS */
+.past-seasons-section {
+    background: rgba(10, 10, 10, 0.6);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 12px;
+    padding: var(--space-8);
+    margin-bottom: var(--space-12);
+}
+
+.past-seasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-6);
+}
+
+.past-season-card {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 8px;
+    padding: var(--space-6);
+    transition: all 0.3s ease;
+}
+
+.past-season-card:hover {
+    border-color: #FF6600;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.2);
+    transform: translateY(-3px);
+}
+
+.past-season-header {
+    margin-bottom: var(--space-4);
+}
+
+.past-season-name {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin: 0 0 var(--space-2) 0;
+}
+
+.past-season-dates {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.past-season-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: var(--space-4);
+}
+
+.past-season-podium {
+    background: rgba(255, 102, 0, 0.05);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 6px;
+    padding: var(--space-4);
+}
+
+.podium-title {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #FF6600;
+    text-align: center;
+    margin-bottom: var(--space-3);
+}
+
+.podium-winners {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.podium-winner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.podium-medal {
+    font-size: 1.2rem;
+}
+
+.podium-name {
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: #FFFFFF;
+}
+
+.podium-mmr {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: #FFD700;
+}
+
+.podium-empty {
+    text-align: center;
+    padding: var(--space-4);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+.no-past-seasons {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+}
+
+.no-past-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+}
+
+.no-past-text {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--space-2);
+}
+
+.no-past-hint {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* 6 SEASON CTA */
+.season-cta {
+    position: relative;
+    background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 100%);
+    border: 2px solid rgba(255, 102, 0, 0.3);
+    border-radius: 12px;
+    padding: var(--space-12) var(--space-8);
+    text-align: center;
+    overflow: hidden;
+}
+
+.season-cta::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 102, 0, 0.1) 50%, transparent 70%);
+    animation: ctaGlow 3s linear infinite;
+    z-index: 0;
+}
+
+.season-cta-content {
+    position: relative;
+    z-index: 1;
+}
+
+.cta-icon-season {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+    filter: drop-shadow(0 0 20px rgba(255, 102, 0, 0.6));
+}
+
+.cta-title-season {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    margin: 0 0 var(--space-4) 0;
+}
+
+.cta-description-season {
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+    margin: 0 auto var(--space-8) auto;
+}
+
+.cta-buttons-season {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-cta-primary-season {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-8);
+    background: linear-gradient(135deg, #FF6600 0%, #FF8800 100%);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(255, 102, 0, 0.4);
+}
+
+.btn-cta-primary-season:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 30px rgba(255, 102, 0, 0.6);
+}
+
+.btn-cta-secondary-season {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-8);
+    background: transparent;
+    border: 2px solid #FF6600;
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #FF6600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cta-secondary-season:hover {
+    background: rgba(255, 102, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .rewards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .progress-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .leaderboard-row {
+        grid-template-columns: 50px 1fr;
+    }
+    
+    .lb-stats {
+        grid-column: 1 / -1;
+        margin-top: var(--space-2);
+    }
+    
+    .past-seasons-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons-season {
+        flex-direction: column;
+    }
+    
+    .btn-cta-primary-season,
+    .btn-cta-secondary-season {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .season-hero {
+        padding: var(--space-8) var(--space-4);
+    }
+    
+    .cta-title-season {
+        font-size: 1.5rem;
+    }
+}
+
