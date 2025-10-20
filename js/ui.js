@@ -141,90 +141,9 @@ const UI = {
     },
     
     // Render profile page
+    // Render profile page
     async renderProfile() {
-        try {
-            if (!RankedData.currentUser) {
-                document.getElementById('profileContent').innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Faça login para ver seu perfil.</p>';
-                return;
-            }
-            
-            const player = await RankedData.getPlayer(RankedData.currentUser);
-            if (!player) return;
-            
-            // Garantir valores válidos
-            player.mmr = player.mmr || 1000;
-            player.wins = player.wins || 0;
-            player.losses = player.losses || 0;
-            player.gamesPlayed = player.gamesPlayed || 0;
-            player.totalKills = player.totalKills || 0;
-            player.totalDeaths = player.totalDeaths || 0;
-            player.winStreak = player.winStreak || 0;
-            player.bestStreak = player.bestStreak || 0;
-            
-            const rank = RankSystem.getRank(player.mmr);
-            const progress = RankSystem.getRankProgress(player.mmr);
-            const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
-            const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
-        
-        document.getElementById('profileContent').innerHTML = `
-            <div class="section">
-                <div style="background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(10, 10, 10, 0.9) 100%);
-                           padding: 40px; border-radius: 20px; border: 3px solid ${rank.color};">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <div style="font-size: 5em; margin-bottom: 10px;">${rank.icon}</div>
-                        <h1 style="font-family: 'Orbitron', sans-serif; font-size: 3em; color: ${rank.color}; margin-bottom: 5px;">${player.username}</h1>
-                        <div style="font-size: 1.5em; color: var(--text-secondary);">${rank.name}</div>
-                        <div style="font-size: 2.5em; color: var(--primary-orange); margin-top: 10px; font-family: 'Orbitron', sans-serif;">${player.mmr} MMR</div>
-                    </div>
-                    
-                    ${progress.next ? `
-                    <div style="margin: 30px 0;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span>Progresso para ${progress.next.icon} ${progress.next.name}</span>
-                            <span>${progress.mmrNeeded} MMR restante</span>
-                        </div>
-                        <div style="background: #0a0a0a; height: 30px; border-radius: 15px; overflow: hidden; border: 2px solid #444;">
-                            <div style="width: ${progress.progress}%; height: 100%; background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
-                                       transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                                ${progress.progress}%
-                            </div>
-                        </div>
-                    </div>
-                    ` : '<p style="text-align: center; color: var(--success); font-size: 1.5em; margin: 20px 0;">Rank maximo atingido!</p>'}
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 30px;">
-                        <div style="text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 2.5em; color: var(--success);">${player.wins}</div>
-                            <div style="color: var(--text-secondary);">Vitorias</div>
-                        </div>
-                        <div style="text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 2.5em; color: var(--error);">${player.losses}</div>
-                            <div style="color: var(--text-secondary);">Derrotas</div>
-                        </div>
-                        <div style="text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 2.5em; color: var(--neon-blue);">${winRate}%</div>
-                            <div style="color: var(--text-secondary);">Win Rate</div>
-                        </div>
-                        <div style="text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 2.5em; color: var(--primary-orange);">${kd}</div>
-                            <div style="color: var(--text-secondary);">K/D Ratio</div>
-                        </div>
-                        <div style="text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 2.5em; color: var(--warning);">${player.winStreak}</div>
-                            <div style="color: var(--text-secondary);">Streak Atual</div>
-                        </div>
-                        <div style="text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
-                            <div style="font-size: 2.5em; color: var(--warning);">${player.bestStreak}</div>
-                            <div style="color: var(--text-secondary);">Melhor Streak</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        } catch (error) {
-            console.error('Error rendering profile:', error);
-            document.getElementById('profileContent').innerHTML = '<p style="text-align: center; color: var(--error);">Erro ao carregar perfil.</p>';
-        }
+        await ProfileManager.renderProfile();
     },
     
     // Render leaderboard

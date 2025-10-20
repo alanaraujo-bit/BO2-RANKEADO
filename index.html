@@ -392,7 +392,284 @@
 
         <!-- PROFILE PAGE -->
         <div id="profile" class="page">
-            <div id="profileContent"></div>
+            <!-- Empty State (Not Logged In) -->
+            <div id="profileNotLoggedIn" class="profile-empty-state">
+                <div class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <p class="empty-text">Você precisa estar logado</p>
+                    <p class="empty-subtext">Faça login para ver seu perfil e acompanhar suas estatísticas</p>
+                    <button class="btn-empty-action" onclick="showLoginModal()">Fazer Login</button>
+                </div>
+            </div>
+
+            <!-- Profile Content (Logged In) -->
+            <div id="profileContent" class="profile-container" style="display: none;">
+                
+                <!-- 1️⃣ INFORMAÇÕES BÁSICAS DO JOGADOR -->
+                <div class="profile-header">
+                    <div class="profile-background">
+                        <div class="profile-background-glow"></div>
+                    </div>
+                    
+                    <div class="profile-main-info">
+                        <div class="profile-avatar-section">
+                            <div class="profile-avatar" id="profileAvatar">
+                                <span class="avatar-rank-icon" id="profileAvatarIcon">🎮</span>
+                            </div>
+                            <div class="profile-level-badge" id="profileLevelBadge">
+                                <span class="level-label">LVL</span>
+                                <span class="level-value" id="profileLevel">1</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-info">
+                            <div class="profile-name-section">
+                                <h1 class="profile-name" id="profileName">Jogador</h1>
+                                <span class="profile-id" id="profileId">#0000</span>
+                            </div>
+                            
+                            <div class="profile-rank-display">
+                                <div class="rank-badge">
+                                    <span class="rank-icon-profile" id="profileRankIcon">🥉</span>
+                                    <div class="rank-details">
+                                        <span class="rank-label">RANK ATUAL</span>
+                                        <span class="rank-name-profile" id="profileRankName">BRONZE</span>
+                                    </div>
+                                </div>
+                                <div class="mmr-display">
+                                    <div class="mmr-value" id="profileMMR">1000</div>
+                                    <div class="mmr-label">MMR</div>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Progressão de Rank -->
+                            <div class="rank-progress-section" id="rankProgressSection">
+                                <div class="progress-header">
+                                    <span class="progress-label">Progresso para <span id="nextRankName">PRATA</span></span>
+                                    <span class="progress-mmr-needed"><span id="mmrNeeded">200</span> MMR restantes</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" id="progressBarFill" style="width: 0%">
+                                            <span class="progress-percentage" id="progressPercentage">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress-footer">
+                                    <span id="currentRankMMR">0 MMR</span>
+                                    <span id="nextRankMMR">1000 MMR</span>
+                                </div>
+                            </div>
+
+                            <div class="max-rank-message" id="maxRankMessage" style="display: none;">
+                                <span class="max-rank-icon">⚡</span>
+                                <span class="max-rank-text">RANK MÁXIMO ATINGIDO!</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn-profile-action btn-primary" onclick="showPage('play')">
+                                <span class="btn-icon">🎮</span>
+                                <span>Jogar</span>
+                            </button>
+                            <button class="btn-profile-action btn-secondary" onclick="showPage('friends')">
+                                <span class="btn-icon">👥</span>
+                                <span>Amigos</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2️⃣ ESTATÍSTICAS GERAIS -->
+                <div class="profile-stats-section">
+                    <div class="section-header">
+                        <span class="section-badge">📊</span>
+                        <h2 class="section-title">SUAS ESTATÍSTICAS</h2>
+                        <p class="section-subtitle">Veja seu desempenho geral e acompanhe sua evolução</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <!-- Total de Partidas -->
+                        <div class="stat-card">
+                            <div class="stat-icon">🎮</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statTotalGames">0</div>
+                                <div class="stat-label">Total de Partidas</div>
+                            </div>
+                        </div>
+
+                        <!-- Vitórias -->
+                        <div class="stat-card stat-win">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statWins">0</div>
+                                <div class="stat-label">Vitórias</div>
+                            </div>
+                        </div>
+
+                        <!-- Derrotas -->
+                        <div class="stat-card stat-loss">
+                            <div class="stat-icon">❌</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statLosses">0</div>
+                                <div class="stat-label">Derrotas</div>
+                            </div>
+                        </div>
+
+                        <!-- Win Rate -->
+                        <div class="stat-card stat-highlight">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statWinRate">0%</div>
+                                <div class="stat-label">Taxa de Vitória</div>
+                            </div>
+                        </div>
+
+                        <!-- Total Kills -->
+                        <div class="stat-card">
+                            <div class="stat-icon">🔫</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statTotalKills">0</div>
+                                <div class="stat-label">Total de Kills</div>
+                            </div>
+                        </div>
+
+                        <!-- Total Deaths -->
+                        <div class="stat-card">
+                            <div class="stat-icon">💀</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statTotalDeaths">0</div>
+                                <div class="stat-label">Total de Deaths</div>
+                            </div>
+                        </div>
+
+                        <!-- K/D Ratio -->
+                        <div class="stat-card stat-highlight">
+                            <div class="stat-icon">⚔️</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statKD">0.00</div>
+                                <div class="stat-label">K/D Ratio</div>
+                            </div>
+                        </div>
+
+                        <!-- Melhor Streak -->
+                        <div class="stat-card stat-special">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statBestStreak">0</div>
+                                <div class="stat-label">Melhor Streak</div>
+                            </div>
+                        </div>
+
+                        <!-- Streak Atual -->
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statCurrentStreak">0</div>
+                                <div class="stat-label">Streak Atual</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de Performance (opcional) -->
+                    <div class="performance-chart" id="performanceChart">
+                        <h3 class="chart-title">📈 Evolução de MMR</h3>
+                        <canvas id="mmrChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3️⃣ HISTÓRICO DE PARTIDAS -->
+                <div class="profile-matches-section">
+                    <div class="section-header">
+                        <span class="section-badge">⚔️</span>
+                        <h2 class="section-title">ÚLTIMAS PARTIDAS</h2>
+                        <p class="section-subtitle">Reviva suas batalhas e veja onde melhorar</p>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="matches-filters">
+                        <button class="filter-btn active" onclick="filterMatches('all')" data-filter="all">
+                            <span class="filter-icon">📋</span>
+                            <span>Todas</span>
+                        </button>
+                        <button class="filter-btn" onclick="filterMatches('win')" data-filter="win">
+                            <span class="filter-icon">✅</span>
+                            <span>Vitórias</span>
+                        </button>
+                        <button class="filter-btn" onclick="filterMatches('loss')" data-filter="loss">
+                            <span class="filter-icon">❌</span>
+                            <span>Derrotas</span>
+                        </button>
+                        <select class="filter-select" id="mapFilter" onchange="filterByMap()">
+                            <option value="all">🗺️ Todos os Mapas</option>
+                            <option value="Nuketown">Nuketown 2025</option>
+                            <option value="Raid">Raid</option>
+                            <option value="Standoff">Standoff</option>
+                            <option value="Slums">Slums</option>
+                            <option value="Hijacked">Hijacked</option>
+                            <option value="Express">Express</option>
+                            <option value="Yemen">Yemen</option>
+                            <option value="Carrier">Carrier</option>
+                        </select>
+                        <select class="filter-select" id="gameModeFilter" onchange="filterByGameMode()">
+                            <option value="all">🎯 Todos os Modos</option>
+                            <option value="TDM">Team Deathmatch</option>
+                            <option value="DOM">Domination</option>
+                            <option value="SND">Search and Destroy</option>
+                            <option value="HP">Hardpoint</option>
+                        </select>
+                    </div>
+
+                    <!-- Lista de Partidas -->
+                    <div class="matches-list" id="profileMatchesList">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+
+                    <!-- Botão Ver Mais -->
+                    <div class="view-more-container" id="viewMoreMatches" style="display: none;">
+                        <button class="btn-view-more" onclick="loadMoreMatches()">
+                            <span>Carregar Mais Partidas</span>
+                            <span class="btn-icon">↓</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4️⃣ CONQUISTAS / BADGES -->
+                <div class="profile-achievements-section">
+                    <div class="section-header">
+                        <span class="section-badge">🏅</span>
+                        <h2 class="section-title">CONQUISTAS</h2>
+                        <p class="section-subtitle">Cada vitória, cada kill, cada conquista conta para sua fama no BO2 Ranked</p>
+                    </div>
+
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- 5️⃣ CALL TO ACTION -->
+                <div class="profile-cta-section">
+                    <div class="cta-background">
+                        <div class="cta-glow"></div>
+                    </div>
+                    <div class="cta-content">
+                        <div class="cta-icon">⚡</div>
+                        <h2 class="cta-title">PRONTO PARA EVOLUIR AINDA MAIS?</h2>
+                        <p class="cta-description">Registre sua próxima partida agora e continue sua jornada rumo ao topo!</p>
+                        <div class="cta-actions">
+                            <button class="btn-cta-primary" onclick="showPage('play')">
+                                <span class="btn-icon">🎮</span>
+                                <span class="btn-text">REGISTRAR PARTIDA</span>
+                                <span class="btn-shine"></span>
+                            </button>
+                            <button class="btn-cta-secondary" onclick="showPage('friends')">
+                                <span class="btn-icon">👥</span>
+                                <span class="btn-text">DESAFIAR AMIGOS</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- FRIENDS PAGE -->
@@ -624,6 +901,7 @@
     <script src="js/data-firebase.js"></script>
     <script src="js/friends.js"></script>
     <script src="js/matches.js"></script>
+    <script src="js/profile.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
 </body>
