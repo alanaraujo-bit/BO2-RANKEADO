@@ -82,15 +82,56 @@ const ProfileManager = {
 
     // 2️⃣ Update Stats
     updateStats(player) {
-        const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(0) : '0';
-        const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
+        // Fallback: se os contadores ainda não refletirem o histórico, recalcular a partir de matchHistory
+        const hist = Array.isArray(player.matchHistory) ? player.matchHistory : [];
+        let wins = player.wins || 0;
+        let losses = player.losses || 0;
+        let totalKills = player.totalKills || 0;
+        let totalDeaths = player.totalDeaths || 0;
+        let gamesPlayed = player.gamesPlayed || 0;
 
-        document.getElementById('statTotalGames').textContent = player.gamesPlayed || 0;
-        document.getElementById('statWins').textContent = player.wins || 0;
-        document.getElementById('statLosses').textContent = player.losses || 0;
+        const computed = hist.reduce((acc, m) => {
+            if (m.result === 'win') acc.wins++;
+            if (m.result === 'loss') acc.losses++;
+            acc.kills += Number(m.kills) || 0;
+            acc.deaths += Number(m.deaths) || 0;
+            acc.games++;
+            return acc;
+        }, { wins: 0, losses: 0, kills: 0, deaths: 0, games: 0 });
+
+        const countersLookEmpty = (wins + losses + gamesPlayed + totalKills + totalDeaths) === 0 && computed.games > 0;
+        const countersInconsistent = computed.games > 0 && (gamesPlayed < computed.games || wins + losses < computed.games);
+
+        if (countersLookEmpty || countersInconsistent) {
+            wins = computed.wins;
+            losses = computed.losses;
+            totalKills = computed.kills;
+            totalDeaths = computed.deaths;
+            gamesPlayed = computed.games;
+
+            // Persistir de forma assíncrona sem bloquear UI
+            const updated = {
+                ...player,
+                wins,
+                losses,
+                totalKills,
+                totalDeaths,
+                gamesPlayed
+            };
+            if (typeof RankedData.updatePlayer === 'function') {
+                Promise.resolve(RankedData.updatePlayer(player.username, updated)).catch(console.error);
+            }
+        }
+
+        const winRate = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(0) : '0';
+        const kd = totalDeaths > 0 ? (totalKills / totalDeaths).toFixed(2) : totalKills.toFixed(2);
+
+        document.getElementById('statTotalGames').textContent = gamesPlayed;
+        document.getElementById('statWins').textContent = wins;
+        document.getElementById('statLosses').textContent = losses;
         document.getElementById('statWinRate').textContent = winRate + '%';
-        document.getElementById('statTotalKills').textContent = player.totalKills || 0;
-        document.getElementById('statTotalDeaths').textContent = player.totalDeaths || 0;
+        document.getElementById('statTotalKills').textContent = totalKills;
+        document.getElementById('statTotalDeaths').textContent = totalDeaths;
         document.getElementById('statKD').textContent = kd;
         document.getElementById('statBestStreak').textContent = player.bestStreak || 0;
         document.getElementById('statCurrentStreak').textContent = player.winStreak || 0;
