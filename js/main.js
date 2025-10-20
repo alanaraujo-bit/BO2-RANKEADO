@@ -464,7 +464,12 @@ async function filterLeaderboard(type) {
     await UI.renderLeaderboard(type);
 }
 
-// Show page (called from HTML)
+// Show page (called from HTML) - Make it explicitly global
+window.showPage = function(pageId) {
+    UI.showPage(pageId);
+};
+
+// Also expose as regular function
 function showPage(pageId) {
     UI.showPage(pageId);
 }

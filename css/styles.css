@@ -355,12 +355,12 @@ a:hover {
 }
 
 .page {
-    display: none;
+    display: none !important;
     animation: fadeIn 0.3s ease-out;
 }
 
 .page.active {
-    display: block;
+    display: block !important;
 }
 
 @keyframes fadeIn {
