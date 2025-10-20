@@ -509,6 +509,28 @@ UI.renderRanks = function() {
 
     const ranks = RankSystem.getAllRanks();
 
+    // Sort by tier and division ascending (I, II, III)
+    const tierOrder = ['bronze','silver','gold','platinum','diamond','master','legend'];
+    const romanToNum = { 'I': 1, 'II': 2, 'III': 3 };
+    const getDivisionNum = (name) => {
+        const parts = name.trim().split(/\s+/);
+        const last = parts[parts.length - 1];
+        return romanToNum[last] || 0; // 0 for ranks without division (Master/Legend)
+    };
+    const getTierIndex = (name) => tierOrder.indexOf(RankSystem.getRankTier(name));
+
+    const sorted = [...ranks].sort((a, b) => {
+        const ta = getTierIndex(a.name);
+        const tb = getTierIndex(b.name);
+        if (ta !== tb) return ta - tb;
+        const da = getDivisionNum(a.name);
+        const db = getDivisionNum(b.name);
+        // Ascending: I (1) -> II (2) -> III (3); ranks without division (0) vão no topo do tier
+        if (da !== db) return da - db;
+        // Fallback by min MMR
+        return (a.min || 0) - (b.min || 0);
+    });
+
     const tierBadge = (name) => {
         const tier = RankSystem.getRankTier(name);
         const label = {
@@ -537,7 +559,7 @@ UI.renderRanks = function() {
         return `${min} ${max === Infinity ? '' : ''}${max === Infinity ? '+' : `- ${max}`} MMR`;
     };
 
-    grid.innerHTML = ranks.map(r => {
+    grid.innerHTML = sorted.map(r => {
         const { tier, label, icon } = tierBadge(r.name);
         const mmrRange = r.max === Infinity ? `${r.min}+ MMR` : `${r.min} - ${r.max} MMR`;
         return `
