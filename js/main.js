@@ -671,48 +671,63 @@ async function openPlayerProfile(username) {
         // Fallback: Open profile modal manually (Firebase mode or when friendsSystem not loaded)
         console.log('Opening profile for:', username);
         
-        // Get player data
-        const playerData = await getUserData(username);
+        // Get player data using RankedData
+        const playerData = await RankedData.getPlayerByUsername(username);
         if (!playerData) {
             alert('Jogador não encontrado!');
             return;
         }
 
-        const rankData = getRankFromMMR(playerData.mmr || 1000);
+        const rankData = RankSystem.getRank(playerData.mmr || 1000);
         const winrate = playerData.wins && playerData.gamesPlayed
             ? ((playerData.wins / playerData.gamesPlayed) * 100).toFixed(1)
             : '0';
 
         // Update modal content
-        document.getElementById('profileModalTitle').textContent = `PERFIL DE ${username.toUpperCase()}`;
-        document.getElementById('profileUsername').textContent = username;
-        document.getElementById('profileRankBadge').textContent = rankData.name;
-        document.getElementById('profileRankIcon').textContent = rankData.icon;
-        document.getElementById('profileMMR').textContent = playerData.mmr || 1000;
-        document.getElementById('profileTotalMatches').textContent = playerData.gamesPlayed || 0;
-        document.getElementById('profileWins').textContent = playerData.wins || 0;
-        document.getElementById('profileLosses').textContent = playerData.losses || 0;
-        document.getElementById('profileWinrate').textContent = winrate + '%';
+        const modalTitle = document.getElementById('profileModalTitle');
+        const profileUsername = document.getElementById('profileUsername');
+        const profileRankBadge = document.getElementById('profileRankBadge');
+        const profileRankIcon = document.getElementById('profileRankIcon');
+        const profileMMR = document.getElementById('profileMMR');
+        const profileTotalMatches = document.getElementById('profileTotalMatches');
+        const profileWins = document.getElementById('profileWins');
+        const profileLosses = document.getElementById('profileLosses');
+        const profileWinrate = document.getElementById('profileWinrate');
+        
+        if (modalTitle) modalTitle.textContent = `PERFIL DE ${username.toUpperCase()}`;
+        if (profileUsername) profileUsername.textContent = username;
+        if (profileRankBadge) profileRankBadge.textContent = rankData.name;
+        if (profileRankIcon) profileRankIcon.textContent = rankData.icon;
+        if (profileMMR) profileMMR.textContent = playerData.mmr || 1000;
+        if (profileTotalMatches) profileTotalMatches.textContent = playerData.gamesPlayed || 0;
+        if (profileWins) profileWins.textContent = playerData.wins || 0;
+        if (profileLosses) profileLosses.textContent = playerData.losses || 0;
+        if (profileWinrate) profileWinrate.textContent = winrate + '%';
 
         // Action buttons
         const actionButtons = document.getElementById('profileActionButtons');
         const currentUser = RankedData.currentUser;
         
-        if (username === currentUser) {
-            actionButtons.innerHTML = '<button class="btn-primary" onclick="showPage(\'profile\'); closePlayerProfile();">📝 EDITAR PERFIL</button>';
-        } else {
-            actionButtons.innerHTML = `<button class="btn-primary" onclick="alert(\'Sistema de amigos em desenvolvimento!\')">➕ ADICIONAR AMIGO</button>`;
+        if (actionButtons) {
+            if (username === currentUser) {
+                actionButtons.innerHTML = '<button class="btn-primary" onclick="showPage(\'profile\'); closePlayerProfile();">📝 EDITAR PERFIL</button>';
+            } else {
+                actionButtons.innerHTML = `<button class="btn-primary" onclick="alert(\'Sistema de amigos em desenvolvimento!\')">➕ ADICIONAR AMIGO</button>`;
+            }
         }
 
         // Load match history
         await loadPlayerMatchHistory(username);
 
         // Show modal
-        document.getElementById('playerProfileModal').classList.add('active');
+        const modal = document.getElementById('playerProfileModal');
+        if (modal) {
+            modal.classList.add('active');
+        }
         
     } catch (error) {
         console.error('Error opening player profile:', error);
-        alert('Erro ao carregar perfil!');
+        alert('Erro ao carregar perfil: ' + error.message);
     }
 }
 
