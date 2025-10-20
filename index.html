@@ -59,18 +59,18 @@
         <!-- HOME PAGE -->
         <div id="home" class="page active">
             <!-- 1️⃣ HERO / BANNER PRINCIPAL -->
-            <div class="hero-banner">
+            <div class="hero-banner hero-improved">
                 <div class="hero-content">
                     <div class="hero-badge">
                         <span class="badge-icon">⚡</span>
                         <span class="badge-text">SISTEMA OFICIAL DE RANQUEADAS</span>
                     </div>
                     <h1 class="hero-title">
-                        <span class="title-highlight">SUBA DE PATENTE</span>
-                        <span class="title-main">NO BO2 RANKED</span>
+                        <span class="title-highlight">DOMINE O CAMPO DE BATALHA</span>
+                        <span class="title-main">BLACK OPS 2 RANKED</span>
                     </h1>
                     <p class="hero-description">
-                        Acompanhe seu progresso, registre suas partidas e mostre que você é o melhor jogador de Black Ops 2.
+                        Entre no combate competitivo. Registre suas vitórias, suba de patente e prove que você é o melhor operador do BO2.
                     </p>
                     
                     <!-- Player Current Rank (if logged in) -->
@@ -78,7 +78,7 @@
                         <div class="player-rank-display">
                             <div class="rank-icon-large" id="heroRankIcon">🥉</div>
                             <div class="rank-info">
-                                <div class="rank-label">SEU RANK ATUAL</div>
+                                <div class="rank-label">SUA PATENTE ATUAL</div>
                                 <div class="rank-name-large" id="heroRankName">BRONZE</div>
                                 <div class="rank-mmr-display">
                                     <span class="mmr-value" id="heroMMR">0</span>
@@ -96,7 +96,7 @@
                                 <span class="stat-value" id="heroKD">0.00</span>
                             </div>
                             <div class="quick-stat">
-                                <span class="stat-label">PARTIDAS</span>
+                                <span class="stat-label">BATALHAS</span>
                                 <span class="stat-value" id="heroMatches">0</span>
                             </div>
                         </div>
@@ -104,12 +104,12 @@
 
                     <div class="hero-actions">
                         <button class="btn-hero-primary" onclick="showPage('play')">
-                            <span class="btn-icon">🎮</span>
-                            <span class="btn-text">REGISTRAR PARTIDA</span>
+                            <span class="btn-icon">�</span>
+                            <span class="btn-text">REGISTRAR BATALHA</span>
                         </button>
                         <button class="btn-hero-secondary" onclick="showPage('leaderboard')">
                             <span class="btn-icon">🏆</span>
-                            <span class="btn-text">VER RANKING</span>
+                            <span class="btn-text">VER CLASSIFICAÇÃO</span>
                         </button>
                     </div>
 
@@ -118,7 +118,7 @@
                             <div class="stat-icon">👥</div>
                             <div class="stat-content">
                                 <div class="stat-value" id="totalPlayers">0</div>
-                                <div class="stat-label">Jogadores Ativos</div>
+                                <div class="stat-label">Operadores Ativos</div>
                             </div>
                         </div>
                         <div class="stat-divider"></div>
@@ -126,7 +126,7 @@
                             <div class="stat-icon">⚔️</div>
                             <div class="stat-content">
                                 <div class="stat-value" id="totalMatches">0</div>
-                                <div class="stat-label">Partidas Jogadas</div>
+                                <div class="stat-label">Combates Registrados</div>
                             </div>
                         </div>
                         <div class="stat-divider"></div>
@@ -134,7 +134,7 @@
                             <div class="stat-icon">📅</div>
                             <div class="stat-content">
                                 <div class="stat-value" id="activeSeason">S1</div>
-                                <div class="stat-label">Temporada Atual</div>
+                                <div class="stat-label">Temporada de Guerra</div>
                             </div>
                         </div>
                     </div>
@@ -149,40 +149,40 @@
             </div>
 
             <!-- 2️⃣ COMO FUNCIONA / INTRODUÇÃO -->
-            <div class="how-it-works-section">
+            <div class="how-it-works-section section-card">
                 <div class="section-header">
-                    <span class="section-badge">📖</span>
-                    <h2 class="section-title">COMO FUNCIONA O SISTEMA DE RANQUEADAS</h2>
-                    <p class="section-subtitle">Ganhe MMR a cada partida, evolua nas patentes e alcance o topo da tabela. Cada kill, cada vitória, conta!</p>
+                    <span class="section-badge">🎖️</span>
+                    <h2 class="section-title">SUA PATENTE ESPERA – SUBA NO RANKED</h2>
+                    <p class="section-subtitle">Cada kill conta. Cada vitória importa. Domine o campo de batalha e alcance a glória máxima!</p>
                 </div>
 
                 <div class="steps-grid">
                     <div class="step-card">
                         <div class="step-number">01</div>
-                        <div class="step-icon">🎮</div>
-                        <h3 class="step-title">Jogue Ranqueadas</h3>
-                        <p class="step-description">Entre em partidas ranqueadas contra outros jogadores registrados no sistema.</p>
+                        <div class="step-icon">⚔️</div>
+                        <h3 class="step-title">Entre em Combate</h3>
+                        <p class="step-description">Desafie outros operadores em partidas ranqueadas intensas. Só os melhores sobrevivem.</p>
                     </div>
 
                     <div class="step-card">
                         <div class="step-number">02</div>
-                        <div class="step-icon">📊</div>
-                        <h3 class="step-title">Registre os Resultados</h3>
-                        <p class="step-description">Após cada partida, registre o resultado com kills, deaths e screenshot do placar.</p>
+                        <div class="step-icon">�</div>
+                        <h3 class="step-title">Registre sua Batalha</h3>
+                        <p class="step-description">Após cada combate, registre o resultado com kills, deaths e screenshot do placar final.</p>
                     </div>
 
                     <div class="step-card">
                         <div class="step-number">03</div>
                         <div class="step-icon">📈</div>
                         <h3 class="step-title">Ganhe MMR</h3>
-                        <p class="step-description">Vitórias aumentam seu MMR. Performance individual (K/D) também influencia seus ganhos.</p>
+                        <p class="step-description">Vitórias aumentam seu MMR. Sua performance (K/D) também influencia nos ganhos de pontos.</p>
                     </div>
 
                     <div class="step-card">
                         <div class="step-number">04</div>
                         <div class="step-icon">🏆</div>
-                        <h3 class="step-title">Suba de Rank</h3>
-                        <p class="step-description">Acumule MMR para subir de patente: Bronze → Prata → Ouro → Platina → Diamante → Mestre → Lenda.</p>
+                        <h3 class="step-title">Suba de Patente</h3>
+                        <p class="step-description">Acumule MMR e evolua: Bronze → Prata → Ouro → Platina → Diamante → Mestre → Lenda.</p>
                     </div>
                 </div>
 
@@ -227,29 +227,29 @@
             </div>
 
             <!-- 3️⃣ ÚLTIMAS PARTIDAS -->
-            <div class="recent-matches-section">
+            <div class="recent-matches-section section-card">
                 <div class="section-header">
                     <span class="section-badge">⚔️</span>
-                    <h2 class="section-title">SUAS ÚLTIMAS PARTIDAS</h2>
-                    <p class="section-subtitle">Confira seu desempenho recente e veja onde melhorar</p>
+                    <h2 class="section-title">SUAS ÚLTIMAS BATALHAS</h2>
+                    <p class="section-subtitle">Analise seu desempenho recente e identifique pontos de melhoria no campo de batalha</p>
                 </div>
 
                 <div id="recentMatchesContainer" class="recent-matches-container">
                     <div class="empty-state">
                         <div class="empty-icon">🎮</div>
-                        <p class="empty-text">Nenhuma partida jogada ainda</p>
-                        <p class="empty-subtext">Faça login e registre sua primeira partida para ver seu histórico aqui</p>
-                        <button class="btn-empty-action" onclick="showPage('play')">Jogar Agora</button>
+                        <p class="empty-text">Nenhuma batalha registrada</p>
+                        <p class="empty-subtext">Faça login e registre seu primeiro combate para ver seu histórico aqui</p>
+                        <button class="btn-empty-action" onclick="showPage('play')">Entrar em Combate</button>
                     </div>
                 </div>
             </div>
 
             <!-- 4️⃣ TOP JOGADORES / DESTAQUES -->
-            <div class="top-players-section">
+            <div class="top-players-section section-card">
                 <div class="section-header">
                     <span class="section-badge">🏆</span>
-                    <h2 class="section-title">DESTAQUES DO DIA</h2>
-                    <p class="section-subtitle">Os melhores jogadores estão aqui. Quem vai dominar o ranking hoje?</p>
+                    <h2 class="section-title">ELITE DO BO2 RANKED</h2>
+                    <p class="section-subtitle">Os melhores operadores estão aqui. Quem vai dominar a classificação hoje?</p>
                 </div>
 
                 <div class="podium-container">
@@ -277,31 +277,31 @@
                 </div>
                 <div class="cta-content">
                     <div class="cta-icon">⚡</div>
-                    <h2 class="cta-title">PRONTO PARA EVOLUIR?</h2>
-                    <p class="cta-description">Registre sua próxima partida agora e suba de rank. Mostre suas habilidades e domine o ranking!</p>
+                    <h2 class="cta-title">MISSÃO: DOMINAR O RANKED</h2>
+                    <p class="cta-description">Seu objetivo está claro: suba de patente, domine o combate e conquiste a glória. Registre sua próxima batalha agora!</p>
                     <div class="cta-actions">
                         <button class="btn-cta-primary" onclick="showPage('play')">
-                            <span class="btn-icon">�</span>
-                            <span class="btn-text">REGISTRAR PARTIDA</span>
+                            <span class="btn-icon">🎯</span>
+                            <span class="btn-text">REGISTRAR BATALHA</span>
                             <span class="btn-shine"></span>
                         </button>
                         <button class="btn-cta-secondary" onclick="showPage('friends')">
                             <span class="btn-icon">👥</span>
-                            <span class="btn-text">DESAFIAR AMIGOS</span>
+                            <span class="btn-text">DESAFIAR OPERADORES</span>
                         </button>
                     </div>
                     <div class="cta-stats">
                         <div class="cta-stat">
                             <span class="cta-stat-icon">🔥</span>
-                            <span class="cta-stat-text">Sistema anti-trapaça ativo</span>
+                            <span class="cta-stat-text">Proteção Anti-Trapaça em Operação</span>
                         </div>
                         <div class="cta-stat">
                             <span class="cta-stat-icon">✅</span>
-                            <span class="cta-stat-text">Confirmação mútua de partidas</span>
+                            <span class="cta-stat-text">Verificação Dupla de Resultados</span>
                         </div>
                         <div class="cta-stat">
                             <span class="cta-stat-icon">📸</span>
-                            <span class="cta-stat-text">Verificação por screenshot</span>
+                            <span class="cta-stat-text">Confirmação Visual Obrigatória</span>
                         </div>
                     </div>
                 </div>

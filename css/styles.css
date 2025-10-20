@@ -198,6 +198,56 @@ a:hover {
     }
 }
 
+/* ===== GLOBAL SECTION CARDS ===== */
+.section-card {
+    background: linear-gradient(135deg, var(--neutral-900) 0%, var(--neutral-850) 100%);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--neutral-800);
+    padding: var(--space-12) var(--space-8);
+    margin-bottom: var(--space-12);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.section-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--primary-500) 50%, 
+        transparent 100%
+    );
+    opacity: 0.5;
+}
+
+.section-card:hover {
+    border-color: rgba(255, 122, 0, 0.3);
+    box-shadow: var(--shadow-glow-md);
+    transform: translateY(-2px);
+}
+
+/* Specific section card variants */
+.how-it-works-section.section-card::before {
+    background: linear-gradient(90deg, transparent 0%, var(--accent-500) 50%, transparent 100%);
+}
+
+.recent-matches-section.section-card::before {
+    background: linear-gradient(90deg, transparent 0%, var(--warning) 50%, transparent 100%);
+}
+
+.top-players-section.section-card::before {
+    background: linear-gradient(90deg, transparent 0%, #FFD700 50%, transparent 100%);
+}
+
+.cta-section.section-card::before {
+    background: linear-gradient(90deg, transparent 0%, var(--success) 50%, transparent 100%);
+}
+
 /* ===== NAVBAR ===== */
 .navbar {
     position: sticky;
@@ -1602,7 +1652,24 @@ select.form-input,
 
 .section-header {
     text-align: center;
-    margin-bottom: var(--space-12);
+    margin-bottom: var(--space-16);
+    position: relative;
+}
+
+.section-header::after {
+    content: '';
+    position: absolute;
+    bottom: calc(-1 * var(--space-8));
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--primary-500) 50%, 
+        transparent 100%
+    );
+    border-radius: var(--radius-full);
 }
 
 .section-badge {
@@ -1650,6 +1717,23 @@ select.form-input,
     transform: translateY(-5px);
     border-color: var(--primary-500);
     box-shadow: 0 10px 30px rgba(255, 122, 0, 0.2);
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top right, rgba(255, 122, 0, 0.1) 0%, transparent 50%);
+    border-radius: var(--radius-xl);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.step-card:hover::before {
+    opacity: 1;
 }
 
 .step-number {
@@ -1731,6 +1815,28 @@ select.form-input,
     height: 2px;
     background: linear-gradient(90deg, var(--neutral-700) 0%, var(--neutral-600) 100%);
     position: relative;
+    overflow: hidden;
+}
+
+.progression-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--primary-500) 50%, 
+        transparent 100%
+    );
+    animation: progressFlow 3s ease-in-out infinite;
+}
+
+@keyframes progressFlow {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
 }
 
 /* Rank Colors */
@@ -1917,16 +2023,43 @@ select.form-input,
     order: 2;
     border-color: #FFD700;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    animation: goldenPulse 2s ease-in-out infinite;
+    position: relative;
+}
+
+.podium-place.first::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+    border-radius: var(--radius-xl);
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(8px);
+}
+
+@keyframes goldenPulse {
+    0%, 100% { 
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+    }
 }
 
 .podium-place.second {
     order: 1;
     border-color: #C0C0C0;
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
 }
 
 .podium-place.third {
     order: 3;
     border-color: #CD7F32;
+    box-shadow: 0 0 15px rgba(205, 127, 50, 0.2);
 }
 
 .podium-medal {
