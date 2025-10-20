@@ -856,14 +856,22 @@
                 
                 <!-- Search Bar -->
                 <div class="friends-search">
-                    <input type="text" id="playerSearchInput" class="form-input" placeholder="🔍 Buscar jogador por username ou ID..." oninput="searchPlayers(this.value)">
+                    <input 
+                        type="text" 
+                        id="playerSearchInput" 
+                        class="form-input" 
+                        placeholder="Buscar amigo..." 
+                        oninput="searchPlayers(this.value)"
+                    >
                     <div id="searchResults" class="search-results"></div>
                 </div>
 
                 <!-- Friend Requests -->
                 <div class="friends-section" id="friendRequestsSection" style="display: none;">
                     <h3 class="subsection-title">📬 SOLICITAÇÕES PENDENTES</h3>
-                    <div id="friendRequestsList" class="friends-grid"></div>
+                    <div id="friendRequestsList" class="friends-grid">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                    </div>
                 </div>
 
                 <!-- Friends List -->
@@ -871,31 +879,68 @@
                     <div class="subsection-header">
                         <h3 class="subsection-title">✅ MEUS AMIGOS (<span id="friendsCount">0</span>)</h3>
                         <div class="friend-filter-buttons">
-                            <button class="filter-btn-small active" onclick="friendsSystem.filterFriends('all')">TODOS</button>
-                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('online')">🟢 ONLINE</button>
-                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('playing')">🎮 JOGANDO</button>
+                            <button class="filter-btn-small active" onclick="friendsSystem.filterFriends('all')">
+                                TODOS
+                            </button>
+                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('online')">
+                                🟢 ONLINE
+                            </button>
+                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('playing')">
+                                🎮 JOGANDO
+                            </button>
+                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('offline')">
+                                ⚫ OFFLINE
+                            </button>
                         </div>
                     </div>
-                    <div id="friendsList" class="friends-grid"></div>
+                    <div id="friendsList" class="friends-grid">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="friendsEmptyState" style="display: none;">
+                            <div class="empty-state-icon">👥</div>
+                            <div class="empty-state-text">Você ainda não tem amigos</div>
+                            <div class="empty-state-hint">Use a busca acima para encontrar e adicionar jogadores</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Friends Ranking -->
                 <div class="friends-section">
                     <h3 class="subsection-title">🏆 RANKING ENTRE AMIGOS</h3>
-                    <div id="friendsRanking" class="friends-ranking-container"></div>
+                    <div id="friendsRanking" class="friends-ranking-container">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="rankingEmptyState" style="display: none;">
+                            <div class="empty-state-icon">🏆</div>
+                            <div class="empty-state-text">Nenhum ranking disponível</div>
+                            <div class="empty-state-hint">Adicione amigos para ver o ranking</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Recent Activity Feed -->
                 <div class="friends-section">
                     <h3 class="subsection-title">📰 ATIVIDADE RECENTE</h3>
-                    <div id="friendsActivity" class="activity-feed"></div>
+                    <div id="friendsActivity" class="activity-feed">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="activityEmptyState" style="display: none;">
+                            <div class="empty-state-icon">📰</div>
+                            <div class="empty-state-text">Nenhuma atividade recente</div>
+                            <div class="empty-state-hint">As atividades dos seus amigos aparecerão aqui</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Suggested Friends -->
                 <div class="friends-section">
                     <h3 class="subsection-title">💡 SUGESTÕES DE AMIZADE</h3>
-                    <p class="subsection-description">Jogadores com MMR similar ao seu</p>
-                    <div id="suggestedFriends" class="friends-grid"></div>
+                    <p class="subsection-description">Jogadores com MMR similar ao seu que você pode conhecer</p>
+                    <div id="suggestedFriends" class="friends-grid">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="suggestionsEmptyState" style="display: none;">
+                            <div class="empty-state-icon">💡</div>
+                            <div class="empty-state-text">Nenhuma sugestão disponível</div>
+                            <div class="empty-state-hint">Jogue mais partidas para encontrar jogadores compatíveis</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

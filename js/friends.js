@@ -374,8 +374,16 @@ class FriendsSystem {
     async updateFriendsUI() {
         // Update friend requests
         const requestsList = document.getElementById('friendRequestsList');
+        const emptyState = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📬</div>
+                <div class="empty-state-text">Nenhuma solicitação pendente</div>
+                <div class="empty-state-hint">Solicitações de amizade aparecerão aqui</div>
+            </div>
+        `;
+        
         if (!this.friendRequests.received || this.friendRequests.received.length === 0) {
-            requestsList.innerHTML = '<div class="empty-state">Nenhuma solicitação pendente</div>';
+            requestsList.innerHTML = emptyState;
         } else {
             const requestsHTML = await Promise.all(
                 this.friendRequests.received.map(req => this.createFriendRequestCard(req))
@@ -385,13 +393,21 @@ class FriendsSystem {
 
         // Update friends list
         const friendsList = document.getElementById('friendsList');
+        const friendsEmptyState = document.getElementById('friendsEmptyState');
+        
         if (this.friends.length === 0) {
-            friendsList.innerHTML = '<div class="empty-state">Você ainda não tem amigos adicionados</div>';
+            friendsList.innerHTML = '';
+            if (friendsEmptyState) {
+                friendsEmptyState.style.display = 'block';
+            }
         } else {
             const friendsHTML = await Promise.all(
                 this.friends.map(username => this.createFriendCard(username))
             );
             friendsList.innerHTML = friendsHTML.join('');
+            if (friendsEmptyState) {
+                friendsEmptyState.style.display = 'none';
+            }
         }
     }
 
@@ -675,34 +691,57 @@ class FriendsSystem {
         event.target.classList.add('active');
 
         const friendsList = document.getElementById('friendsList');
+        const emptyState = `
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <div class="empty-state-text">Nenhum amigo encontrado</div>
+                <div class="empty-state-hint">Tente outro filtro ou adicione mais amigos</div>
+            </div>
+        `;
         
         if (this.friends.length === 0) {
-            friendsList.innerHTML = '<div class="empty-state">Você ainda não tem amigos adicionados</div>';
+            friendsList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">👥</div>
+                    <div class="empty-state-text">Você ainda não tem amigos</div>
+                    <div class="empty-state-hint">Use a busca acima para encontrar jogadores</div>
+                </div>
+            `;
             return;
         }
 
         let filteredFriends = this.friends;
         
-        if (filter === 'online') {
+        if (filter !== 'all') {
             filteredFriends = [];
             for (const username of this.friends) {
                 const userData = await getUserData(username);
-                if (userData && userData.status === 'online') {
+                if (!userData) continue;
+                
+                if (filter === 'online' && userData.status === 'online') {
                     filteredFriends.push(username);
-                }
-            }
-        } else if (filter === 'playing') {
-            filteredFriends = [];
-            for (const username of this.friends) {
-                const userData = await getUserData(username);
-                if (userData && userData.status === 'in-match') {
+                } else if (filter === 'playing' && userData.status === 'in-match') {
+                    filteredFriends.push(username);
+                } else if (filter === 'offline' && (!userData.status || userData.status === 'offline')) {
                     filteredFriends.push(username);
                 }
             }
         }
 
         if (filteredFriends.length === 0) {
-            friendsList.innerHTML = `<div class="empty-state">Nenhum amigo ${filter === 'online' ? 'online' : filter === 'playing' ? 'jogando' : ''}</div>`;
+            const filterText = {
+                'online': 'online',
+                'playing': 'jogando',
+                'offline': 'offline'
+            };
+            
+            friendsList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">👥</div>
+                    <div class="empty-state-text">Nenhum amigo ${filterText[filter] || ''}</div>
+                    <div class="empty-state-hint">Tente outro filtro ou volte mais tarde</div>
+                </div>
+            `;
         } else {
             const friendsHTML = await Promise.all(
                 filteredFriends.map(username => this.createFriendCard(username))
