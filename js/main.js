@@ -672,7 +672,7 @@ async function openPlayerProfile(username) {
         console.log('Opening profile for:', username);
         
         // Get player data using RankedData
-        const playerData = await RankedData.getPlayerByUsername(username);
+        const playerData = await RankedData.getPlayer(username);
         if (!playerData) {
             alert('Jogador não encontrado!');
             return;
@@ -734,11 +734,8 @@ async function openPlayerProfile(username) {
 // Load player match history for profile modal
 async function loadPlayerMatchHistory(username) {
     try {
-        const allMatches = await getAllMatches();
-        const playerMatches = allMatches
-            .filter(match => match.winner === username || match.loser === username)
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .slice(0, 10);
+        // Use RankedData.getPlayerMatches for Firebase compatibility
+        const playerMatches = await RankedData.getPlayerMatches(username, 10);
 
         const historyDiv = document.getElementById('profileMatchHistory');
         
@@ -748,9 +745,12 @@ async function loadPlayerMatchHistory(username) {
         }
 
         historyDiv.innerHTML = playerMatches.map(match => {
+            // Firebase structure uses winner/loser fields
             const isWinner = match.winner === username;
             const opponent = isWinner ? match.loser : match.winner;
-            const mmrChange = isWinner ? `+${match.mmrGain || 25}` : `-${match.mmrLoss || 25}`;
+            
+            // Calculate MMR change (25 for win, 25 for loss by default)
+            const mmrChange = isWinner ? '+25' : '-25';
             const resultClass = isWinner ? 'match-win' : 'match-loss';
             const date = new Date(match.timestamp).toLocaleDateString('pt-BR');
 
