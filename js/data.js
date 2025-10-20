@@ -181,6 +181,7 @@ const RankedData = {
         const match = {
             id: this.matches.length + 1,
             ...matchData,
+            players: [matchData.playerA, matchData.playerB],
             timestamp: Date.now(),
             season: this.currentSeason,
             confirmed: false

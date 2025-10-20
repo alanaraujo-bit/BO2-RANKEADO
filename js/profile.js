@@ -19,7 +19,8 @@ const ProfileManager = {
         profileNotLoggedIn.style.display = 'none';
         profileContent.style.display = 'block';
 
-        const player = await RankedData.getPlayer(RankedData.currentUser);
+    // Force refresh to avoid stale cached data in Firebase mode (extra arg is ignored in LocalStorage mode)
+    const player = await RankedData.getPlayer(RankedData.currentUser, true);
         if (!player) return;
 
         // 1️⃣ Update Basic Info

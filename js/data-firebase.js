@@ -297,6 +297,7 @@ const RankedData = {
         try {
             const match = {
                 ...matchData,
+                players: [matchData.playerA, matchData.playerB],
                 timestamp: Date.now(),
                 confirmed: false
             };
