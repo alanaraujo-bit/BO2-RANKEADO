@@ -136,6 +136,14 @@ const ProfileManager = {
         document.getElementById('statKD').textContent = kd;
         document.getElementById('statBestStreak').textContent = player.bestStreak || 0;
         document.getElementById('statCurrentStreak').textContent = player.winStreak || 0;
+
+        // Atualizar também o bloco de "Quick Stats" do topo do perfil, se existir
+        const heroWinsEl = document.getElementById('heroWins');
+        const heroLossesEl = document.getElementById('heroLosses');
+        const heroKDEl = document.getElementById('heroKD');
+        if (heroWinsEl) heroWinsEl.textContent = wins;
+        if (heroLossesEl) heroLossesEl.textContent = losses;
+        if (heroKDEl) heroKDEl.textContent = kd;
     },
 
     // 3️⃣ Update Match History
