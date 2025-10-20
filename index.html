@@ -584,266 +584,264 @@
             <!-- Profile Content (Logged In) -->
             <div id="profileContent" class="profile-container" style="display: none;">
                 
-                <!-- 1️⃣ INFORMAÇÕES BÁSICAS DO JOGADOR -->
-                <div class="profile-header">
-                    <div class="profile-background">
-                        <div class="profile-background-glow"></div>
+                <!-- 🎯 1. HERO SECTION - Avatar, Nome, Patente, MMR, Progresso -->
+                <div class="profile-hero-section">
+                    <div class="profile-hero-bg">
+                        <div class="hero-scanline"></div>
                     </div>
                     
-                    <div class="profile-main-info">
-                        <div class="profile-avatar-section">
-                            <div class="profile-avatar" id="profileAvatar">
-                                <span class="avatar-rank-icon" id="profileAvatarIcon">🎮</span>
+                    <div class="profile-hero-content">
+                        <!-- Avatar Grande -->
+                        <div class="profile-avatar-wrapper">
+                            <div class="avatar-ring"></div>
+                            <div class="profile-avatar-large" id="profileAvatar">
+                                <span class="avatar-icon-large" id="profileAvatarIcon">🎮</span>
                             </div>
-                            <div class="profile-level-badge" id="profileLevelBadge">
-                                <span class="level-label">LVL</span>
-                                <span class="level-value" id="profileLevel">1</span>
+                            <div class="avatar-level-badge" id="profileLevelBadge">
+                                <span class="level-text">LV <span id="profileLevel">1</span></span>
                             </div>
                         </div>
 
-                        <div class="profile-info">
-                            <div class="profile-name-section">
-                                <h1 class="profile-name" id="profileName">Jogador</h1>
-                                <span class="profile-id" id="profileId">#0000</span>
+                        <!-- Info Principal -->
+                        <div class="profile-hero-info">
+                            <div class="player-identity">
+                                <h1 class="player-name-hero" id="profileName">Jogador</h1>
+                                <span class="player-id-hero" id="profileId">#0000</span>
                             </div>
-                            
-                            <div class="profile-rank-display">
-                                <div class="rank-badge">
-                                    <span class="rank-icon-profile" id="profileRankIcon">🥉</span>
-                                    <div class="rank-details">
-                                        <span class="rank-label">RANK ATUAL</span>
-                                        <span class="rank-name-profile" id="profileRankName">BRONZE</span>
+
+                            <!-- Rank e MMR em Destaque -->
+                            <div class="rank-mmr-container">
+                                <div class="rank-display-hero">
+                                    <span class="rank-icon-hero" id="profileRankIcon">🥉</span>
+                                    <div class="rank-text-hero">
+                                        <span class="rank-label-hero">RANK ATUAL</span>
+                                        <span class="rank-name-hero" id="profileRankName">BRONZE III</span>
                                     </div>
                                 </div>
-                                <div class="mmr-display">
-                                    <div class="mmr-value" id="profileMMR">1000</div>
-                                    <div class="mmr-label">MMR</div>
+                                
+                                <div class="mmr-display-hero">
+                                    <div class="mmr-value-hero" id="profileMMR">1000</div>
+                                    <div class="mmr-label-hero">MMR Points</div>
                                 </div>
                             </div>
 
-                            <!-- Barra de Progressão de Rank -->
-                            <div class="rank-progress-section" id="rankProgressSection">
-                                <div class="progress-header">
-                                    <span class="progress-label">Progresso para <span id="nextRankName">PRATA</span></span>
-                                    <span class="progress-mmr-needed"><span id="mmrNeeded">200</span> MMR restantes</span>
+                            <!-- Barra de Progresso Animada -->
+                            <div class="rank-progress-hero" id="rankProgressSection">
+                                <div class="progress-info">
+                                    <span class="progress-text">Próximo Rank: <strong id="nextRankName">PRATA III</strong></span>
+                                    <span class="progress-remaining"><span id="mmrNeeded">200</span> MMR faltam</span>
                                 </div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill" id="progressBarFill" style="width: 0%">
-                                            <span class="progress-percentage" id="progressPercentage">0%</span>
-                                        </div>
+                                <div class="progress-bar-hero">
+                                    <div class="progress-fill-hero" id="progressBarFill" style="width: 0%">
+                                        <span class="progress-glow"></span>
                                     </div>
+                                    <span class="progress-percentage-hero" id="progressPercentage">0%</span>
                                 </div>
-                                <div class="progress-footer">
-                                    <span id="currentRankMMR">0 MMR</span>
-                                    <span id="nextRankMMR">1000 MMR</span>
+                                <div class="progress-range">
+                                    <span id="currentRankMMR">0</span>
+                                    <span id="nextRankMMR">1000</span>
                                 </div>
                             </div>
 
-                            <div class="max-rank-message" id="maxRankMessage" style="display: none;">
+                            <!-- Mensagem Rank Máximo -->
+                            <div class="max-rank-badge" id="maxRankMessage" style="display: none;">
                                 <span class="max-rank-icon">⚡</span>
-                                <span class="max-rank-text">RANK MÁXIMO ATINGIDO!</span>
+                                <span class="max-rank-text">RANK MÁXIMO ATINGIDO - LENDA!</span>
                             </div>
-                        </div>
 
-                        <div class="profile-actions">
-                            <button class="btn-profile-action btn-primary" onclick="showPage('play')">
-                                <span class="btn-icon">🎮</span>
-                                <span>Jogar</span>
-                            </button>
-                            <button class="btn-profile-action btn-secondary" onclick="showPage('friends')">
-                                <span class="btn-icon">👥</span>
-                                <span>Amigos</span>
-                            </button>
+                            <!-- Quick Stats -->
+                            <div class="hero-quick-stats">
+                                <div class="quick-stat-item">
+                                    <span class="quick-stat-value" id="heroWins">0</span>
+                                    <span class="quick-stat-label">Vitórias</span>
+                                </div>
+                                <div class="stat-divider-hero"></div>
+                                <div class="quick-stat-item">
+                                    <span class="quick-stat-value" id="heroLosses">0</span>
+                                    <span class="quick-stat-label">Derrotas</span>
+                                </div>
+                                <div class="stat-divider-hero"></div>
+                                <div class="quick-stat-item">
+                                    <span class="quick-stat-value" id="heroKD">0.00</span>
+                                    <span class="quick-stat-label">K/D</span>
+                                </div>
+                            </div>
+
+                            <!-- Ações Rápidas -->
+                            <div class="hero-actions">
+                                <button class="btn-hero-primary-profile" onclick="showPage('play')">
+                                    <span class="btn-icon">⚔️</span>
+                                    <span>JOGAR AGORA</span>
+                                </button>
+                                <button class="btn-hero-secondary-profile" onclick="showPage('friends')">
+                                    <span class="btn-icon">👥</span>
+                                    <span>AMIGOS</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2️⃣ ESTATÍSTICAS GERAIS -->
+                <!-- 📊 2. ESTATÍSTICAS GERAIS - Cards Organizados -->
                 <div class="profile-stats-section">
-                    <div class="section-header">
-                        <span class="section-badge">📊</span>
-                        <h2 class="section-title">SUAS ESTATÍSTICAS</h2>
-                        <p class="section-subtitle">Veja seu desempenho geral e acompanhe sua evolução</p>
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">📊</span>
+                            <h2 class="section-title-profile">Estatísticas Gerais</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Seu desempenho em números</p>
                     </div>
 
-                    <div class="stats-grid">
-                        <!-- Total de Partidas -->
-                        <div class="stat-card">
-                            <div class="stat-icon">🎮</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statTotalGames">0</div>
-                                <div class="stat-label">Total de Partidas</div>
-                            </div>
-                        </div>
-
+                    <div class="stats-grid-profile">
                         <!-- Vitórias -->
-                        <div class="stat-card stat-win">
-                            <div class="stat-icon">✅</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statWins">0</div>
-                                <div class="stat-label">Vitórias</div>
+                        <div class="stat-card-profile stat-win-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">✅</span>
+                                <span class="stat-label-profile">Vitórias</span>
+                            </div>
+                            <div class="stat-value-profile" id="statWins">0</div>
+                            <div class="stat-trend-profile">
+                                <span class="trend-icon">↗</span>
+                                <span class="trend-text">Subindo!</span>
                             </div>
                         </div>
 
                         <!-- Derrotas -->
-                        <div class="stat-card stat-loss">
-                            <div class="stat-icon">❌</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statLosses">0</div>
-                                <div class="stat-label">Derrotas</div>
+                        <div class="stat-card-profile stat-loss-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">❌</span>
+                                <span class="stat-label-profile">Derrotas</span>
                             </div>
+                            <div class="stat-value-profile" id="statLosses">0</div>
                         </div>
 
-                        <!-- Win Rate -->
-                        <div class="stat-card stat-highlight">
-                            <div class="stat-icon">📈</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statWinRate">0%</div>
-                                <div class="stat-label">Taxa de Vitória</div>
+                        <!-- Taxa de Vitória -->
+                        <div class="stat-card-profile stat-highlight-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">📈</span>
+                                <span class="stat-label-profile">Taxa de Vitória</span>
                             </div>
-                        </div>
-
-                        <!-- Total Kills -->
-                        <div class="stat-card">
-                            <div class="stat-icon">🔫</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statTotalKills">0</div>
-                                <div class="stat-label">Total de Kills</div>
-                            </div>
-                        </div>
-
-                        <!-- Total Deaths -->
-                        <div class="stat-card">
-                            <div class="stat-icon">💀</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statTotalDeaths">0</div>
-                                <div class="stat-label">Total de Deaths</div>
-                            </div>
+                            <div class="stat-value-profile" id="statWinRate">0%</div>
                         </div>
 
                         <!-- K/D Ratio -->
-                        <div class="stat-card stat-highlight">
-                            <div class="stat-icon">⚔️</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statKD">0.00</div>
-                                <div class="stat-label">K/D Ratio</div>
+                        <div class="stat-card-profile stat-highlight-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">⚔️</span>
+                                <span class="stat-label-profile">K/D Ratio</span>
                             </div>
+                            <div class="stat-value-profile" id="statKD">0.00</div>
+                        </div>
+
+                        <!-- Total Kills -->
+                        <div class="stat-card-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">🔫</span>
+                                <span class="stat-label-profile">Total Kills</span>
+                            </div>
+                            <div class="stat-value-profile" id="statTotalKills">0</div>
+                        </div>
+
+                        <!-- Total Deaths -->
+                        <div class="stat-card-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">💀</span>
+                                <span class="stat-label-profile">Total Deaths</span>
+                            </div>
+                            <div class="stat-value-profile" id="statTotalDeaths">0</div>
                         </div>
 
                         <!-- Melhor Streak -->
-                        <div class="stat-card stat-special">
-                            <div class="stat-icon">🔥</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statBestStreak">0</div>
-                                <div class="stat-label">Melhor Streak</div>
+                        <div class="stat-card-profile stat-special-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">🔥</span>
+                                <span class="stat-label-profile">Melhor Streak</span>
                             </div>
+                            <div class="stat-value-profile" id="statBestStreak">0</div>
                         </div>
 
-                        <!-- Streak Atual -->
-                        <div class="stat-card">
-                            <div class="stat-icon">📊</div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statCurrentStreak">0</div>
-                                <div class="stat-label">Streak Atual</div>
+                        <!-- Total Partidas -->
+                        <div class="stat-card-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">🎮</span>
+                                <span class="stat-label-profile">Total Partidas</span>
                             </div>
+                            <div class="stat-value-profile" id="statTotalGames">0</div>
                         </div>
-                    </div>
-
-                    <!-- Gráfico de Performance (opcional) -->
-                    <div class="performance-chart" id="performanceChart">
-                        <h3 class="chart-title">📈 Evolução de MMR</h3>
-                        <canvas id="mmrChart"></canvas>
                     </div>
                 </div>
 
-                <!-- 3️⃣ HISTÓRICO DE PARTIDAS -->
+                <!-- ⚔️ 3. ÚLTIMAS PARTIDAS - Cards Modernos -->
                 <div class="profile-matches-section">
-                    <div class="section-header">
-                        <span class="section-badge">⚔️</span>
-                        <h2 class="section-title">ÚLTIMAS PARTIDAS</h2>
-                        <p class="section-subtitle">Reviva suas batalhas e veja onde melhorar</p>
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">⚔️</span>
+                            <h2 class="section-title-profile">Últimas Partidas</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Reviva seus últimos combates</p>
                     </div>
 
-                    <!-- Filtros -->
-                    <div class="matches-filters">
-                        <button class="filter-btn active" onclick="filterMatches('all')" data-filter="all">
-                            <span class="filter-icon">📋</span>
-                            <span>Todas</span>
+                    <!-- Filtros Simples -->
+                    <div class="matches-filters-profile">
+                        <button class="filter-btn-profile active" onclick="filterMatches('all')" data-filter="all">
+                            <span>📋 Todas</span>
                         </button>
-                        <button class="filter-btn" onclick="filterMatches('win')" data-filter="win">
-                            <span class="filter-icon">✅</span>
-                            <span>Vitórias</span>
+                        <button class="filter-btn-profile" onclick="filterMatches('win')" data-filter="win">
+                            <span>✅ Vitórias</span>
                         </button>
-                        <button class="filter-btn" onclick="filterMatches('loss')" data-filter="loss">
-                            <span class="filter-icon">❌</span>
-                            <span>Derrotas</span>
+                        <button class="filter-btn-profile" onclick="filterMatches('loss')" data-filter="loss">
+                            <span>❌ Derrotas</span>
                         </button>
-                        <select class="filter-select" id="mapFilter" onchange="filterByMap()">
-                            <option value="all">🗺️ Todos os Mapas</option>
-                            <option value="Nuketown">Nuketown 2025</option>
-                            <option value="Raid">Raid</option>
-                            <option value="Standoff">Standoff</option>
-                            <option value="Slums">Slums</option>
-                            <option value="Hijacked">Hijacked</option>
-                            <option value="Express">Express</option>
-                            <option value="Yemen">Yemen</option>
-                            <option value="Carrier">Carrier</option>
-                        </select>
-                        <select class="filter-select" id="gameModeFilter" onchange="filterByGameMode()">
-                            <option value="all">🎯 Todos os Modos</option>
-                            <option value="TDM">Team Deathmatch</option>
-                            <option value="DOM">Domination</option>
-                            <option value="SND">Search and Destroy</option>
-                            <option value="HP">Hardpoint</option>
-                        </select>
                     </div>
 
-                    <!-- Lista de Partidas -->
-                    <div class="matches-list" id="profileMatchesList">
-                        <!-- Will be populated by JavaScript -->
+                    <!-- Grid de Partidas -->
+                    <div class="matches-grid-profile" id="profileMatchesList">
+                        <!-- Será preenchido via JavaScript -->
                     </div>
 
-                    <!-- Botão Ver Mais -->
-                    <div class="view-more-container" id="viewMoreMatches" style="display: none;">
-                        <button class="btn-view-more" onclick="loadMoreMatches()">
-                            <span>Carregar Mais Partidas</span>
+                    <!-- Ver Mais -->
+                    <div class="view-more-profile" id="viewMoreMatches" style="display: none;">
+                        <button class="btn-view-more-profile" onclick="loadMoreMatches()">
+                            <span>Ver Mais Partidas</span>
                             <span class="btn-icon">↓</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- 4️⃣ CONQUISTAS / BADGES -->
+                <!-- 🏅 4. CONQUISTAS - Badges Visuais -->
                 <div class="profile-achievements-section">
-                    <div class="section-header">
-                        <span class="section-badge">🏅</span>
-                        <h2 class="section-title">CONQUISTAS</h2>
-                        <p class="section-subtitle">Cada vitória, cada kill, cada conquista conta para sua fama no BO2 Ranked</p>
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">🏅</span>
+                            <h2 class="section-title-profile">Conquistas</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Suas glórias e medalhas de guerra</p>
                     </div>
 
-                    <div class="achievements-grid" id="achievementsGrid">
-                        <!-- Will be populated by JavaScript -->
+                    <div class="achievements-grid-profile" id="achievementsGrid">
+                        <!-- Será preenchido via JavaScript -->
                     </div>
                 </div>
 
-                <!-- 5️⃣ CALL TO ACTION -->
+                <!-- 🚀 5. CALL TO ACTION -->
                 <div class="profile-cta-section">
-                    <div class="cta-background">
-                        <div class="cta-glow"></div>
+                    <div class="cta-bg-profile">
+                        <div class="cta-scanline-profile"></div>
                     </div>
-                    <div class="cta-content">
-                        <div class="cta-icon">⚡</div>
-                        <h2 class="cta-title">PRONTO PARA EVOLUIR AINDA MAIS?</h2>
-                        <p class="cta-description">Registre sua próxima partida agora e continue sua jornada rumo ao topo!</p>
-                        <div class="cta-actions">
-                            <button class="btn-cta-primary" onclick="showPage('play')">
-                                <span class="btn-icon">🎮</span>
-                                <span class="btn-text">REGISTRAR PARTIDA</span>
-                                <span class="btn-shine"></span>
+                    <div class="cta-content-profile">
+                        <span class="cta-icon-profile">⚡</span>
+                        <h2 class="cta-title-profile">Continue Sua Escalada</h2>
+                        <p class="cta-description-profile">
+                            Você está no caminho certo! Registre mais partidas e alcance novos ranks.
+                        </p>
+                        <div class="cta-buttons-profile">
+                            <button class="btn-cta-primary-profile" onclick="showPage('play')">
+                                <span class="btn-icon">⚔️</span>
+                                <span>JOGAR AGORA</span>
                             </button>
-                            <button class="btn-cta-secondary" onclick="showPage('friends')">
-                                <span class="btn-icon">👥</span>
-                                <span class="btn-text">DESAFIAR AMIGOS</span>
+                            <button class="btn-cta-secondary-profile" onclick="showPage('leaderboard')">
+                                <span class="btn-icon">🏆</span>
+                                <span>VER RANKING</span>
                             </button>
                         </div>
                     </div>
