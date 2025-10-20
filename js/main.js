@@ -364,6 +364,10 @@ function updateUserDisplay() {
         
         // Update notifications
         updateNotifications();
+        
+        // Update hero section when user logs in
+        UI.updateHeroSection();
+        UI.updateRecentMatches();
     } else {
         userNameEl.textContent = 'Visitante';
         userNameEl.style.cursor = 'default';
@@ -374,6 +378,10 @@ function updateUserDisplay() {
         // Hide notification bell
         const bell = document.getElementById('notificationBell');
         if (bell) bell.style.display = 'none';
+        
+        // Reset hero section
+        UI.updateHeroSection();
+        UI.updateRecentMatches();
     }
 }
 

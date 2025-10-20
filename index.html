@@ -58,74 +58,253 @@
         
         <!-- HOME PAGE -->
         <div id="home" class="page active">
-            <div class="hero-section">
-                <h1 class="hero-title">SISTEMA RANKED PLUTONIUM</h1>
-                <p class="hero-subtitle">Call of Duty: Black Ops 2</p>
-                <div class="hero-stats">
-                    <div class="stat-box">
-                        <div class="stat-value" id="totalPlayers">0</div>
-                        <div class="stat-label">JOGADORES</div>
+            <!-- 1️⃣ HERO / BANNER PRINCIPAL -->
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-icon">⚡</span>
+                        <span class="badge-text">SISTEMA OFICIAL DE RANQUEADAS</span>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="totalMatches">0</div>
-                        <div class="stat-label">PARTIDAS</div>
+                    <h1 class="hero-title">
+                        <span class="title-highlight">SUBA DE PATENTE</span>
+                        <span class="title-main">NO BO2 RANKED</span>
+                    </h1>
+                    <p class="hero-description">
+                        Acompanhe seu progresso, registre suas partidas e mostre que você é o melhor jogador de Black Ops 2.
+                    </p>
+                    
+                    <!-- Player Current Rank (if logged in) -->
+                    <div class="hero-player-card" id="heroPlayerCard" style="display: none;">
+                        <div class="player-rank-display">
+                            <div class="rank-icon-large" id="heroRankIcon">🥉</div>
+                            <div class="rank-info">
+                                <div class="rank-label">SEU RANK ATUAL</div>
+                                <div class="rank-name-large" id="heroRankName">BRONZE</div>
+                                <div class="rank-mmr-display">
+                                    <span class="mmr-value" id="heroMMR">0</span>
+                                    <span class="mmr-label">MMR</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-quick-stats">
+                            <div class="quick-stat">
+                                <span class="stat-label">V/D</span>
+                                <span class="stat-value" id="heroWinRate">0%</span>
+                            </div>
+                            <div class="quick-stat">
+                                <span class="stat-label">K/D</span>
+                                <span class="stat-value" id="heroKD">0.00</span>
+                            </div>
+                            <div class="quick-stat">
+                                <span class="stat-label">PARTIDAS</span>
+                                <span class="stat-value" id="heroMatches">0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-value" id="activeSeason">S1</div>
-                        <div class="stat-label">TEMPORADA</div>
+
+                    <div class="hero-actions">
+                        <button class="btn-hero-primary" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span class="btn-text">REGISTRAR PARTIDA</span>
+                        </button>
+                        <button class="btn-hero-secondary" onclick="showPage('leaderboard')">
+                            <span class="btn-icon">🏆</span>
+                            <span class="btn-text">VER RANKING</span>
+                        </button>
+                    </div>
+
+                    <div class="hero-stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalPlayers">0</div>
+                                <div class="stat-label">Jogadores Ativos</div>
+                            </div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-icon">⚔️</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalMatches">0</div>
+                                <div class="stat-label">Partidas Jogadas</div>
+                            </div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="activeSeason">S1</div>
+                                <div class="stat-label">Temporada Atual</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button class="btn-primary btn-large" onclick="showPage('play')">
-                    🎮 COMEÇAR A JOGAR
-                </button>
-            </div>
-
-            <!-- Rank Tiers Display -->
-            <div class="section">
-                <h2 class="section-title">📊 SISTEMA DE RANKS</h2>
-                <div class="ranks-grid">
-                    <div class="rank-card bronze">
-                        <div class="rank-icon">🥉</div>
-                        <div class="rank-name">BRONZE</div>
-                        <div class="rank-mmr">0 - 999 MMR</div>
-                    </div>
-                    <div class="rank-card silver">
-                        <div class="rank-icon">🥈</div>
-                        <div class="rank-name">PRATA</div>
-                        <div class="rank-mmr">1000 - 1499 MMR</div>
-                    </div>
-                    <div class="rank-card gold">
-                        <div class="rank-icon">🥇</div>
-                        <div class="rank-name">OURO</div>
-                        <div class="rank-mmr">1500 - 1999 MMR</div>
-                    </div>
-                    <div class="rank-card platinum">
-                        <div class="rank-icon">💎</div>
-                        <div class="rank-name">PLATINA</div>
-                        <div class="rank-mmr">2000 - 2499 MMR</div>
-                    </div>
-                    <div class="rank-card diamond">
-                        <div class="rank-icon">💠</div>
-                        <div class="rank-name">DIAMANTE</div>
-                        <div class="rank-mmr">2500 - 2999 MMR</div>
-                    </div>
-                    <div class="rank-card master">
-                        <div class="rank-icon">👑</div>
-                        <div class="rank-name">MESTRE</div>
-                        <div class="rank-mmr">3000 - 3499 MMR</div>
-                    </div>
-                    <div class="rank-card legend">
-                        <div class="rank-icon">⚡</div>
-                        <div class="rank-name">LENDA</div>
-                        <div class="rank-mmr">3500+ MMR</div>
+                
+                <div class="hero-visual">
+                    <div class="rank-showcase">
+                        <div class="showcase-ring"></div>
+                        <div class="showcase-icon" id="showcaseRankIcon">⚡</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Top Players Preview -->
-            <div class="section">
-                <h2 class="section-title">🏆 TOP 5 JOGADORES</h2>
-                <div id="topPlayersPreview"></div>
+            <!-- 2️⃣ COMO FUNCIONA / INTRODUÇÃO -->
+            <div class="how-it-works-section">
+                <div class="section-header">
+                    <span class="section-badge">📖</span>
+                    <h2 class="section-title">COMO FUNCIONA O SISTEMA DE RANQUEADAS</h2>
+                    <p class="section-subtitle">Ganhe MMR a cada partida, evolua nas patentes e alcance o topo da tabela. Cada kill, cada vitória, conta!</p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <div class="step-icon">🎮</div>
+                        <h3 class="step-title">Jogue Ranqueadas</h3>
+                        <p class="step-description">Entre em partidas ranqueadas contra outros jogadores registrados no sistema.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <div class="step-icon">📊</div>
+                        <h3 class="step-title">Registre os Resultados</h3>
+                        <p class="step-description">Após cada partida, registre o resultado com kills, deaths e screenshot do placar.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <div class="step-icon">📈</div>
+                        <h3 class="step-title">Ganhe MMR</h3>
+                        <p class="step-description">Vitórias aumentam seu MMR. Performance individual (K/D) também influencia seus ganhos.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <div class="step-icon">🏆</div>
+                        <h3 class="step-title">Suba de Rank</h3>
+                        <p class="step-description">Acumule MMR para subir de patente: Bronze → Prata → Ouro → Platina → Diamante → Mestre → Lenda.</p>
+                    </div>
+                </div>
+
+                <div class="rank-progression-visual">
+                    <div class="progression-track">
+                        <div class="progression-step bronze">
+                            <div class="step-icon-mini">�</div>
+                            <div class="step-name">BRONZE</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step silver">
+                            <div class="step-icon-mini">🥈</div>
+                            <div class="step-name">PRATA</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step gold">
+                            <div class="step-icon-mini">🥇</div>
+                            <div class="step-name">OURO</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step platinum">
+                            <div class="step-icon-mini">💎</div>
+                            <div class="step-name">PLATINA</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step diamond">
+                            <div class="step-icon-mini">💠</div>
+                            <div class="step-name">DIAMANTE</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step master">
+                            <div class="step-icon-mini">👑</div>
+                            <div class="step-name">MESTRE</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step legend">
+                            <div class="step-icon-mini">⚡</div>
+                            <div class="step-name">LENDA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3️⃣ ÚLTIMAS PARTIDAS -->
+            <div class="recent-matches-section">
+                <div class="section-header">
+                    <span class="section-badge">⚔️</span>
+                    <h2 class="section-title">SUAS ÚLTIMAS PARTIDAS</h2>
+                    <p class="section-subtitle">Confira seu desempenho recente e veja onde melhorar</p>
+                </div>
+
+                <div id="recentMatchesContainer" class="recent-matches-container">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎮</div>
+                        <p class="empty-text">Nenhuma partida jogada ainda</p>
+                        <p class="empty-subtext">Faça login e registre sua primeira partida para ver seu histórico aqui</p>
+                        <button class="btn-empty-action" onclick="showPage('play')">Jogar Agora</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4️⃣ TOP JOGADORES / DESTAQUES -->
+            <div class="top-players-section">
+                <div class="section-header">
+                    <span class="section-badge">🏆</span>
+                    <h2 class="section-title">DESTAQUES DO DIA</h2>
+                    <p class="section-subtitle">Os melhores jogadores estão aqui. Quem vai dominar o ranking hoje?</p>
+                </div>
+
+                <div class="podium-container">
+                    <div id="podiumDisplay" class="podium-display">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <div class="top-players-list" id="topPlayersPreview">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <div class="view-all-container">
+                    <button class="btn-view-all" onclick="showPage('leaderboard')">
+                        <span>VER RANKING COMPLETO</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5️⃣ CALL TO ACTION / ENGAJAMENTO -->
+            <div class="cta-section">
+                <div class="cta-background">
+                    <div class="cta-glow"></div>
+                </div>
+                <div class="cta-content">
+                    <div class="cta-icon">⚡</div>
+                    <h2 class="cta-title">PRONTO PARA EVOLUIR?</h2>
+                    <p class="cta-description">Registre sua próxima partida agora e suba de rank. Mostre suas habilidades e domine o ranking!</p>
+                    <div class="cta-actions">
+                        <button class="btn-cta-primary" onclick="showPage('play')">
+                            <span class="btn-icon">�</span>
+                            <span class="btn-text">REGISTRAR PARTIDA</span>
+                            <span class="btn-shine"></span>
+                        </button>
+                        <button class="btn-cta-secondary" onclick="showPage('friends')">
+                            <span class="btn-icon">👥</span>
+                            <span class="btn-text">DESAFIAR AMIGOS</span>
+                        </button>
+                    </div>
+                    <div class="cta-stats">
+                        <div class="cta-stat">
+                            <span class="cta-stat-icon">🔥</span>
+                            <span class="cta-stat-text">Sistema anti-trapaça ativo</span>
+                        </div>
+                        <div class="cta-stat">
+                            <span class="cta-stat-icon">✅</span>
+                            <span class="cta-stat-text">Confirmação mútua de partidas</span>
+                        </div>
+                        <div class="cta-stat">
+                            <span class="cta-stat-icon">📸</span>
+                            <span class="cta-stat-text">Verificação por screenshot</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

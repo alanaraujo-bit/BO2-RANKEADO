@@ -46,6 +46,9 @@ const UI = {
         await this.updateStats();
         await this.updateTopPlayers();
         await this.updatePendingMatches();
+        await this.updateHeroSection();
+        await this.updateRecentMatches();
+        await this.updatePodium();
         
         // Update current page
         const activePage = document.querySelector('.page.active');
@@ -428,6 +431,153 @@ const UI = {
             notification.style.animation = 'slideOutRight 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 4000);
+    },
+
+    // Update Hero Section (Home Page)
+    async updateHeroSection() {
+        const heroPlayerCard = document.getElementById('heroPlayerCard');
+        const showcaseRankIcon = document.getElementById('showcaseRankIcon');
+        
+        if (!RankedData.currentUser) {
+            if (heroPlayerCard) heroPlayerCard.style.display = 'none';
+            if (showcaseRankIcon) showcaseRankIcon.textContent = '⚡';
+            return;
+        }
+
+        const player = await RankedData.getPlayer(RankedData.currentUser);
+        if (!player) return;
+
+        const rank = RankSystem.getRank(player.mmr);
+        const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(0) : '0';
+        const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : player.totalKills.toFixed(2);
+
+        // Update player card
+        if (heroPlayerCard) {
+            heroPlayerCard.style.display = 'block';
+            document.getElementById('heroRankIcon').textContent = rank.icon;
+            document.getElementById('heroRankName').textContent = rank.name;
+            document.getElementById('heroMMR').textContent = player.mmr;
+            document.getElementById('heroWinRate').textContent = winRate + '%';
+            document.getElementById('heroKD').textContent = kd;
+            document.getElementById('heroMatches').textContent = player.gamesPlayed;
+        }
+
+        // Update showcase icon
+        if (showcaseRankIcon) {
+            showcaseRankIcon.textContent = rank.icon;
+        }
+    },
+
+    // Update Recent Matches (Home Page)
+    async updateRecentMatches() {
+        const container = document.getElementById('recentMatchesContainer');
+        if (!container) return;
+
+        if (!RankedData.currentUser) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎮</div>
+                    <p class="empty-text">Nenhuma partida jogada ainda</p>
+                    <p class="empty-subtext">Faça login e registre sua primeira partida para ver seu histórico aqui</p>
+                    <button class="btn-empty-action" onclick="showLoginModal()">Fazer Login</button>
+                </div>
+            `;
+            return;
+        }
+
+        const player = await RankedData.getPlayer(RankedData.currentUser);
+        if (!player || !player.matchHistory || player.matchHistory.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎮</div>
+                    <p class="empty-text">Nenhuma partida jogada ainda</p>
+                    <p class="empty-subtext">Registre sua primeira partida ranqueada para ver seu histórico</p>
+                    <button class="btn-empty-action" onclick="showPage('play')">Jogar Agora</button>
+                </div>
+            `;
+            return;
+        }
+
+        // Show last 5 matches
+        const recentMatches = player.matchHistory.slice(-5).reverse();
+        
+        container.innerHTML = recentMatches.map(match => {
+            const isWin = match.result === 'win';
+            const kd = match.deaths > 0 ? (match.kills / match.deaths).toFixed(2) : match.kills.toFixed(2);
+            const mmrChange = match.mmrChange || 0;
+            
+            return `
+                <div class="match-card">
+                    <div class="match-result-icon">${isWin ? '✅' : '❌'}</div>
+                    <div class="match-info">
+                        <div class="match-opponent">vs ${match.opponent}</div>
+                        <div class="match-details">${match.map} • ${match.gameMode} • ${new Date(match.date).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    <div class="match-stats">
+                        <div class="match-stat">
+                            <div class="match-stat-label">K/D</div>
+                            <div class="match-stat-value">${kd}</div>
+                        </div>
+                        <div class="match-stat">
+                            <div class="match-stat-label">KILLS</div>
+                            <div class="match-stat-value">${match.kills}</div>
+                        </div>
+                        <div class="match-stat">
+                            <div class="match-stat-label">DEATHS</div>
+                            <div class="match-stat-value">${match.deaths}</div>
+                        </div>
+                    </div>
+                    <div class="match-mmr-change ${mmrChange >= 0 ? 'positive' : 'negative'}">
+                        ${mmrChange >= 0 ? '+' : ''}${mmrChange}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+
+    // Update Podium (Top 3 Players)
+    async updatePodium() {
+        const podiumDisplay = document.getElementById('podiumDisplay');
+        if (!podiumDisplay) return;
+
+        try {
+            const leaderboard = await RankedData.getLeaderboard('global');
+            const top3 = leaderboard.slice(0, 3);
+
+            if (top3.length === 0) {
+                podiumDisplay.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🏆</div>
+                        <p class="empty-text">Seja o primeiro no ranking!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const positions = [
+                { place: 'first', medal: '🥇', index: 0 },
+                { place: 'second', medal: '🥈', index: 1 },
+                { place: 'third', medal: '🥉', index: 2 }
+            ];
+
+            podiumDisplay.innerHTML = positions.map(pos => {
+                const player = top3[pos.index];
+                if (!player) return '';
+
+                const rank = RankSystem.getRank(player.mmr);
+                
+                return `
+                    <div class="podium-place ${pos.place}">
+                        <div class="podium-medal">${pos.medal}</div>
+                        <div class="podium-player-name">${player.username}</div>
+                        <div class="podium-rank-icon">${rank.icon}</div>
+                        <div class="podium-mmr">${player.mmr} MMR</div>
+                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('Error updating podium:', error);
+        }
     }
 };
 
