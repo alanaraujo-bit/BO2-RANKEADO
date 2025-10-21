@@ -72,21 +72,38 @@ const RankedData = {
     async allocateNextPlayerNumber() {
         if (!firebaseReady) await waitForFirebase();
         const ref = this._seqRef();
-        const assigned = await db.runTransaction(async (tx) => {
-            const snap = await tx.get(ref);
-            let next = 1;
-            if (!snap.exists) {
-                // Initialize sequence
-                tx.set(ref, { nextPlayerNumber: 2, createdAt: Date.now(), updatedAt: Date.now() });
+        try {
+            const assigned = await db.runTransaction(async (tx) => {
+                const snap = await tx.get(ref);
+                let next = 1;
+                if (!snap.exists) {
+                    // Initialize sequence
+                    tx.set(ref, { nextPlayerNumber: 2, createdAt: Date.now(), updatedAt: Date.now() });
+                    return 1;
+                } else {
+                    const data = snap.data() || {};
+                    next = typeof data.nextPlayerNumber === 'number' ? data.nextPlayerNumber : 1;
+                    tx.update(ref, { nextPlayerNumber: next + 1, updatedAt: Date.now() });
+                    return next;
+                }
+            });
+            return assigned;
+        } catch (txErr) {
+            console.warn('⚠️ Sequence transaction failed, falling back to max(playerNumber)+1:', txErr?.message || txErr);
+            try {
+                // Fallback: get the highest existing playerNumber and add 1
+                const snap = await db.collection('players').orderBy('playerNumber', 'desc').limit(1).get();
+                if (!snap.empty) {
+                    const top = snap.docs[0].data();
+                    const topNum = typeof top.playerNumber === 'number' ? top.playerNumber : 0;
+                    return topNum + 1;
+                }
                 return 1;
-            } else {
-                const data = snap.data() || {};
-                next = typeof data.nextPlayerNumber === 'number' ? data.nextPlayerNumber : 1;
-                tx.update(ref, { nextPlayerNumber: next + 1, updatedAt: Date.now() });
-                return next;
+            } catch (fallbackErr) {
+                console.error('❌ Fallback allocation failed:', fallbackErr);
+                return 0;
             }
-        });
-        return assigned;
+        }
     },
 
     // Ensure a player has a sequential number; allocates and patches if missing
@@ -376,6 +393,17 @@ const RankedData = {
             };
             
             await db.collection('players').doc(userId).set(playerData);
+            // If allocation failed (0), try to ensure right after creation
+            if (!seqNum) {
+                try {
+                    await this.ensurePlayerNumber(username);
+                    const refreshed = await this.getPlayer(username, true);
+                    if (refreshed && typeof refreshed.playerNumber === 'number') {
+                        playerData.playerNumber = refreshed.playerNumber;
+                        playerData.playerNumberStr = refreshed.playerNumberStr;
+                    }
+                } catch (_) {}
+            }
             
             this.currentUserId = userId;
             this.currentUser = username;
