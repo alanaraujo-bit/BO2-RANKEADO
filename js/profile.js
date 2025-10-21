@@ -83,6 +83,11 @@ const ProfileManager = {
 
     // 2️⃣ Update Stats
     updateStats(player) {
+        // Helper para setar texto com segurança
+        const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        };
         // Fallback: se os contadores ainda não refletirem o histórico, recalcular a partir de matchHistory
         const hist = Array.isArray(player.matchHistory) ? player.matchHistory : [];
         let wins = player.wins || 0;
@@ -127,23 +132,20 @@ const ProfileManager = {
         const winRate = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(0) : '0';
         const kd = totalDeaths > 0 ? (totalKills / totalDeaths).toFixed(2) : totalKills.toFixed(2);
 
-        document.getElementById('statTotalGames').textContent = gamesPlayed;
-        document.getElementById('statWins').textContent = wins;
-        document.getElementById('statLosses').textContent = losses;
-        document.getElementById('statWinRate').textContent = winRate + '%';
-        document.getElementById('statTotalKills').textContent = totalKills;
-        document.getElementById('statTotalDeaths').textContent = totalDeaths;
-        document.getElementById('statKD').textContent = kd;
-        document.getElementById('statBestStreak').textContent = player.bestStreak || 0;
-        document.getElementById('statCurrentStreak').textContent = player.winStreak || 0;
+    setText('statTotalGames', gamesPlayed);
+    setText('statWins', wins);
+    setText('statLosses', losses);
+    setText('statWinRate', winRate + '%');
+    setText('statTotalKills', totalKills);
+    setText('statTotalDeaths', totalDeaths);
+    setText('statKD', kd);
+    setText('statBestStreak', player.bestStreak || 0);
+    setText('statCurrentStreak', player.winStreak || 0);
 
         // Atualizar também o bloco de "Quick Stats" do topo do perfil, se existir
-        const heroWinsEl = document.getElementById('heroWins');
-        const heroLossesEl = document.getElementById('heroLosses');
-        const heroKDEl = document.getElementById('heroKD');
-        if (heroWinsEl) heroWinsEl.textContent = wins;
-        if (heroLossesEl) heroLossesEl.textContent = losses;
-        if (heroKDEl) heroKDEl.textContent = kd;
+        setText('heroWins', wins);
+        setText('heroLosses', losses);
+        setText('heroKD', kd);
     },
 
     // 3️⃣ Update Match History
