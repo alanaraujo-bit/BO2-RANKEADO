@@ -383,7 +383,7 @@ const UI = {
             return;
         }
 
-        const player = await RankedData.getPlayer(RankedData.currentUser);
+    const player = await RankedData.getPlayer(RankedData.currentUser, true);
         if (!player) return;
 
         const rank = RankSystem.getRank(player.mmr);

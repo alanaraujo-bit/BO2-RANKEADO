@@ -274,6 +274,23 @@ class FriendsSystem {
     }
 
     /**
+     * Send friend request by sequential ID (e.g., 01, 23)
+     */
+    async sendFriendRequestById(seqId) {
+        try {
+            const target = await RankedData.findPlayerBySequentialId(seqId);
+            if (!target || !target.username) {
+                alert('Jogador não encontrado pelo ID informado');
+                return;
+            }
+            return await this.sendFriendRequest(target.username);
+        } catch (e) {
+            console.error('Error sending friend request by ID:', e);
+            alert('Erro ao enviar solicitação pelo ID');
+        }
+    }
+
+    /**
      * Accept friend request
      */
     async acceptFriendRequest(fromUsername) {
@@ -451,6 +468,7 @@ class FriendsSystem {
         const timeAgo = this.getTimeAgo(request.timestamp);
         const avatarUrl = playerData.avatarUrl || `https://robohash.org/${request.from}?set=set4&size=200x200`;
 
+        const idStr = playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00');
         return `
             <div class="friend-card friend-request-card">
                 <div class="friend-avatar-container">
@@ -459,7 +477,7 @@ class FriendsSystem {
                 </div>
                 <div class="friend-info">
                     <div class="friend-username" onclick="friendsSystem.openPlayerProfile('${request.from}')">${request.from}</div>
-                    <div class="friend-user-id">${playerData.userId || 'BO2#0000'}</div>
+                    <div class="friend-user-id">#${idStr}</div>
                     <div class="friend-rank">${rankData.name}</div>
                     <div class="friend-mmr">🏆 ${playerData.mmr || 999} MMR</div>
                     <div class="friend-time">⏰ ${timeAgo}</div>
@@ -480,6 +498,7 @@ class FriendsSystem {
         if (!playerData) return '';
 
     const rankData = getRankFromMMR(playerData.mmr || 999);
+    const idStr = playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00');
         const winrate = playerData.wins && playerData.totalMatches 
             ? ((playerData.wins / playerData.totalMatches) * 100).toFixed(1)
             : '0';
@@ -496,7 +515,7 @@ class FriendsSystem {
                 </div>
                 <div class="friend-info">
                     <div class="friend-username">${username}</div>
-                    <div class="friend-user-id">${playerData.userId || 'BO2#0000'}</div>
+                    <div class="friend-user-id">#${idStr}</div>
                     ${this.getStatusBadge(status, lastOnline)}
                     <div class="friend-rank">${rankData.name}</div>
                     <div class="friend-stats">
@@ -554,6 +573,7 @@ class FriendsSystem {
      */
     async createSuggestedCard(player) {
     const rankData = getRankFromMMR(player.mmr || 999);
+    const idStr = player.playerNumberStr || (player.playerNumber ? String(player.playerNumber).padStart(2, '0') : '00');
         const avatarUrl = player.avatarUrl || `https://robohash.org/${player.username}?set=set4&size=200x200`;
 
         return `
@@ -564,7 +584,7 @@ class FriendsSystem {
                 </div>
                 <div class="friend-info">
                     <div class="friend-username">${player.username}</div>
-                    <div class="friend-user-id">${player.userId || 'BO2#0000'}</div>
+                    <div class="friend-user-id">#${idStr}</div>
                     <div class="friend-rank">${rankData.name}</div>
                     <div class="friend-mmr">🏆 ${player.mmr || 999} MMR</div>
                 </div>

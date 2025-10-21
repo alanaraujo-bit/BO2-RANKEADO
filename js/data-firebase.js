@@ -676,6 +676,23 @@ const RankedData = {
             return [];
         }
     },
+
+    // Find player by sequential id (number or string)
+    async findPlayerBySequentialId(id) {
+        try {
+            const idNum = typeof id === 'number' ? id : parseInt(String(id).replace(/^#/, ''), 10);
+            if (!idNum || isNaN(idNum)) return null;
+            const q = await db.collection('players').where('playerNumber', '==', idNum).limit(1).get();
+            if (q.empty) return null;
+            const data = q.docs[0].data();
+            // cache
+            if (data && data.username) this.players[data.username] = data;
+            return data;
+        } catch (e) {
+            console.error('findPlayerBySequentialId error:', e);
+            return null;
+        }
+    },
     
     // Get player matches (for history)
     async getPlayerMatches(username, limit = 20) {

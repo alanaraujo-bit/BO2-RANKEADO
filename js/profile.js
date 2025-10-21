@@ -49,9 +49,14 @@ const ProfileManager = {
         const level = Math.floor(player.gamesPlayed / 10) + 1;
     container.querySelector('#profileLevel').textContent = level;
 
-        // Name and ID
-    container.querySelector('#profileName').textContent = player.username;
-    container.querySelector('#profileId').textContent = `#${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+        // Name and ID (use sequential playerNumber)
+        container.querySelector('#profileName').textContent = player.username;
+        const idStr = (typeof player.playerNumberStr === 'string' && player.playerNumberStr)
+            ? player.playerNumberStr
+            : (typeof player.playerNumber === 'number' && player.playerNumber > 0
+                ? String(player.playerNumber).padStart(2, '0')
+                : '00');
+        container.querySelector('#profileId').textContent = `#${idStr}`;
 
         // Rank
     container.querySelector('#profileRankIcon').textContent = rank.icon;
