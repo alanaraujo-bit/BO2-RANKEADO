@@ -605,50 +605,45 @@ class FriendsSystem {
             }
 
             const rankData = getRankFromMMR(playerData.mmr || 999);
-            const winrate = playerData.wins && playerData.totalMatches
-                ? ((playerData.wins / playerData.totalMatches) * 100).toFixed(1)
+            const gamesPlayed = playerData.gamesPlayed || playerData.totalMatches || 0;
+            const winrate = playerData.wins && gamesPlayed
+                ? ((playerData.wins / gamesPlayed) * 100).toFixed(1)
                 : '0';
+            const kd = (playerData.totalDeaths || 0) > 0
+                ? (playerData.totalKills / playerData.totalDeaths).toFixed(2)
+                : (playerData.totalKills || 0).toFixed(2);
 
-            // Update modal content
-            document.getElementById('profileModalTitle').textContent = `PERFIL DE ${username.toUpperCase()}`;
-            document.getElementById('profileUsername').textContent = username;
-            const idStr = (playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00'));
-            const profileUserId = document.getElementById('profileUserId');
-            if (profileUserId) profileUserId.textContent = `#${idStr}`;
-            document.getElementById('profileRankBadge').textContent = rankData.name;
-            document.getElementById('profileRankIcon').textContent = rankData.icon;
-            document.getElementById('profileMMR').textContent = playerData.mmr || 999;
-            document.getElementById('profileTotalMatches').textContent = playerData.totalMatches || 0;
-            document.getElementById('profileWins').textContent = playerData.wins || 0;
-            document.getElementById('profileLosses').textContent = playerData.losses || 0;
-            document.getElementById('profileWinrate').textContent = winrate + '%';
+            // Safe setter
+            const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
 
-            // Fill stat chips in redesigned modal
-            const modalRankName = document.getElementById('modalRankName');
-            const modalMMR = document.getElementById('modalMMR');
-            const modalKD = document.getElementById('modalKD');
-            const modalWR = document.getElementById('modalWR');
-            const modalMatches = document.getElementById('modalMatches');
-            if (modalRankName) modalRankName.textContent = rankData.name;
-            if (modalMMR) modalMMR.textContent = playerData.mmr || 999;
-            const kd = playerData.totalDeaths > 0 ? (playerData.totalKills / playerData.totalDeaths).toFixed(2) : (playerData.totalKills || 0).toFixed(2);
-            if (modalKD) modalKD.textContent = kd;
-            if (modalWR) modalWR.textContent = winrate + '%';
-            if (modalMatches) modalMatches.textContent = playerData.gamesPlayed || 0;
+            // Modal header basics
+            setText('profileModalTitle', `PERFIL DE ${username.toUpperCase()}`);
+            setText('profileUsername', username);
+            const idStr = playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00');
+            setText('profileUserId', `#${idStr}`);
+
+            // New stat chips
+            setText('modalRankName', rankData.name);
+            setText('modalMMR', playerData.mmr || 999);
+            setText('modalKD', kd);
+            setText('modalWR', `${winrate}%`);
+            setText('modalMatches', gamesPlayed);
 
             // Action buttons
             const actionButtons = document.getElementById('profileActionButtons');
-            if (username === currentUser) {
-                actionButtons.innerHTML = '<button class="btn-primary" onclick="showPage(\'profile\'); closePlayerProfile();">📝 EDITAR PERFIL</button>';
-            } else {
-                const isFriend = this.friends.includes(username);
-                if (isFriend) {
-                    actionButtons.innerHTML = `
-                        <button class="btn-secondary" onclick="friendsSystem.removeFriend('${username}')">❌ REMOVER AMIGO</button>
-                        <button class="btn-primary" onclick="closePlayerProfile(); showPage('play');">🎮 DESAFIAR</button>
-                    `;
+            if (actionButtons) {
+                if (username === currentUser) {
+                    actionButtons.innerHTML = '<button class="btn-primary" onclick="showPage(\'profile\'); closePlayerProfile();">📝 EDITAR PERFIL</button>';
                 } else {
-                    actionButtons.innerHTML = `<button class="btn-primary" onclick="friendsSystem.sendFriendRequest('${username}')">➕ ADICIONAR AMIGO</button>`;
+                    const isFriend = this.friends.includes(username);
+                    if (isFriend) {
+                        actionButtons.innerHTML = `
+                            <button class="btn-secondary" onclick="friendsSystem.removeFriend('${username}')">❌ REMOVER AMIGO</button>
+                            <button class="btn-primary" onclick="closePlayerProfile(); showPage('play');">🎮 DESAFIAR</button>
+                        `;
+                    } else {
+                        actionButtons.innerHTML = `<button class="btn-primary" onclick="friendsSystem.sendFriendRequest('${username}')">➕ ADICIONAR AMIGO</button>`;
+                    }
                 }
             }
 
@@ -656,7 +651,8 @@ class FriendsSystem {
             await this.loadPlayerMatchHistory(username);
 
             // Show modal
-            document.getElementById('playerProfileModal').classList.add('active');
+            const modal = document.getElementById('playerProfileModal');
+            if (modal) modal.classList.add('active');
             
         } catch (error) {
             console.error('Error opening player profile:', error);
@@ -669,25 +665,22 @@ class FriendsSystem {
      */
     async loadPlayerMatchHistory(username) {
         try {
-            const allMatches = await getAllMatches();
-            const playerMatches = allMatches
-                .filter(match => match.winner === username || match.loser === username)
-                .sort((a, b) => b.timestamp - a.timestamp)
-                .slice(0, 10);
-
+            const playerMatches = await RankedData.getPlayerMatches(username, 10);
             const historyDiv = document.getElementById('profileMatchHistory');
-            
-            if (playerMatches.length === 0) {
+            if (!historyDiv) return;
+
+            if (!playerMatches || playerMatches.length === 0) {
                 historyDiv.innerHTML = '<div class="empty-state">Nenhuma partida registrada</div>';
                 return;
             }
 
             historyDiv.innerHTML = playerMatches.map(match => {
                 const isWinner = match.winner === username;
-                const opponent = isWinner ? match.loser : match.winner;
-                const mmrChange = isWinner ? `+${match.mmrGain || 25}` : `-${match.mmrLoss || 25}`;
+                const opponent = match.playerA === username ? match.playerB : match.playerA;
+                const delta = match.mmrDelta ? (isWinner ? match.mmrDelta.winner?.change : match.mmrDelta.loser?.change) : null;
+                const mmrChange = (typeof delta === 'number') ? `${delta >= 0 ? '+' : ''}${delta}` : (isWinner ? '+25' : '-25');
                 const resultClass = isWinner ? 'match-win' : 'match-loss';
-                const date = new Date(match.timestamp).toLocaleDateString('pt-BR');
+                const date = match.timestamp ? new Date(match.timestamp).toLocaleDateString('pt-BR') : '';
 
                 return `
                     <div class="profile-match-item ${resultClass}">
@@ -700,10 +693,10 @@ class FriendsSystem {
                     </div>
                 `;
             }).join('');
-            
         } catch (error) {
             console.error('Error loading match history:', error);
-            document.getElementById('profileMatchHistory').innerHTML = '<div class="error-state">Erro ao carregar histórico</div>';
+            const historyDiv = document.getElementById('profileMatchHistory');
+            if (historyDiv) historyDiv.innerHTML = '<div class="error-state">Erro ao carregar histórico</div>';
         }
     }
 
@@ -724,10 +717,10 @@ class FriendsSystem {
      */
     async filterFriends(filter) {
         // Update active button
-        document.querySelectorAll('.friend-filter-buttons .filter-btn-small').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
+        document.querySelectorAll('.friend-filter-buttons .filter-btn-small').forEach(btn => btn.classList.remove('active'));
+        if (typeof event !== 'undefined' && event.target) {
+            event.target.classList.add('active');
+        }
 
         const friendsList = document.getElementById('friendsList');
         const emptyState = `
@@ -737,43 +730,23 @@ class FriendsSystem {
                 <div class="empty-state-hint">Tente outro filtro ou adicione mais amigos</div>
             </div>
         `;
-        
-        if (this.friends.length === 0) {
-            friendsList.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">👥</div>
-                    <div class="empty-state-text">Você ainda não tem amigos</div>
-                    <div class="empty-state-hint">Use a busca acima para encontrar jogadores</div>
-                </div>
-            `;
-            return;
-        }
 
-        let filteredFriends = this.friends;
-        
-        if (filter !== 'all') {
-            filteredFriends = [];
-            for (const username of this.friends) {
-                const userData = await getUserData(username);
+        let filteredFriends = [];
+        if (filter === 'all') {
+            filteredFriends = [...this.friends];
+        } else {
+            for (const uname of this.friends) {
+                const userData = await getUserData(uname);
                 if (!userData) continue;
-                
-                if (filter === 'online' && userData.status === 'online') {
-                    filteredFriends.push(username);
-                } else if (filter === 'playing' && userData.status === 'in-match') {
-                    filteredFriends.push(username);
-                } else if (filter === 'offline' && (!userData.status || userData.status === 'offline')) {
-                    filteredFriends.push(username);
-                }
+                const status = userData.status || 'offline';
+                if (filter === 'online' && status === 'online') filteredFriends.push(uname);
+                if (filter === 'playing' && status === 'in-match') filteredFriends.push(uname);
+                if (filter === 'offline' && (status === 'offline' || !userData.status)) filteredFriends.push(uname);
             }
         }
 
         if (filteredFriends.length === 0) {
-            const filterText = {
-                'online': 'online',
-                'playing': 'jogando',
-                'offline': 'offline'
-            };
-            
+            const filterText = { online: 'online', playing: 'jogando', offline: 'offline' };
             friendsList.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon">👥</div>
@@ -795,7 +768,8 @@ class FriendsSystem {
     async loadFriendsRanking() {
         try {
             const rankingDiv = document.getElementById('friendsRanking');
-            
+            if (!rankingDiv) return;
+
             if (this.friends.length === 0) {
                 rankingDiv.innerHTML = '<div class="empty-state">Adicione amigos para ver o ranking!</div>';
                 return;
@@ -803,45 +777,36 @@ class FriendsSystem {
 
             // Get all friends data
             const friendsData = [];
-            for (const username of this.friends) {
-                const userData = await getUserData(username);
-                if (userData) {
-                    friendsData.push(userData);
-                }
+            for (const uname of this.friends) {
+                const userData = await getUserData(uname);
+                if (userData) friendsData.push(userData);
             }
 
             // Add current user
             const currentUserData = await getUserData(currentUser);
-            if (currentUserData) {
-                friendsData.push(currentUserData);
-            }
+            if (currentUserData) friendsData.push(currentUserData);
 
             // Sort by MMR
             friendsData.sort((a, b) => (b.mmr || 999) - (a.mmr || 999));
 
-            // Create ranking HTML
             const rankingHTML = friendsData.map((player, index) => {
                 const rankData = getRankFromMMR(player.mmr || 999);
                 const isCurrentUser = player.username === currentUser;
-                const winrate = player.wins && player.totalMatches 
-                    ? ((player.wins / player.totalMatches) * 100).toFixed(1)
+                const totalMatches = player.gamesPlayed || player.totalMatches || 0;
+                const winrate = player.wins && totalMatches
+                    ? ((player.wins / totalMatches) * 100).toFixed(1)
                     : '0';
-
                 const positionIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
 
                 return `
                     <div class="ranking-item ${isCurrentUser ? 'ranking-current-user' : ''}" onclick="friendsSystem.openPlayerProfile('${player.username}')">
                         <div class="ranking-position">${positionIcon}</div>
                         <div class="ranking-avatar-small">
-                            <img src="${player.avatarUrl || 'https://robohash.org/' + player.username + '?set=set4&size=200x200'}" 
-                                 alt="${player.username}" 
-                                 onerror="this.src='https://robohash.org/${player.username}?set=set4&size=200x200'">
+                            <img src="${player.avatarUrl || 'https://robohash.org/' + player.username + '?set=set4&size=200x200'}" alt="${player.username}" onerror="this.src='https://robohash.org/${player.username}?set=set4&size=200x200'">
                         </div>
                         <div class="ranking-info">
                             <div class="ranking-username">${player.username} ${isCurrentUser ? '(Você)' : ''}</div>
-                            <div class="ranking-stats">
-                                ${rankData.icon} ${rankData.name} • ${winrate}% WR
-                            </div>
+                            <div class="ranking-stats">${rankData.icon} ${rankData.name} • ${winrate}% WR</div>
                         </div>
                         <div class="ranking-mmr">${player.mmr || 999} <span>MMR</span></div>
                     </div>
@@ -849,7 +814,6 @@ class FriendsSystem {
             }).join('');
 
             rankingDiv.innerHTML = rankingHTML;
-
         } catch (error) {
             console.error('Error loading friends ranking:', error);
         }
