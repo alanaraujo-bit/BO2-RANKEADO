@@ -1450,21 +1450,40 @@
             </div>
             <div class="modal-body">
                 <!-- Profile Header -->
-                <div class="profile-header-card">
-                    <div class="profile-avatar-large">
-                        <div class="rank-icon-profile" id="profileRankIcon">🎖️</div>
-                    </div>
-                    <div class="profile-info-main">
-                        <h1 id="profileUsername" class="profile-username-display">USERNAME</h1>
-                        <div class="profile-public-id">ID: <span id="profileUserId">#00</span></div>
-                        <div class="profile-rank-badge" id="profileRankBadge">BRONZE I</div>
-                        <div class="profile-mmr-display">
-                            <span style="color: var(--primary-orange); font-weight: 600;">MMR:</span>
-                            <span id="profileMMR" style="font-weight: bold; font-size: 1.3em;">1000</span>
+                <div class="profile-header-card redesigned">
+                    <div class="profile-header-left">
+                        <div class="profile-avatar-large">
+                            <div class="rank-icon-profile" id="profileRankIcon">🎖️</div>
+                        </div>
+                        <div class="profile-info-main">
+                            <h1 id="profileUsername" class="profile-username-display">USERNAME</h1>
+                            <div class="profile-public-id">ID: <span id="profileUserId">#00</span></div>
+                            <div class="profile-action-buttons" id="profileActionButtons">
+                                <!-- Buttons added dynamically -->
+                            </div>
                         </div>
                     </div>
-                    <div class="profile-action-buttons" id="profileActionButtons">
-                        <!-- Buttons added dynamically -->
+                    <div class="profile-header-stats">
+                        <div class="stat-chip">
+                            <div class="chip-label">Rank</div>
+                            <div class="chip-value" id="modalRankName">BRONZE I</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="chip-label">MMR</div>
+                            <div class="chip-value" id="modalMMR">1000</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="chip-label">K/D</div>
+                            <div class="chip-value" id="modalKD">0.00</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="chip-label">WIN%</div>
+                            <div class="chip-value" id="modalWR">0%</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="chip-label">PARTIDAS</div>
+                            <div class="chip-value" id="modalMatches">0</div>
+                        </div>
                     </div>
                 </div>
 

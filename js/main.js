@@ -778,6 +778,19 @@ async function openPlayerProfile(username) {
         if (profileLosses) profileLosses.textContent = playerData.losses || 0;
         if (profileWinrate) profileWinrate.textContent = winrate + '%';
 
+        // Fill stat chips
+        const modalRankName = document.getElementById('modalRankName');
+        const modalMMR = document.getElementById('modalMMR');
+        const modalKD = document.getElementById('modalKD');
+        const modalWR = document.getElementById('modalWR');
+        const modalMatches = document.getElementById('modalMatches');
+        if (modalRankName) modalRankName.textContent = rankData.name;
+        if (modalMMR) modalMMR.textContent = playerData.mmr || 999;
+        const kd = playerData.totalDeaths > 0 ? (playerData.totalKills / playerData.totalDeaths).toFixed(2) : (playerData.totalKills || 0).toFixed(2);
+        if (modalKD) modalKD.textContent = kd;
+        if (modalWR) modalWR.textContent = winrate + '%';
+        if (modalMatches) modalMatches.textContent = playerData.gamesPlayed || 0;
+
         // Action buttons
         const actionButtons = document.getElementById('profileActionButtons');
         const currentUser = RankedData.currentUser;
