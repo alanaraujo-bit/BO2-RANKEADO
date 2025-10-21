@@ -83,9 +83,17 @@ const ProfileManager = {
 
     // 2️⃣ Update Stats
     updateStats(player) {
-        // Helper para setar texto com segurança
+        // Escopo do perfil para evitar conflito com IDs iguais em outras páginas (ex.: Home)
+        const container = document.getElementById('profileContent');
+        // Helper para setar texto com segurança, priorizando busca dentro do container do perfil
         const setText = (id, value) => {
-            const el = document.getElementById(id);
+            let el = null;
+            if (container) {
+                el = container.querySelector(`#${id}`);
+            }
+            if (!el) {
+                el = document.getElementById(id);
+            }
             if (el) el.textContent = value;
         };
         // Fallback: se os contadores ainda não refletirem o histórico, recalcular a partir de matchHistory
@@ -143,9 +151,9 @@ const ProfileManager = {
     setText('statCurrentStreak', player.winStreak || 0);
 
         // Atualizar também o bloco de "Quick Stats" do topo do perfil, se existir
-        setText('heroWins', wins);
-        setText('heroLosses', losses);
-        setText('heroKD', kd);
+    setText('heroWins', wins);
+    setText('heroLosses', losses);
+    setText('heroKD', kd);
 
         // Atualizar nível baseado em total de partidas (1 a cada 10 jogos)
         const level = Math.floor(gamesPlayed / 10) + 1;
