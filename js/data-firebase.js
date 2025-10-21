@@ -29,6 +29,7 @@ const RankedData = {
     initialized: false,
     _rt: { player: null, pending: null, matches: null, leaderboard: null },
     _lastMMR: {},
+    _seqRef: null,
     
     // Initialize
     async init() {
@@ -36,12 +37,17 @@ const RankedData = {
         
         // Wait for Firebase to be ready
         await waitForFirebase();
+        this._seqRef = () => db.collection('meta').doc('sequences');
         
         // Listen to auth state
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 this.currentUserId = user.uid;
                 await this.loadUserData();
+                // Ensure legacy players receive a sequential number
+                if (this.currentUser) {
+                    await this.ensurePlayerNumber(this.currentUser);
+                }
                 await this.loadPendingConfirmations(); // Load pending confirmations
                 // Start realtime listeners
                 this.subscribeAllRealtime();
@@ -60,6 +66,60 @@ const RankedData = {
         
         this.initialized = true;
         console.log('✅ RankedData initialized');
+    },
+
+    // Allocate next sequential player number using a Firestore transaction
+    async allocateNextPlayerNumber() {
+        if (!firebaseReady) await waitForFirebase();
+        const ref = this._seqRef();
+        const assigned = await db.runTransaction(async (tx) => {
+            const snap = await tx.get(ref);
+            let next = 1;
+            if (!snap.exists) {
+                // Initialize sequence
+                tx.set(ref, { nextPlayerNumber: 2, createdAt: Date.now(), updatedAt: Date.now() });
+                return 1;
+            } else {
+                const data = snap.data() || {};
+                next = typeof data.nextPlayerNumber === 'number' ? data.nextPlayerNumber : 1;
+                tx.update(ref, { nextPlayerNumber: next + 1, updatedAt: Date.now() });
+                return next;
+            }
+        });
+        return assigned;
+    },
+
+    // Ensure a player has a sequential number; allocates and patches if missing
+    async ensurePlayerNumber(username) {
+        try {
+            const player = await this.getPlayer(username, true);
+            if (!player) return false;
+            if (typeof player.playerNumber === 'number' && player.playerNumber > 0) return true;
+            const num = await this.allocateNextPlayerNumber();
+            const patch = { playerNumber: num, playerNumberStr: String(num).padStart(2, '0') };
+            await this.updatePlayerPartial(username, patch);
+            return true;
+        } catch (e) {
+            console.error('❌ ensurePlayerNumber failed:', e);
+            return false;
+        }
+    },
+
+    // Partial update for player (avoids full overwrite)
+    async updatePlayerPartial(username, patch) {
+        try {
+            const current = await this.getPlayer(username, true);
+            if (!current || !current.userId) {
+                console.error('❌ Cannot patch player (missing userId):', username);
+                return false;
+            }
+            await db.collection('players').doc(current.userId).update(patch);
+            this.players[username] = { ...current, ...patch };
+            return true;
+        } catch (err) {
+            console.error('❌ Error in updatePlayerPartial:', err);
+            return false;
+        }
     },
 
     // Subscribe to all realtime feeds relevant to current user
@@ -283,6 +343,10 @@ const RankedData = {
             const userId = userCredential.user.uid;
             
             // Create player document in Firestore
+            // Allocate sequential number
+            let seqNum = 0;
+            try { seqNum = await this.allocateNextPlayerNumber(); } catch (e) { console.warn('⚠️ Could not allocate player number, defaulting to 0', e); }
+
             const playerData = {
                 userId: userId,
                 username: username,
@@ -300,6 +364,8 @@ const RankedData = {
                 createdAt: Date.now(),
                 lastPlayed: null,
                 achievements: [],
+                playerNumber: seqNum || 0,
+                playerNumberStr: seqNum ? String(seqNum).padStart(2, '0') : null,
                 seasonStats: {
                     [this.currentSeason]: {
                         wins: 0,
@@ -351,6 +417,10 @@ const RankedData = {
                 this.currentUserId = userCredential.user.uid;
                 this.currentUser = playerData.username;
                 this.players[this.currentUser] = playerData;
+                // Backfill sequential number if missing
+                if (typeof playerData.playerNumber !== 'number' || playerData.playerNumber <= 0) {
+                    await this.ensurePlayerNumber(this.currentUser);
+                }
                 console.log('✅ Dados do jogador carregados:', this.currentUser);
                 return true;
             } else {

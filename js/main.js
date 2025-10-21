@@ -107,6 +107,14 @@ async function loginWithGoogle() {
         if (!playerDoc.exists) {
             // Create new player profile
             console.log('🆕 Criando perfil para novo usuário Google...');
+            // Allocate sequential number if possible
+            let seqNum = 0;
+            try {
+                if (typeof RankedData.allocateNextPlayerNumber === 'function') {
+                    seqNum = await RankedData.allocateNextPlayerNumber();
+                }
+            } catch (_) {}
+
             const playerData = {
                 username: username,
                 email: user.email,
@@ -120,6 +128,8 @@ async function loginWithGoogle() {
                 totalDeaths: 0,
                 createdAt: new Date().toISOString(),
                 lastLogin: new Date().toISOString(),
+                playerNumber: seqNum || 0,
+                playerNumberStr: seqNum ? String(seqNum).padStart(2, '0') : null,
                 seasonStats: {
                     [RankedData.currentSeason]: {
                         wins: 0,
@@ -141,6 +151,10 @@ async function loginWithGoogle() {
             RankedData.currentUserId = user.uid;
             RankedData.currentUser = playerData.username;
             RankedData.players[playerData.username] = playerData;
+            // Ensure sequential number exists for legacy users
+            if (typeof playerData.playerNumber !== 'number' || playerData.playerNumber <= 0) {
+                await RankedData.ensurePlayerNumber(RankedData.currentUser);
+            }
             
             UI.showNotification('Bem-vindo de volta, ' + playerData.username + '!', 'success');
         }

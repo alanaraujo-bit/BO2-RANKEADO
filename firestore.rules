@@ -1,6 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Meta collection for app-wide sequences/counters
+    match /meta/{docId} {
+      allow read: if true;
+      // Allow authenticated users to update sequences via transactions
+      allow create, update: if request.auth != null;
+      allow delete: if false;
+    }
     // Players collection
     match /players/{userId} {
       // Anyone can read player profiles (for leaderboard)
