@@ -1069,10 +1069,10 @@ select.form-input,
    ============================================================================ */
 
 .notifications-dropdown {
-    position: absolute;
-    top: 100%;
-    right: var(--space-6);
-    margin-top: var(--space-2);
+    position: fixed; /* fix: keep anchored to viewport instead of layout flow */
+    top: 72px; /* just below navbar */
+    right: 24px;
+    margin-top: 0;
     width: 380px;
     max-height: 500px;
     background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(20, 20, 20, 0.98));
@@ -1082,7 +1082,7 @@ select.form-input,
     box-shadow: var(--shadow-2xl);
     overflow: hidden;
     display: none;
-    z-index: var(--z-dropdown);
+    z-index: 10000; /* ensure it overlays page content */
     animation: slideDown 0.2s ease-out;
 }
 

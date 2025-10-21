@@ -352,7 +352,7 @@ const UI = {
             color: var(--text-primary);
             font-size: 1.1em;
             font-weight: 600;
-            z-index: 10000;
+            z-index: 11000;
             box-shadow: 0 4px 20px ${colors[type]}40;
             animation: slideInRight 0.3s ease;
         `;
