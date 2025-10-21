@@ -765,8 +765,11 @@ async function openPlayerProfile(username) {
         const profileLosses = document.getElementById('profileLosses');
         const profileWinrate = document.getElementById('profileWinrate');
         
-        if (modalTitle) modalTitle.textContent = `PERFIL DE ${username.toUpperCase()}`;
+    if (modalTitle) modalTitle.textContent = `PERFIL DE ${username.toUpperCase()}`;
         if (profileUsername) profileUsername.textContent = username;
+    const idStr = (playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00'));
+    const profileUserId = document.getElementById('profileUserId');
+    if (profileUserId) profileUserId.textContent = `#${idStr}`;
         if (profileRankBadge) profileRankBadge.textContent = rankData.name;
         if (profileRankIcon) profileRankIcon.textContent = rankData.icon;
     if (profileMMR) profileMMR.textContent = playerData.mmr || 999;

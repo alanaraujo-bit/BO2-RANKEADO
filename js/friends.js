@@ -612,6 +612,9 @@ class FriendsSystem {
             // Update modal content
             document.getElementById('profileModalTitle').textContent = `PERFIL DE ${username.toUpperCase()}`;
             document.getElementById('profileUsername').textContent = username;
+            const idStr = (playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00'));
+            const profileUserId = document.getElementById('profileUserId');
+            if (profileUserId) profileUserId.textContent = `#${idStr}`;
             document.getElementById('profileRankBadge').textContent = rankData.name;
             document.getElementById('profileRankIcon').textContent = rankData.icon;
             document.getElementById('profileMMR').textContent = playerData.mmr || 999;
