@@ -441,17 +441,45 @@ const RankedData = {
     // Get player matches (for history)
     async getPlayerMatches(username, limit = 20) {
         try {
-            const matchesSnapshot = await db.collection('matches')
+            // Tenta via players[] (novo padrão)
+            let query = db.collection('matches')
                 .where('players', 'array-contains', username)
                 .orderBy('timestamp', 'desc')
-                .limit(limit)
-                .get();
-            
-            const matches = [];
-            matchesSnapshot.forEach((doc) => {
-                matches.push({ id: doc.id, ...doc.data() });
-            });
-            
+                .limit(limit);
+
+            let matchesSnapshot = null;
+            try {
+                matchesSnapshot = await query.get();
+            } catch (e) {
+                console.warn('players[] query failed, falling back to OR query on playerA/playerB', e);
+            }
+
+            let matches = [];
+            if (matchesSnapshot && !matchesSnapshot.empty) {
+                matchesSnapshot.forEach((doc) => {
+                    matches.push({ id: doc.id, ...doc.data() });
+                });
+            } else {
+                // Fallback: buscar por playerA==username e playerB==username e unir
+                const [aSnap, bSnap] = await Promise.all([
+                    db.collection('matches')
+                        .where('playerA', '==', username)
+                        .orderBy('timestamp', 'desc')
+                        .limit(limit)
+                        .get(),
+                    db.collection('matches')
+                        .where('playerB', '==', username)
+                        .orderBy('timestamp', 'desc')
+                        .limit(limit)
+                        .get()
+                ]);
+
+                const mapDoc = (doc) => ({ id: doc.id, ...doc.data() });
+                matches = [...aSnap.docs.map(mapDoc), ...bSnap.docs.map(mapDoc)]
+                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                    .slice(0, limit);
+            }
+
             return matches;
         } catch (error) {
             console.error('Error getting player matches:', error);

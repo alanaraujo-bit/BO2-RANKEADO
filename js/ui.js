@@ -212,7 +212,9 @@ const UI = {
     // Render match history
     async renderHistory() {
         try {
-            const matches = await MatchSystem.getMatchHistory(RankedData.currentUser);
+            // Usar RankedData.getPlayerMatches para suportar tanto LocalStorage quanto Firebase,
+            // e para lidar com documentos antigos sem players[]
+            const matches = await RankedData.getPlayerMatches(RankedData.currentUser);
             const container = document.getElementById('matchHistory');
             
             if (!container) return;

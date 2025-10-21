@@ -228,8 +228,21 @@ const RankedData = {
     
     // Get player match history
     getPlayerMatches(username, limit = 20) {
+        if (!Array.isArray(this.matches)) return [];
+
+        // Migrate legacy matches (add players array if missing)
+        let mutated = false;
+        this.matches.forEach(m => {
+            if (!m.players && (m.playerA || m.playerB)) {
+                m.players = [m.playerA, m.playerB].filter(Boolean);
+                mutated = true;
+            }
+        });
+        if (mutated) this.save();
+
         return this.matches
-            .filter(m => m.playerA === username || m.playerB === username)
+            .filter(m => Array.isArray(m.players) ? m.players.includes(username) : (m.playerA === username || m.playerB === username))
+            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
             .slice(0, limit);
     },
     
