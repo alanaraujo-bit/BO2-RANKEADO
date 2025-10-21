@@ -388,6 +388,19 @@ const MMRSystem = {
         } catch (e) {
             console.error('Failed to append match history to players:', e);
         }
+
+        // Persist per-match MMR deltas for UI (history page)
+        try {
+            const mmrDelta = {
+                winner: { username: winner, change: winnerResult?.change ?? mmrChanges.winnerChange },
+                loser: { username: loser, change: loserResult?.change ?? mmrChanges.loserChange }
+            };
+            if (typeof RankedData.updateMatch === 'function' && matchData.id) {
+                await RankedData.updateMatch(matchData.id, { mmrDelta });
+            }
+        } catch (e) {
+            console.warn('Could not persist mmrDelta on match:', e);
+        }
         
         console.log('Players updated:', { winnerResult, loserResult });
         

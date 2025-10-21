@@ -402,6 +402,22 @@ const RankedData = {
             return false;
         }
     },
+
+    // Update match document (partial)
+    async updateMatch(matchId, updates) {
+        try {
+            await db.collection('matches').doc(matchId).update(updates);
+            // Update local cache copy if present
+            const idx = this.matches.findIndex(m => m.id === matchId);
+            if (idx !== -1) {
+                this.matches[idx] = { ...this.matches[idx], ...updates };
+            }
+            return true;
+        } catch (error) {
+            console.error('Error updating match:', error);
+            return false;
+        }
+    },
     
     // Get leaderboard
     async getLeaderboard(type = 'global') {

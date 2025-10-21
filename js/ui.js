@@ -229,6 +229,14 @@ const UI = {
             const opponent = match.playerA === RankedData.currentUser ? match.playerB : match.playerA;
             const kd = (match.kills / Math.max(1, match.deaths)).toFixed(2);
             const date = new Date(match.timestamp).toLocaleString('pt-BR');
+            // Try to read per-match MMR change if present
+            let mmrChangeText = '';
+            if (match.mmrDelta) {
+                const delta = isWinner ? match.mmrDelta.winner?.change : match.mmrDelta.loser?.change;
+                if (typeof delta === 'number') {
+                    mmrChangeText = `<div style="color: ${delta >= 0 ? 'var(--success)' : 'var(--error)'}; font-size: 0.9em;">${delta >= 0 ? '+' : ''}${delta} MMR</div>`;
+                }
+            }
             
             return `
                 <div style="background: linear-gradient(135deg, ${isWinner ? 'rgba(0, 255, 0, 0.05)' : 'rgba(255, 0, 0, 0.05)'} 0%, rgba(10, 10, 10, 0.9) 100%);
@@ -245,6 +253,7 @@ const UI = {
                         <div style="font-size: 1.8em; color: var(--primary-orange);">${match.kills}/${match.deaths}</div>
                         <div style="color: var(--neon-blue);">K/D: ${kd}</div>
                         ${match.confirmed ? '<div style="color: var(--success); font-size: 0.9em;">Confirmado</div>' : '<div style="color: var(--warning); font-size: 0.9em;">Pendente</div>'}
+                        ${mmrChangeText}
                     </div>
                 </div>
             `;

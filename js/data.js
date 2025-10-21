@@ -207,6 +207,15 @@ const RankedData = {
         this.save();
     },
     
+    // Update an existing match by id
+    updateMatch(matchId, updates) {
+        const idx = this.matches.findIndex(m => m.id === matchId);
+        if (idx === -1) return false;
+        this.matches[idx] = { ...this.matches[idx], ...updates };
+        this.save();
+        return true;
+    },
+
     // Confirm match
     confirmMatch(matchId) {
         const pendingIndex = this.pendingConfirmations.findIndex(p => p.matchId === matchId);
