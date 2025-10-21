@@ -441,10 +441,9 @@ const RankedData = {
     // Get player matches (for history)
     async getPlayerMatches(username, limit = 20) {
         try {
-            // Tenta via players[] (novo padrão)
+            // Tenta via players[] (novo padrão) - sem orderBy para evitar necessidade de índice composto
             let query = db.collection('matches')
                 .where('players', 'array-contains', username)
-                .orderBy('timestamp', 'desc')
                 .limit(limit);
 
             let matchesSnapshot = null;
@@ -464,12 +463,10 @@ const RankedData = {
                 const [aSnap, bSnap] = await Promise.all([
                     db.collection('matches')
                         .where('playerA', '==', username)
-                        .orderBy('timestamp', 'desc')
                         .limit(limit)
                         .get(),
                     db.collection('matches')
                         .where('playerB', '==', username)
-                        .orderBy('timestamp', 'desc')
                         .limit(limit)
                         .get()
                 ]);
