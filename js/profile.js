@@ -146,6 +146,10 @@ const ProfileManager = {
         setText('heroWins', wins);
         setText('heroLosses', losses);
         setText('heroKD', kd);
+
+        // Atualizar nível baseado em total de partidas (1 a cada 10 jogos)
+        const level = Math.floor(gamesPlayed / 10) + 1;
+        setText('profileLevel', level);
     },
 
     // 3️⃣ Update Match History
