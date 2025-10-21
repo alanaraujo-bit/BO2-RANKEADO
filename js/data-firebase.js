@@ -73,10 +73,21 @@ const RankedData = {
         if (!firebaseReady) await waitForFirebase();
         const ref = this._seqRef();
         try {
+            // If players collection is empty (fresh start), reset sequence to 1
+            let shouldReset = false;
+            try {
+                const anyPlayer = await db.collection('players').limit(1).get();
+                shouldReset = anyPlayer.empty;
+            } catch (_) {}
+
             const assigned = await db.runTransaction(async (tx) => {
                 const snap = await tx.get(ref);
                 let next = 1;
-                if (!snap.exists) {
+                if (shouldReset) {
+                    // Reset/start sequence
+                    tx.set(ref, { nextPlayerNumber: 2, createdAt: Date.now(), updatedAt: Date.now() }, { merge: true });
+                    return 1;
+                } else if (!snap.exists) {
                     // Initialize sequence
                     tx.set(ref, { nextPlayerNumber: 2, createdAt: Date.now(), updatedAt: Date.now() });
                     return 1;

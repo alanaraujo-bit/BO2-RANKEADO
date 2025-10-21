@@ -139,7 +139,7 @@ async function loginWithGoogle() {
                 }
             };
             
-            await firebase.firestore().collection('players').doc(user.uid).set(playerData);
+            await firebase.firestore().collection('players').doc(user.uid).set({ ...playerData, userId: user.uid });
             RankedData.currentUserId = user.uid;
             RankedData.currentUser = username;
             RankedData.players[username] = playerData;
@@ -767,7 +767,7 @@ async function openPlayerProfile(username) {
         
     if (modalTitle) modalTitle.textContent = `PERFIL DE ${username.toUpperCase()}`;
         if (profileUsername) profileUsername.textContent = username;
-    const idStr = (playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00'));
+    const idStr = (playerData.playerNumberStr || (typeof playerData.playerNumber === 'number' && playerData.playerNumber > 0 ? String(playerData.playerNumber).padStart(2, '0') : '00'));
     const profileUserId = document.getElementById('profileUserId');
     if (profileUserId) profileUserId.textContent = `#${idStr}`;
         if (profileRankBadge) profileRankBadge.textContent = rankData.name;
