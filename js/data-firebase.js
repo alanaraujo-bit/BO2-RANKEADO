@@ -134,13 +134,21 @@ const RankedData = {
                 });
             });
             const wasEmpty = (this.pendingConfirmations || []).length === 0;
-            const newCount = list.length - (this.pendingConfirmations || []).length;
+            const prevLen = (this.pendingConfirmations || []).length;
+            const addedCount = (snap.docChanges ? snap.docChanges().filter(c => c.type === 'added').length : 0);
+            const newCount = list.length - prevLen;
             this.pendingConfirmations = list;
-            if (newCount > 0 && window.UI && typeof UI.showNotification === 'function') {
-                UI.showNotification(`📥 ${newCount} nova(s) partida(s) pendente(s) para confirmar`, 'info');
+            // Notify only when there are real additions or on first load from empty -> some
+            if ((addedCount > 0 || (wasEmpty && list.length > 0)) && window.UI && typeof UI.showNotification === 'function') {
+                const count = addedCount || list.length;
+                UI.showNotification(`📥 ${count} nova(s) partida(s) pendente(s) para confirmar`, 'info');
             }
             if (window.UI && typeof UI.updatePendingMatches === 'function') {
                 UI.updatePendingMatches();
+            }
+            // Keep notification bell/badge in sync on Home without requiring page refresh
+            if (typeof window.updateNotifications === 'function') {
+                window.updateNotifications();
             }
         });
         return unsub;
@@ -156,14 +164,25 @@ const RankedData = {
                 const idx = this.matches.findIndex(x => x.id === m.id);
                 if (change.type === 'added') {
                     if (idx === -1) this.matches.push(m); else this.matches[idx] = m;
-                    if (!m.confirmed && m.reporter && m.opponent === username) {
-                        if (window.UI) UI.showNotification(`📄 Partida reportada por ${m.reporter}`, 'info');
+                    // Notify opponent that a new match was reported against them
+                    const opponent = (m.playerA === username) ? m.playerB : (m.playerB === username ? m.playerA : null);
+                    const isOpponent = opponent !== null; // user is part of this match
+                    if (!m.confirmed && m.reporter && isOpponent && m.reporter !== username) {
+                        if (window.UI && typeof UI.showNotification === 'function') {
+                            UI.showNotification(`📄 Partida reportada por ${m.reporter} (vs ${opponent})`, 'info');
+                        }
+                        if (typeof window.updateNotifications === 'function') {
+                            window.updateNotifications();
+                        }
                     }
                 } else if (change.type === 'modified') {
                     const prev = idx !== -1 ? this.matches[idx] : null;
                     if (idx === -1) this.matches.push(m); else this.matches[idx] = m;
                     if (prev && !prev.confirmed && m.confirmed) {
-                        if (window.UI) UI.showNotification('✅ Partida confirmada!', 'success');
+                        if (window.UI && typeof UI.showNotification === 'function') UI.showNotification('✅ Partida confirmada!', 'success');
+                        if (typeof window.updateNotifications === 'function') {
+                            window.updateNotifications();
+                        }
                     }
                 } else if (change.type === 'removed') {
                     if (idx !== -1) this.matches.splice(idx, 1);

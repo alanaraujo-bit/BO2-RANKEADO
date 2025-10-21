@@ -37,19 +37,27 @@ Object.defineProperty(window, 'currentUser', {
 
 // Initialize application on page load
 document.addEventListener('DOMContentLoaded', async function() {
-    // Initialize data
-    await RankedData.init();
-    
+    // Initialize data and start realtime as soon as possible
+    try {
+        await RankedData.init();
+        // When already authenticated from previous session, make sure listeners are active
+        if (RankedData.currentUser) {
+            RankedData.subscribeAllRealtime();
+        }
+    } catch (e) {
+        console.error('❌ Failed to initialize RankedData:', e);
+    }
+
     // Update UI
     updateUserDisplay();
     await UI.updateAllViews();
-    
+
     // Setup event listeners
     setupEventListeners();
-    
+
     // Show home page
     UI.showPage('home');
-    
+
     console.log('BO2 Ranked System initialized');
 });
 

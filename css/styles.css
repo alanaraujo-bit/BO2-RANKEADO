@@ -349,6 +349,10 @@ a:hover {
     transition: all var(--transition-fast);
 }
 
+.notification-bell.pulse {
+    animation: bellPulse 0.8s ease;
+}
+
 .notification-bell:hover {
     background: rgba(255, 255, 255, 0.08);
     color: var(--neutral-100);
@@ -1095,6 +1099,12 @@ select.form-input,
 
 .notifications-dropdown.active {
     display: block;
+}
+
+@keyframes bellPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    100% { transform: scale(1); }
 }
 
 .notifications-header {

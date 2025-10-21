@@ -343,8 +343,8 @@ const UI = {
         
         notification.style.cssText = `
             position: fixed;
-            top: 80px;
-            right: 20px;
+            bottom: 24px;
+            right: 24px;
             background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
             border: 2px solid ${colors[type]};
             border-radius: 10px;
@@ -363,6 +363,13 @@ const UI = {
             notification.style.animation = 'slideOutRight 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 4000);
+
+        // Nudge the bell to draw attention
+        const bell = document.getElementById('notificationBell');
+        if (bell) {
+            bell.classList.add('pulse');
+            setTimeout(() => bell.classList.remove('pulse'), 800);
+        }
     },
 
     // Update Hero Section (Home Page)
