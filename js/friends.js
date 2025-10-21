@@ -629,6 +629,16 @@ class FriendsSystem {
             setText('modalWR', `${winrate}%`);
             setText('modalMatches', gamesPlayed);
 
+            // Rank progress
+            const progress = RankSystem.getRankProgress(playerData.mmr || 999);
+            const progText = progress.next
+                ? `${progress.current.name} → ${progress.next.name} • ${progress.progress}% (faltam ${progress.mmrNeeded} MMR)`
+                : `${progress.current.name} • Máximo`;
+            setText('modalRankProgressText', progText);
+            setText('modalRankProgressValue', `${progress.progress}%`);
+            const bar = document.getElementById('modalRankProgressBar');
+            if (bar) bar.style.width = `${progress.progress}%`;
+
             // Action buttons
             const actionButtons = document.getElementById('profileActionButtons');
             if (actionButtons) {

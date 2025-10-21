@@ -791,6 +791,18 @@ async function openPlayerProfile(username) {
         if (modalWR) modalWR.textContent = winrate + '%';
         if (modalMatches) modalMatches.textContent = playerData.gamesPlayed || 0;
 
+        // Rank progress (fallback path)
+        const progress = RankSystem.getRankProgress(playerData.mmr || 999);
+        const progText = progress.next
+            ? `${progress.current.name} → ${progress.next.name} • ${progress.progress}% (faltam ${progress.mmrNeeded} MMR)`
+            : `${progress.current.name} • Máximo`;
+        const modalRankProgressText = document.getElementById('modalRankProgressText');
+        const modalRankProgressValue = document.getElementById('modalRankProgressValue');
+        const modalRankProgressBar = document.getElementById('modalRankProgressBar');
+        if (modalRankProgressText) modalRankProgressText.textContent = progText;
+        if (modalRankProgressValue) modalRankProgressValue.textContent = `${progress.progress}%`;
+        if (modalRankProgressBar) modalRankProgressBar.style.width = `${progress.progress}%`;
+
         // Action buttons
         const actionButtons = document.getElementById('profileActionButtons');
         const currentUser = RankedData.currentUser;
