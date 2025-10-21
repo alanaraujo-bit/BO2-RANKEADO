@@ -27,6 +27,8 @@ const RankedData = {
     pendingConfirmations: [],
     currentSeason: 1,
     initialized: false,
+    _rt: { player: null, pending: null, matches: null, leaderboard: null },
+    _lastMMR: {},
     
     // Initialize
     async init() {
@@ -41,6 +43,8 @@ const RankedData = {
                 this.currentUserId = user.uid;
                 await this.loadUserData();
                 await this.loadPendingConfirmations(); // Load pending confirmations
+                // Start realtime listeners
+                this.subscribeAllRealtime();
                 if (window.updateUserDisplay) {
                     window.updateUserDisplay();
                 }
@@ -49,12 +53,142 @@ const RankedData = {
                 this.currentUserId = null;
                 this.currentUser = null;
                 this.pendingConfirmations = []; // Clear pending confirmations
+                this.unsubscribeAllRealtime();
                 console.log('User logged out');
             }
         });
         
         this.initialized = true;
         console.log('✅ RankedData initialized');
+    },
+
+    // Subscribe to all realtime feeds relevant to current user
+    subscribeAllRealtime() {
+        if (!this.currentUser) return;
+        this.unsubscribeAllRealtime();
+        this._rt.player = this.subscribeToPlayer(this.currentUser);
+        this._rt.pending = this.subscribeToPendingConfirmations(this.currentUser);
+        this._rt.matches = this.subscribeToMatchesForUser(this.currentUser);
+        this._rt.leaderboard = this.subscribeToLeaderboard();
+    },
+
+    unsubscribeAllRealtime() {
+        Object.keys(this._rt).forEach(k => {
+            try { if (typeof this._rt[k] === 'function') this._rt[k](); } catch (_) {}
+            this._rt[k] = null;
+        });
+    },
+
+    // Realtime: listen to current player doc
+    subscribeToPlayer(username) {
+        const q = db.collection('players').where('username', '==', username).limit(1);
+        const unsub = q.onSnapshot((snap) => {
+            if (snap.empty) return;
+            const data = snap.docs[0].data();
+            const prev = this.players[username];
+            this.players[username] = data;
+
+            // Detect MMR changes for in-app notification
+            const last = this._lastMMR[username];
+            if (typeof data.mmr === 'number' && last !== undefined && data.mmr !== last) {
+                const delta = data.mmr - last;
+                if (window.UI && typeof UI.showNotification === 'function') {
+                    UI.showNotification(`${delta >= 0 ? '+' : ''}${delta} MMR`, delta >= 0 ? 'success' : 'warning');
+                }
+            }
+            this._lastMMR[username] = data.mmr;
+
+            if (window.UI && typeof UI.updateAllViews === 'function') {
+                UI.updateAllViews();
+            }
+        });
+        return unsub;
+    },
+
+    // Realtime: pending confirmations for current user
+    subscribeToPendingConfirmations(username) {
+        const q = db.collection('pendingConfirmations').where('opponent', '==', username);
+        const unsub = q.onSnapshot((snap) => {
+            const list = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                list.push({
+                    id: doc.id,
+                    matchId: d.matchId,
+                    reporter: d.reporter,
+                    opponent: d.opponent,
+                    timestamp: d.timestamp,
+                    matchData: {
+                        id: d.matchId,
+                        playerA: d.playerA,
+                        playerB: d.playerB,
+                        winner: d.winner,
+                        loser: d.loser,
+                        kills: d.kills,
+                        deaths: d.deaths,
+                        map: d.map,
+                        mode: d.mode,
+                        reporter: d.reporter,
+                        confirmed: false
+                    }
+                });
+            });
+            const wasEmpty = (this.pendingConfirmations || []).length === 0;
+            const newCount = list.length - (this.pendingConfirmations || []).length;
+            this.pendingConfirmations = list;
+            if (newCount > 0 && window.UI && typeof UI.showNotification === 'function') {
+                UI.showNotification(`📥 ${newCount} nova(s) partida(s) pendente(s) para confirmar`, 'info');
+            }
+            if (window.UI && typeof UI.updatePendingMatches === 'function') {
+                UI.updatePendingMatches();
+            }
+        });
+        return unsub;
+    },
+
+    // Realtime: matches involving current user
+    subscribeToMatchesForUser(username) {
+        const q = db.collection('matches').where('players', 'array-contains', username);
+        const unsub = q.onSnapshot((snap) => {
+            const changes = snap.docChanges();
+            changes.forEach(change => {
+                const m = { id: change.doc.id, ...change.doc.data() };
+                const idx = this.matches.findIndex(x => x.id === m.id);
+                if (change.type === 'added') {
+                    if (idx === -1) this.matches.push(m); else this.matches[idx] = m;
+                    if (!m.confirmed && m.reporter && m.opponent === username) {
+                        if (window.UI) UI.showNotification(`📄 Partida reportada por ${m.reporter}`, 'info');
+                    }
+                } else if (change.type === 'modified') {
+                    const prev = idx !== -1 ? this.matches[idx] : null;
+                    if (idx === -1) this.matches.push(m); else this.matches[idx] = m;
+                    if (prev && !prev.confirmed && m.confirmed) {
+                        if (window.UI) UI.showNotification('✅ Partida confirmada!', 'success');
+                    }
+                } else if (change.type === 'removed') {
+                    if (idx !== -1) this.matches.splice(idx, 1);
+                }
+            });
+            // Keep UI fresh
+            if (window.UI && typeof UI.updateAllViews === 'function') {
+                UI.updateAllViews();
+            }
+        });
+        return unsub;
+    },
+
+    // Realtime: leaderboard updates (top 50)
+    subscribeToLeaderboard() {
+        const q = db.collection('players').orderBy('mmr', 'desc').limit(50);
+        const unsub = q.onSnapshot(() => {
+            if (window.UI && typeof UI.updateTopPlayers === 'function') {
+                UI.updateTopPlayers();
+            }
+            if (window.UI && typeof UI.updatePodium === 'function') {
+                UI.updatePodium();
+            }
+        });
+        return unsub;
     },
     
     // Load user data from Firestore
