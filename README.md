@@ -298,3 +298,80 @@ Desenvolvido para a comunidade **Call of Duty: Black Ops 2 Plutonium**
 **Versão:** 1.0.0  
 **Data:** Outubro 2025  
 **Status:** ✅ Funcional e pronto para uso!
+
+---
+
+## ☁️ Vercel + VM (Windows Server) — Passo a passo rápido
+
+1) Defina o segredo na Vercel (Dashboard → Project Settings → Environment Variables):
+- Key: `BO2_SECRET`
+- Value: `uma_chave_segura_qualquer`
+- Ambiente: Production (e Preview, se quiser)
+Depois, faça um novo deploy.
+
+2) Teste a função:
+```
+POST https://bo2-ranked.vercel.app/api/update_stats
+Header: Authorization: Bearer uma_chave_segura_qualquer
+Body: {"ping": true}
+```
+
+3) Na sua VM (Windows Server 2022):
+- Instale Python e requests:
+```powershell
+winget install -e --id Python.Python.3.12
+py -m pip install --upgrade pip
+py -m pip install requests
+```
+- Copie a pasta `backend_py` para a VM (conto: `bo2_log_uploader.py` e `run_uploader.cmd`).
+- Edite `run_uploader.cmd` na VM e ajuste:
+  - `BO2_SECRET` = o mesmo da Vercel
+  - `BO2_API_URL` = https://bo2-ranked.vercel.app/api/update_stats
+  - `BO2_LOG_FILE` = caminho do seu log
+- Execute para testar:
+```powershell
+C:\caminho\para\backend_py\run_uploader.cmd
+```
+- Veja logs em tempo real:
+```powershell
+Get-Content -Path "C:\caminho\para\backend_py\uploader.out.log" -Wait
+```
+
+4) Inicie automaticamente com o Windows (Agendador de Tarefas):
+```powershell
+schtasks /Create /TN "BO2 Log Uploader" /SC ONSTART /RL HIGHEST /TR "C:\caminho\para\backend_py\run_uploader.cmd" /RU "SYSTEM"
+schtasks /Run /TN "BO2 Log Uploader"
+```
+
+Se a resposta for 403, a chave está diferente. Se houver timeout, a VM não está alcançando a URL — verifique DNS/firewall.
+
+## 🔐 Variáveis de ambiente (.env) e execução
+
+Para proteger a chave usada pelo servidor e pelo uploader Python, defina a variável `BO2_SECRET`.
+
+1) Crie um arquivo `.env` na raiz do projeto:
+
+```
+BO2_SECRET=uma_chave_segura_qualquer
+```
+
+2) Alternativamente, você pode definir direto no Windows PowerShell:
+
+```powershell
+$env:BO2_SECRET="uma_chave_segura_qualquer"
+```
+
+3) Inicie o servidor Node:
+
+```powershell
+npm start
+```
+
+4) Rode o script Python (na pasta backend_py):
+
+```powershell
+cd backend_py
+py bo2_log_uploader.py
+```
+
+O servidor usa `process.env.BO2_SECRET` (com fallback `fallback_secreto`) e o Python lê `os.getenv('BO2_SECRET', 'fallback_secreto')`. Garanta que ambos usem o mesmo valor.

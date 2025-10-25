@@ -1,0 +1,5 @@
+# Exemplo de log do jogo
+# Adicione novas linhas enquanto o script roda para testar
+KILL: PlayerA matou PlayerB (Headshot)
+KILL: Alan matou Bruno (Headshot)
+KILL: Maria matou João
