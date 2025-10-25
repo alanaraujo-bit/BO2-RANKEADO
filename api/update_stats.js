@@ -38,6 +38,21 @@ export default async function handler(req, res) {
     console.log('[update_stats] erro ao gravar /tmp/events.json:', e && e.message);
   }
 
+  // Tenta persistir no Firestore (se estiver configurado)
+  try {
+    const { getFirestoreSafe, isFirebaseConfigured } = await import('./_firebaseAdmin.js');
+    if (await isFirebaseConfigured()) {
+      const db = await getFirestoreSafe();
+      const doc = {
+        ts: Date.now(),
+        ...body,
+      };
+      await db.collection('events').add(doc);
+    }
+  } catch (e) {
+    console.log('[update_stats] Firestore skip/erro:', e && e.message);
+  }
+
   // Confirma o recebimento
   return res.status(200).json({ ok: true, recebido: body });
 }
