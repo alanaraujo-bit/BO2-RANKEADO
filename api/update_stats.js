@@ -13,8 +13,31 @@ export default async function handler(req, res) {
   }
 
   const body = req.body || {};
-  console.log('📩 Dados recebidos do servidor (Vercel /api):', body);
+  console.log('[update_stats] recebido:', body);
 
-  // Por enquanto, apenas confirma o recebimento
+  // Armazena temporariamente os últimos eventos em /tmp (válido apenas enquanto a função estiver quente)
+  try {
+    const fsMod = await import('fs');
+    const fsp = fsMod.promises;
+    const path = '/tmp/events.json';
+
+    let events = [];
+    try {
+      const data = await fsp.readFile(path, 'utf8');
+      events = JSON.parse(data);
+      if (!Array.isArray(events)) events = [];
+    } catch (e) {
+      events = [];
+    }
+
+    events.push({ ts: Date.now(), event: body });
+    if (events.length > 100) events = events.slice(-100);
+
+    await fsp.writeFile(path, JSON.stringify(events), 'utf8');
+  } catch (e) {
+    console.log('[update_stats] erro ao gravar /tmp/events.json:', e && e.message);
+  }
+
+  // Confirma o recebimento
   return res.status(200).json({ ok: true, recebido: body });
 }
