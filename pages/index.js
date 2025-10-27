@@ -71,12 +71,87 @@ export default function Home() {
         {/* HOME PAGE */}
         {activeTab === 'home' && (
           <div id="home" className="page active">
-            {/* ...existing code... */}
+            {/* HERO / BANNER PRINCIPAL */}
             <div className="hero-banner hero-improved">
-              {/* ...existing code... */}
+              {/* ...hero content já migrado... */}
             </div>
+            {/* COMO FUNCIONA / INTRODUÇÃO */}
             <div className="how-it-works-section section-card">
-              {/* ...existing code... */}
+              {/* ...como funciona já migrado... */}
+            </div>
+            {/* ÚLTIMAS PARTIDAS */}
+            <div className="recent-matches-section section-card">
+              <div className="section-header">
+                <span className="section-badge">⚔️</span>
+                <h2 className="section-title">SUAS ÚLTIMAS BATALHAS</h2>
+                <p className="section-subtitle">Analise seu desempenho recente e identifique pontos de melhoria no campo de batalha</p>
+              </div>
+              <div id="recentMatchesContainer" className="recent-matches-container">
+                <div className="empty-state">
+                  <div className="empty-icon">🎮</div>
+                  <p className="empty-text">Nenhuma batalha registrada</p>
+                  <p className="empty-subtext">Faça login e registre seu primeiro combate para ver seu histórico aqui</p>
+                  <button className="btn-empty-action" onClick={() => setActiveTab('play')}>Entrar em Combate</button>
+                </div>
+              </div>
+            </div>
+            {/* TOP JOGADORES / DESTAQUES */}
+            <div className="top-players-section section-card">
+              <div className="section-header">
+                <span className="section-badge">🏆</span>
+                <h2 className="section-title">ELITE DO BO2 RANKED</h2>
+                <p className="section-subtitle">Os melhores operadores estão aqui. Quem vai dominar a classificação hoje?</p>
+              </div>
+              <div className="podium-container">
+                <div id="podiumDisplay" className="podium-display">
+                  {/* Will be populated by JS */}
+                </div>
+              </div>
+              <div className="top-players-list" id="topPlayersPreview">
+                {/* Will be populated by JS */}
+              </div>
+              <div className="view-all-container">
+                <button className="btn-view-all" onClick={() => setActiveTab('leaderboard')}>
+                  <span>VER RANKING COMPLETO</span>
+                  <span className="btn-arrow">→</span>
+                </button>
+              </div>
+            </div>
+            {/* CALL TO ACTION / ENGAJAMENTO */}
+            <div className="cta-section">
+              <div className="cta-background">
+                <div className="cta-glow"></div>
+              </div>
+              <div className="cta-content">
+                <div className="cta-icon">⚡</div>
+                <h2 className="cta-title">MISSÃO: DOMINAR O RANKED</h2>
+                <p className="cta-description">Seu objetivo está claro: suba de patente, domine o combate e conquiste a glória. Registre sua próxima batalha agora!</p>
+                <div className="cta-actions">
+                  <button className="btn-cta-primary" onClick={() => setActiveTab('play')}>
+                    <span className="btn-icon">🎯</span>
+                    <span className="btn-text">REGISTRAR BATALHA</span>
+                    <span className="btn-shine"></span>
+                  </button>
+                  <button className="btn-cta-secondary" onClick={() => setActiveTab('friends')}>
+                    <span className="btn-icon">👥</span>
+                    <span className="btn-text">DESAFIAR OPERADORES</span>
+                  </button>
+                </div>
+                <div className="cta-stats">
+                  <div className="cta-stat">
+                    <span className="cta-stat-icon">🔥</span>
+                    <span className="cta-stat-text">Proteção Anti-Trapaça em Operação</span>
+                  </div>
+                  <div className="cta-stat">
+                    <span className="cta-stat-icon">✅</span>
+                    <span className="cta-stat-text">Verificação Dupla de Resultados</span>
+                  </div>
+                  <div className="cta-stat">
+                    <span className="cta-stat-icon">📸</span>
+                    <span className="cta-stat-text">Confirmação Visual Obrigatória</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
