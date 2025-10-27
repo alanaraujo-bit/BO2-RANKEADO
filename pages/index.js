@@ -475,8 +475,236 @@ export default function Home() {
         )}
         {activeTab === 'profile' && (
           <div id="profile" className="page active">
-            <div className="hero-banner hero-improved">
-              <h2 style={{color: '#fff'}}>Página PERFIL (em construção)</h2>
+            {/* Empty State (Not Logged In) */}
+            <div id="profileNotLoggedIn" className="profile-empty-state">
+              <div className="empty-state">
+                <div className="empty-icon">👤</div>
+                <p className="empty-text">Você precisa estar logado</p>
+                <p className="empty-subtext">Faça login para ver seu perfil e acompanhar suas estatísticas</p>
+                <button className="btn-empty-action">Fazer Login</button>
+              </div>
+            </div>
+            {/* Profile Content (Logged In) - Exemplo visual */}
+            <div id="profileContent" className="profile-container" style={{display: 'none'}}>
+              <div className="profile-hero-section">
+                <div className="profile-hero-bg">
+                  <div className="hero-scanline"></div>
+                </div>
+                <div className="profile-hero-content">
+                  <div className="profile-avatar-wrapper">
+                    <div className="avatar-ring"></div>
+                    <div className="profile-avatar-large" id="profileAvatar">
+                      <span className="avatar-icon-large" id="profileAvatarIcon">🎮</span>
+                    </div>
+                    <div className="avatar-level-badge" id="profileLevelBadge">
+                      <span className="level-text">LV <span id="profileLevel">1</span></span>
+                    </div>
+                  </div>
+                  <div className="profile-hero-info">
+                    <div className="player-identity">
+                      <h1 className="player-name-hero" id="profileName">Jogador</h1>
+                      <span className="player-id-hero" id="profileId">#0000</span>
+                    </div>
+                    <div className="rank-mmr-container">
+                      <div className="rank-display-hero">
+                        <span className="rank-icon-hero" id="profileRankIcon">🥉</span>
+                        <div className="rank-text-hero">
+                          <span className="rank-label-hero">RANK ATUAL</span>
+                          <span className="rank-name-hero" id="profileRankName">BRONZE III</span>
+                        </div>
+                      </div>
+                      <div className="mmr-display-hero">
+                        <div className="mmr-value-hero" id="profileMMR">1000</div>
+                        <div className="mmr-label-hero">MMR Points</div>
+                      </div>
+                    </div>
+                    <div className="rank-progress-hero" id="rankProgressSection">
+                      <div className="progress-info">
+                        <span className="progress-text">Próximo Rank: <strong id="nextRankName">PRATA III</strong></span>
+                        <span className="progress-remaining"><span id="mmrNeeded">200</span> MMR faltam</span>
+                      </div>
+                      <div className="progress-bar-hero">
+                        <div className="progress-fill-hero" id="progressBarFill" style={{width: '0%'}}>
+                          <span className="progress-glow"></span>
+                        </div>
+                        <span className="progress-percentage-hero" id="progressPercentage">0%</span>
+                      </div>
+                      <div className="progress-range">
+                        <span id="currentRankMMR">0</span>
+                        <span id="nextRankMMR">1000</span>
+                      </div>
+                    </div>
+                    <div className="max-rank-badge" id="maxRankMessage" style={{display: 'none'}}>
+                      <span className="max-rank-icon">⚡</span>
+                      <span className="max-rank-text">RANK MÁXIMO ATINGIDO - LENDA!</span>
+                    </div>
+                    <div className="hero-quick-stats">
+                      <div className="quick-stat-item">
+                        <span className="quick-stat-value" id="heroWins">0</span>
+                        <span className="quick-stat-label">Vitórias</span>
+                      </div>
+                      <div className="stat-divider-hero"></div>
+                      <div className="quick-stat-item">
+                        <span className="quick-stat-value" id="heroLosses">0</span>
+                        <span className="quick-stat-label">Derrotas</span>
+                      </div>
+                      <div className="stat-divider-hero"></div>
+                      <div className="quick-stat-item">
+                        <span className="quick-stat-value" id="heroKD">0.00</span>
+                        <span className="quick-stat-label">K/D</span>
+                      </div>
+                    </div>
+                    <div className="hero-actions">
+                      <button className="btn-hero-primary-profile" onClick={() => setActiveTab('play')}>
+                        <span className="btn-icon">⚔️</span>
+                        <span>JOGAR AGORA</span>
+                      </button>
+                      <button className="btn-hero-secondary-profile" onClick={() => setActiveTab('friends')}>
+                        <span className="btn-icon">👥</span>
+                        <span>AMIGOS</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Estatísticas Gerais */}
+              <div className="profile-stats-section">
+                <div className="section-header-profile">
+                  <div className="section-title-wrapper">
+                    <span className="section-icon-profile">📊</span>
+                    <h2 className="section-title-profile">Estatísticas Gerais</h2>
+                  </div>
+                  <p className="section-subtitle-profile">Seu desempenho em números</p>
+                </div>
+                <div className="stats-grid-profile">
+                  <div className="stat-card-profile stat-win-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">✅</span>
+                      <span className="stat-label-profile">Vitórias</span>
+                    </div>
+                    <div className="stat-value-profile" id="statWins">0</div>
+                    <div className="stat-trend-profile">
+                      <span className="trend-icon">↗</span>
+                      <span className="trend-text">Subindo!</span>
+                    </div>
+                  </div>
+                  <div className="stat-card-profile stat-loss-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">❌</span>
+                      <span className="stat-label-profile">Derrotas</span>
+                    </div>
+                    <div className="stat-value-profile" id="statLosses">0</div>
+                  </div>
+                  <div className="stat-card-profile stat-highlight-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">📈</span>
+                      <span className="stat-label-profile">Taxa de Vitória</span>
+                    </div>
+                    <div className="stat-value-profile" id="statWinRate">0%</div>
+                  </div>
+                  <div className="stat-card-profile stat-highlight-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">⚔️</span>
+                      <span className="stat-label-profile">K/D Ratio</span>
+                    </div>
+                    <div className="stat-value-profile" id="statKD">0.00</div>
+                  </div>
+                  <div className="stat-card-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">🔫</span>
+                      <span className="stat-label-profile">Total Kills</span>
+                    </div>
+                    <div className="stat-value-profile" id="statTotalKills">0</div>
+                  </div>
+                  <div className="stat-card-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">💀</span>
+                      <span className="stat-label-profile">Total Deaths</span>
+                    </div>
+                    <div className="stat-value-profile" id="statTotalDeaths">0</div>
+                  </div>
+                  <div className="stat-card-profile stat-special-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">🔥</span>
+                      <span className="stat-label-profile">Melhor Streak</span>
+                    </div>
+                    <div className="stat-value-profile" id="statBestStreak">0</div>
+                  </div>
+                  <div className="stat-card-profile">
+                    <div className="stat-card-header">
+                      <span className="stat-icon-profile">🎮</span>
+                      <span className="stat-label-profile">Total Partidas</span>
+                    </div>
+                    <div className="stat-value-profile" id="statTotalGames">0</div>
+                  </div>
+                </div>
+              </div>
+              {/* Últimas Partidas */}
+              <div className="profile-matches-section">
+                <div className="section-header-profile">
+                  <div className="section-title-wrapper">
+                    <span className="section-icon-profile">⚔️</span>
+                    <h2 className="section-title-profile">Últimas Partidas</h2>
+                  </div>
+                  <p className="section-subtitle-profile">Reviva seus últimos combates</p>
+                </div>
+                <div className="matches-filters-profile">
+                  <button className="filter-btn-profile active">
+                    <span>📋 Todas</span>
+                  </button>
+                  <button className="filter-btn-profile">
+                    <span>✅ Vitórias</span>
+                  </button>
+                  <button className="filter-btn-profile">
+                    <span>❌ Derrotas</span>
+                  </button>
+                </div>
+                <div className="matches-grid-profile" id="profileMatchesList">
+                  {/* Será preenchido via JavaScript */}
+                </div>
+                <div className="view-more-profile" id="viewMoreMatches" style={{display: 'none'}}>
+                  <button className="btn-view-more-profile">
+                    <span>Ver Mais Partidas</span>
+                    <span className="btn-icon">↓</span>
+                  </button>
+                </div>
+              </div>
+              {/* Conquistas */}
+              <div className="profile-achievements-section">
+                <div className="section-header-profile">
+                  <div className="section-title-wrapper">
+                    <span className="section-icon-profile">🏅</span>
+                    <h2 className="section-title-profile">Conquistas</h2>
+                  </div>
+                  <p className="section-subtitle-profile">Suas glórias e medalhas de guerra</p>
+                </div>
+                <div className="achievements-grid-profile" id="achievementsGrid">
+                  {/* Será preenchido via JavaScript */}
+                </div>
+              </div>
+              {/* Call to Action */}
+              <div className="profile-cta-section">
+                <div className="cta-bg-profile">
+                  <div className="cta-scanline-profile"></div>
+                </div>
+                <div className="cta-content-profile">
+                  <span className="cta-icon-profile">⚡</span>
+                  <h2 className="cta-title-profile">Continue Sua Escalada</h2>
+                  <p className="cta-description-profile">
+                    Você está no caminho certo! Registre mais partidas e alcance novos ranks.
+                  </p>
+                  <div className="cta-buttons-profile">
+                    <button className="btn-cta-primary-profile" onClick={() => setActiveTab('play')}>
+                      <span className="btn-icon">⚔️</span>
+                      <span>JOGAR AGORA</span>
+                    </button>
+                    <button className="btn-cta-secondary-profile" onClick={() => setActiveTab('leaderboard')}>
+                      <span className="btn-icon">🏆</span>
+                      <span>VER RANKING</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
