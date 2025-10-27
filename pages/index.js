@@ -73,11 +73,159 @@ export default function Home() {
           <div id="home" className="page active">
             {/* HERO / BANNER PRINCIPAL */}
             <div className="hero-banner hero-improved">
-              {/* ...hero content já migrado... */}
+              <div className="hero-content">
+                <div className="hero-badge">
+                  <span className="badge-icon">⚡</span>
+                  <span className="badge-text">SISTEMA OFICIAL DE RANQUEADAS</span>
+                </div>
+                <h1 className="hero-title">
+                  <span className="title-highlight">DOMINE O CAMPO DE BATALHA</span>
+                  <span className="title-main">BLACK OPS 2 RANKED</span>
+                </h1>
+                <p className="hero-description">
+                  Entre no combate competitivo. Registre suas vitórias, suba de patente e prove que você é o melhor operador do BO2.
+                </p>
+                <div className="hero-player-card" id="heroPlayerCard" style={{display: 'none'}}>
+                  <div className="player-rank-display">
+                    <div className="rank-icon-large" id="heroRankIcon">🥉</div>
+                    <div className="rank-info">
+                      <div className="rank-label">SUA PATENTE ATUAL</div>
+                      <div className="rank-name-large" id="heroRankName">BRONZE</div>
+                      <div className="rank-mmr-display">
+                        <span className="mmr-value" id="heroMMR">0</span>
+                        <span className="mmr-label">MMR</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="player-quick-stats">
+                    <div className="quick-stat">
+                      <span className="stat-label">V/D</span>
+                      <span className="stat-value" id="heroWinRate">0%</span>
+                    </div>
+                    <div className="quick-stat">
+                      <span className="stat-label">K/D</span>
+                      <span className="stat-value" id="heroKD">0.00</span>
+                    </div>
+                    <div className="quick-stat">
+                      <span className="stat-label">BATALHAS</span>
+                      <span className="stat-value" id="heroMatches">0</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="hero-actions">
+                  <button className="btn-hero-primary" onClick={() => setActiveTab('play')}>
+                    <span className="btn-icon">🎮</span>
+                    <span className="btn-text">REGISTRAR BATALHA</span>
+                  </button>
+                  <button className="btn-hero-secondary" onClick={() => setActiveTab('leaderboard')}>
+                    <span className="btn-icon">🏆</span>
+                    <span className="btn-text">VER CLASSIFICAÇÃO</span>
+                  </button>
+                </div>
+                <div className="hero-stats-bar">
+                  <div className="stat-item">
+                    <div className="stat-icon">👥</div>
+                    <div className="stat-content">
+                      <div className="stat-value" id="totalPlayers">0</div>
+                      <div className="stat-label">Operadores Ativos</div>
+                    </div>
+                  </div>
+                  <div className="stat-divider"></div>
+                  <div className="stat-item">
+                    <div className="stat-icon">⚔️</div>
+                    <div className="stat-content">
+                      <div className="stat-value" id="totalMatches">0</div>
+                      <div className="stat-label">Combates Registrados</div>
+                    </div>
+                  </div>
+                  <div className="stat-divider"></div>
+                  <div className="stat-item">
+                    <div className="stat-icon">📅</div>
+                    <div className="stat-content">
+                      <div className="stat-value" id="activeSeason">S1</div>
+                      <div className="stat-label">Temporada de Guerra</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="hero-visual">
+                <div className="rank-showcase">
+                  <div className="showcase-ring"></div>
+                  <div className="showcase-icon" id="showcaseRankIcon">⚡</div>
+                </div>
+              </div>
             </div>
             {/* COMO FUNCIONA / INTRODUÇÃO */}
             <div className="how-it-works-section section-card">
-              {/* ...como funciona já migrado... */}
+              <div className="section-header">
+                <span className="section-badge">🎖️</span>
+                <h2 className="section-title">SUA PATENTE ESPERA – SUBA NO RANKED</h2>
+                <p className="section-subtitle">Cada kill conta. Cada vitória importa. Domine o campo de batalha e alcance a glória máxima!</p>
+              </div>
+              <div className="steps-grid">
+                <div className="step-card">
+                  <div className="step-number">01</div>
+                  <div className="step-icon">⚔️</div>
+                  <h3 className="step-title">Entre em Combate</h3>
+                  <p className="step-description">Desafie outros operadores em partidas ranqueadas intensas. Só os melhores sobrevivem.</p>
+                </div>
+                <div className="step-card">
+                  <div className="step-number">02</div>
+                  <div className="step-icon">🎮</div>
+                  <h3 className="step-title">Registre sua Batalha</h3>
+                  <p className="step-description">Após cada combate, registre o resultado com kills, deaths e screenshot do placar final.</p>
+                </div>
+                <div className="step-card">
+                  <div className="step-number">03</div>
+                  <div className="step-icon">📈</div>
+                  <h3 className="step-title">Ganhe MMR</h3>
+                  <p className="step-description">Vitórias aumentam seu MMR. Sua performance (K/D) também influencia nos ganhos de pontos.</p>
+                </div>
+                <div className="step-card">
+                  <div className="step-number">04</div>
+                  <div className="step-icon">🏆</div>
+                  <h3 className="step-title">Suba de Patente</h3>
+                  <p className="step-description">Acumule MMR e evolua: Bronze → Prata → Ouro → Platina → Diamante → Mestre → Lenda.</p>
+                </div>
+              </div>
+              <div className="rank-progression-visual">
+                <div className="progression-track">
+                  <div className="progression-step bronze">
+                    <div className="step-icon-mini">🥉</div>
+                    <div className="step-name">BRONZE</div>
+                  </div>
+                  <div className="progression-line"></div>
+                  <div className="progression-step silver">
+                    <div className="step-icon-mini">🥈</div>
+                    <div className="step-name">PRATA</div>
+                  </div>
+                  <div className="progression-line"></div>
+                  <div className="progression-step gold">
+                    <div className="step-icon-mini">🥇</div>
+                    <div className="step-name">OURO</div>
+                  </div>
+                  <div className="progression-line"></div>
+                  <div className="progression-step platinum">
+                    <div className="step-icon-mini">💎</div>
+                    <div className="step-name">PLATINA</div>
+                  </div>
+                  <div className="progression-line"></div>
+                  <div className="progression-step diamond">
+                    <div className="step-icon-mini">💠</div>
+                    <div className="step-name">DIAMANTE</div>
+                  </div>
+                  <div className="progression-line"></div>
+                  <div className="progression-step master">
+                    <div className="step-icon-mini">👑</div>
+                    <div className="step-name">MESTRE</div>
+                  </div>
+                  <div className="progression-line"></div>
+                  <div className="progression-step legend">
+                    <div className="step-icon-mini">⚡</div>
+                    <div className="step-name">LENDA</div>
+                  </div>
+                </div>
+              </div>
             </div>
             {/* ÚLTIMAS PARTIDAS */}
             <div className="recent-matches-section section-card">
