@@ -83,8 +83,170 @@ export default function Home() {
         {/* Outras páginas (exemplo) */}
         {activeTab === 'play' && (
           <div id="play" className="page active">
-            <div className="hero-banner hero-improved">
-              <h2 style={{color: '#fff'}}>Página JOGAR (em construção)</h2>
+            {/* HERO / BANNER JOGAR */}
+            <div className="match-hero">
+              <div className="match-hero-content">
+                <div className="match-badge">
+                  <span className="badge-icon">⚔️</span>
+                  <span className="badge-text">REGISTRO DE COMBATE</span>
+                </div>
+                <h1 className="match-hero-title">
+                  <span className="title-highlight">REGISTRE SUA BATALHA</span>
+                  <span className="title-main">E ATUALIZE SEU RANK</span>
+                </h1>
+                <p className="match-hero-description">
+                  Cada vitória, cada kill, cada derrota conta! Registre seus combates, atualize seu MMR e suba de patente no ranking.
+                </p>
+              </div>
+            </div>
+            {/* FORMULÁRIO DE REGISTRO */}
+            <div className="match-form-section">
+              <div className="section-header">
+                <span className="section-badge">📋</span>
+                <h2 className="section-title">DADOS DA PARTIDA</h2>
+                <p className="section-subtitle">Preencha os detalhes do seu combate ranqueado</p>
+              </div>
+              <form className="match-form-bo2">
+                <div className="form-grid-bo2">
+                  {/* Adversário */}
+                  <div className="form-field-bo2">
+                    <label className="field-label-bo2">
+                      <span className="label-icon">👥</span>
+                      <span className="label-text">ADVERSÁRIO</span>
+                      <span className="label-required">*</span>
+                    </label>
+                    <select className="field-input-bo2" required>
+                      <option value="">Selecione o oponente...</option>
+                    </select>
+                    <div className="field-hint">Escolha contra quem você batalhou</div>
+                  </div>
+                  {/* Modo de Jogo */}
+                  <div className="form-field-bo2">
+                    <label className="field-label-bo2">
+                      <span className="label-icon">🎯</span>
+                      <span className="label-text">MODO DE JOGO</span>
+                      <span className="label-required">*</span>
+                    </label>
+                    <select className="field-input-bo2" required>
+                      <option value="">Selecione o modo...</option>
+                      <option value="TDM">Team Deathmatch</option>
+                      <option value="DOM">Domination</option>
+                      <option value="SND">Search and Destroy</option>
+                      <option value="HP">Hardpoint</option>
+                      <option value="CTF">Capture the Flag</option>
+                      <option value="KC">Kill Confirmed</option>
+                    </select>
+                    <div className="field-hint">Tipo de combate ranqueado</div>
+                  </div>
+                  {/* Mapa */}
+                  <div className="form-field-bo2">
+                    <label className="field-label-bo2">
+                      <span className="label-icon">🗺️</span>
+                      <span className="label-text">CAMPO DE BATALHA</span>
+                      <span className="label-required">*</span>
+                    </label>
+                    <select className="field-input-bo2" required>
+                      <option value="">Selecione o mapa...</option>
+                      <option value="Nuketown">📍 Nuketown 2025</option>
+                      <option value="Raid">📍 Raid</option>
+                      <option value="Standoff">📍 Standoff</option>
+                      <option value="Slums">📍 Slums</option>
+                      <option value="Hijacked">📍 Hijacked</option>
+                      <option value="Express">📍 Express</option>
+                      <option value="Yemen">📍 Yemen</option>
+                      <option value="Carrier">📍 Carrier</option>
+                      <option value="Meltdown">📍 Meltdown</option>
+                      <option value="Plaza">📍 Plaza</option>
+                    </select>
+                    <div className="field-hint">Localização do combate</div>
+                  </div>
+                  {/* Resultado */}
+                  <div className="form-field-bo2">
+                    <label className="field-label-bo2">
+                      <span className="label-icon">🏆</span>
+                      <span className="label-text">RESULTADO</span>
+                      <span className="label-required">*</span>
+                    </label>
+                    <div className="result-buttons">
+                      <button type="button" className="result-btn result-win">
+                        <span className="result-icon">✅</span>
+                        <span className="result-text">VITÓRIA</span>
+                      </button>
+                      <button type="button" className="result-btn result-loss">
+                        <span className="result-icon">❌</span>
+                        <span className="result-text">DERROTA</span>
+                      </button>
+                    </div>
+                    <input type="hidden" required />
+                    <div className="field-hint">Qual foi o desfecho da batalha?</div>
+                  </div>
+                </div>
+                {/* Stats Grid */}
+                <div className="stats-input-grid">
+                  <div className="form-field-bo2">
+                    <label className="field-label-bo2">
+                      <span className="label-icon">🔫</span>
+                      <span className="label-text">KILLS</span>
+                      <span className="label-required">*</span>
+                    </label>
+                    <input type="number" className="field-input-bo2 input-number" min="0" max="999" placeholder="0" required />
+                    <div className="field-hint">Abates confirmados</div>
+                  </div>
+                  <div className="form-field-bo2">
+                    <label className="field-label-bo2">
+                      <span className="label-icon">💀</span>
+                      <span className="label-text">DEATHS</span>
+                      <span className="label-required">*</span>
+                    </label>
+                    <input type="number" className="field-input-bo2 input-number" min="0" max="999" placeholder="0" required />
+                    <div className="field-hint">Baixas sofridas</div>
+                  </div>
+                  <div className="kd-display">
+                    <div className="kd-label">K/D RATIO</div>
+                    <div className="kd-value">0.00</div>
+                  </div>
+                </div>
+                {/* Notas Estratégicas */}
+                <div className="form-field-bo2 form-field-full">
+                  <label className="field-label-bo2">
+                    <span className="label-icon">📝</span>
+                    <span className="label-text">NOTAS ESTRATÉGICAS</span>
+                    <span className="label-optional">(Opcional)</span>
+                  </label>
+                  <textarea className="field-textarea-bo2" placeholder="Ex: Dominamos B e C no início, flank pela direita funcionou bem..." maxLength={500} rows={4}></textarea>
+                  <div className="field-hint">Observações sobre táticas, loadouts ou momentos chave</div>
+                </div>
+                {/* Screenshot */}
+                <div className="form-field-bo2 form-field-full">
+                  <label className="field-label-bo2">
+                    <span className="label-icon">📸</span>
+                    <span className="label-text">SCREENSHOT DO PLACAR</span>
+                    <span className="label-optional">(Opcional)</span>
+                  </label>
+                  <div className="file-upload-bo2">
+                    <input type="file" className="file-input-hidden" accept="image/*" />
+                    <label className="file-upload-label">
+                      <span className="upload-icon">📤</span>
+                      <span className="upload-text">Clique para enviar screenshot</span>
+                      <span className="upload-hint">PNG, JPG até 5MB</span>
+                    </label>
+                    <div className="file-preview-bo2"></div>
+                  </div>
+                  <div className="field-hint">Evidência visual do resultado para verificação</div>
+                </div>
+                {/* Botões de Ação */}
+                <div className="form-actions-bo2">
+                  <button type="button" className="btn-form-secondary">
+                    <span className="btn-icon">🔄</span>
+                    <span>LIMPAR CAMPOS</span>
+                  </button>
+                  <button type="submit" className="btn-form-primary">
+                    <span className="btn-icon">💥</span>
+                    <span>CONFIRMAR BATALHA</span>
+                    <span className="btn-shine-effect"></span>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
