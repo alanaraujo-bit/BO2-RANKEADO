@@ -1,5 +1,6 @@
 
 import Head from 'next/head';
+import Script from 'next/script';
 import { useState, useEffect } from 'react';
 import FriendsPanel from '../components/FriendsPanel';
 
@@ -626,6 +627,11 @@ export default function Home() {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
+  {/* Legacy scripts: load after hydration so legacy globals (RankedData, UI, etc.) are available for the old scripts */}
+  <Script src="/js/firebase-config.js" strategy="afterInteractive" />
+  <Script src="/js/data.js" strategy="afterInteractive" />
+  <Script src="/js/ui.js" strategy="afterInteractive" />
+  <Script src="/js/main.js" strategy="afterInteractive" />
       <div className="particles" id="particles"></div>
       <nav className="navbar">
         <div className="nav-container">
