@@ -1114,8 +1114,22 @@ export default function Home() {
         )}
         {activeTab === 'history' && (
           <div id="history" className="page active">
-            <div className="hero-banner hero-improved">
-              <h2 style={{color: '#fff'}}>Página HISTÓRICO (em construção)</h2>
+            <div className="section">
+              <h2 className="section-title">📜 HISTÓRICO DE PARTIDAS</h2>
+              <div id="matchHistory">
+                {/* Histórico de partidas será preenchido via JS/API */}
+                <div className="empty-state" style={{padding: '40px 0', textAlign: 'center'}}>
+                  <div className="empty-state-icon">📜</div>
+                  <div className="empty-state-text">Nenhuma partida registrada</div>
+                  <div className="empty-state-hint">Registre partidas para que seu histórico apareça aqui.</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Perfil - histórico recente (últimas 10 partidas) visual */}
+            <div className="profile-history-section">
+              <h3 className="profile-section-title">📜 HISTÓRICO RECENTE (Últimas 10 partidas)</h3>
+              <div id="profileMatchHistory" className="profile-matches-list empty-state-centered">Nenhuma partida registrada</div>
             </div>
           </div>
         )}
