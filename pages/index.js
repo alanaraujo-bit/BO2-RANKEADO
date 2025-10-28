@@ -628,6 +628,11 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
   {/* Legacy scripts: load after hydration so legacy globals (RankedData, UI, etc.) are available for the old scripts */}
+  {/* Firebase SDK (compat) - must load before our firebase-config.js which uses global `firebase` */}
+  <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" strategy="beforeInteractive" />
+  <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" strategy="beforeInteractive" />
+  <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" strategy="beforeInteractive" />
+
   <Script src="/js/firebase-config.js" strategy="afterInteractive" />
   <Script src="/js/data.js" strategy="afterInteractive" />
   <Script src="/js/ui.js" strategy="afterInteractive" />
