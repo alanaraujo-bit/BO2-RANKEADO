@@ -652,7 +652,28 @@ export default function Home() {
               <span className="notification-badge" id="notificationBadge">0</span>
             </div>
             <span className="user-name" id="currentUserName">Visitante</span>
-            <button className="btn-login" id="btnLogin">LOGIN</button>
+            <button
+              className="btn-login"
+              id="btnLogin"
+              onClick={() => {
+                if (typeof window !== 'undefined' && typeof window.showLoginModal === 'function') {
+                  try { window.showLoginModal(); } catch (e) { console.error('Erro ao abrir modal de login:', e); }
+                } else if (typeof window !== 'undefined' && window.UI && typeof window.UI.showLoginModal === 'function') {
+                  try { window.UI.showLoginModal(); } catch (e) { console.error('Erro ao abrir modal de login via UI:', e); }
+                } else {
+                  // Fallback: try to dispatch a custom event so legacy scripts can hook
+                  if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('bo2:request-login'));
+                  }
+                  // As last resort, show a friendly message
+                  setTimeout(() => {
+                    if (typeof document !== 'undefined' && !document.querySelector('#loginModal.active')) {
+                      alert('A funcionalidade de login não está disponível no momento. Abra o console para mais detalhes.');
+                    }
+                  }, 200);
+                }
+              }}
+            >LOGIN</button>
           </div>
         </div>
       </nav>
