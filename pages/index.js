@@ -797,8 +797,163 @@ export default function Home() {
         )}
         {activeTab === 'seasons' && (
           <div id="seasons" className="page active">
-            <div className="hero-banner hero-improved">
-              <h2 style={{color: '#fff'}}>Página TEMPORADAS (em construção)</h2>
+            {/* Active Season Hero */}
+            <div className="season-hero">
+              <div className="season-hero-content">
+                <div className="season-badge">
+                  <span className="badge-icon">🏆</span>
+                  <span className="badge-text">TEMPORADA RANQUEADA</span>
+                </div>
+                <div className="season-status-row">
+                  <span className="season-status-pill" id="seasonStatusPill">AO VIVO</span>
+                  <span className="season-dates" id="seasonDates">--/--/---- • --/--/----</span>
+                </div>
+                <h1 className="season-hero-title" id="activeSeasonName">
+                  <span className="title-highlight">SEASON 1:</span>
+                  <span className="title-main">GENESIS</span>
+                </h1>
+                <p className="season-hero-description" id="activeSeasonDescription">
+                  A primeira temporada ranqueada. Prove seu valor e conquiste seu lugar no topo!
+                </p>
+                <div className="season-timer" id="seasonTimer">
+                  <div className="timer-icon">⏰</div>
+                  <div className="timer-content">
+                    <div className="timer-label">Tempo Restante</div>
+                    <div className="timer-value" id="timerValue">45 dias</div>
+                  </div>
+                </div>
+                <div className="season-hero-actions" style={{marginTop:12, display:'flex', gap:12, flexWrap:'wrap'}}>
+                  <button className="btn-hero-secondary" onClick={() => setActiveTab('leaderboard')}>
+                    <span className="btn-icon">🏆</span>
+                    <span className="btn-text">VER RANKING DA TEMPORADA</span>
+                  </button>
+                  <button className="btn-hero-primary" onClick={() => setActiveTab('play')}>
+                    <span className="btn-icon">🎮</span>
+                    <span className="btn-text">REGISTRAR PARTIDA</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Player Rank Progress (placeholder) */}
+            <div className="player-rank-progress" id="playerRankProgress" style={{display: 'none'}}>
+              <div className="section-header">
+                <span className="section-badge">📊</span>
+                <h2 className="section-title">SEU PROGRESSO ATUAL</h2>
+                <p className="section-subtitle">Acompanhe sua evolução rumo ao topo</p>
+              </div>
+
+              <div className="current-rank-display">
+                <div className="current-rank-card">
+                  <div className="rank-icon-large" id="currentRankIcon">🥉</div>
+                  <div className="rank-info-large">
+                    <div className="rank-label-large">PATENTE ATUAL</div>
+                    <div className="rank-name-huge" id="currentRankName">BRONZE I</div>
+                    <div className="rank-mmr-large">
+                      <span className="mmr-value-large" id="currentMMRValue">150</span>
+                      <span className="mmr-label-large">MMR</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="progress-arrow">➜</div>
+
+                <div className="next-rank-card">
+                  <div className="rank-icon-medium" id="nextRankIcon">🥈</div>
+                  <div className="rank-info-medium">
+                    <div className="rank-label-medium">PRÓXIMA PATENTE</div>
+                    <div className="rank-name-medium" id="nextRankName">PRATA I</div>
+                    <div className="mmr-needed-display">
+                      <span id="mmrNeededValue">150</span> MMR restantes
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="progress-bar-section">
+                <div className="progress-labels">
+                  <span className="progress-current" id="progressCurrentMMR">0 MMR</span>
+                  <span className="progress-percentage-display" id="progressPercentageDisplay">0%</span>
+                  <span className="progress-target" id="progressTargetMMR">300 MMR</span>
+                </div>
+                <div className="progress-bar-container-large">
+                  <div className="progress-bar-fill-large" id="progressBarFillLarge" style={{width: '0%'}}>
+                    <div className="progress-shine-effect"></div>
+                    <div className="progress-stripes"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Ranks Overview */}
+            <div className="ranks-table-section">
+              <div className="section-header">
+                <span className="section-badge">🎖️</span>
+                <h2 className="section-title">TODAS AS PATENTES</h2>
+                <p className="section-subtitle">Conheça todos os ranks e seus requisitos de MMR</p>
+              </div>
+
+              <div className="ranks-grid"></div>
+            </div>
+
+            {/* Tips */}
+            <div className="ranks-tips-section">
+              <div className="section-header">
+                <span className="section-badge">💡</span>
+                <h2 className="section-title">DICAS PARA EVOLUIR MAIS RÁPIDO</h2>
+                <p className="section-subtitle">Estratégias comprovadas para dominar o ranked</p>
+              </div>
+              <div className="tips-grid">
+                <div className="tip-card">
+                  <div className="tip-icon">🎯</div>
+                  <h3 className="tip-title">Foque em Objetivos</h3>
+                  <p className="tip-description">Em modos como Domination e Hardpoint, capture pontos estrategicamente. Kills não valem nada sem controle de mapa.</p>
+                </div>
+                <div className="tip-card">
+                  <div className="tip-icon">🔫</div>
+                  <h3 className="tip-title">Domine Seu Loadout</h3>
+                  <p className="tip-description">Use armas e perks que complementam seu estilo. AN-94, MSMC e DSR-50 são meta. Hardline e Toughness são essenciais.</p>
+                </div>
+                <div className="tip-card">
+                  <div className="tip-icon">🗺️</div>
+                  <h3 className="tip-title">Conheça os Mapas</h3>
+                  <p className="tip-description">Estude spawn points, rotas de flank e power positions. Conhecimento de mapa é metade da vitória.</p>
+                </div>
+                <div className="tip-card">
+                  <div className="tip-icon">👥</div>
+                  <h3 className="tip-title">Jogue em Equipe</h3>
+                  <p className="tip-description">Comunique-se, cubra companheiros e coordene streaks. Trabalho em equipe vence partidas ranqueadas.</p>
+                </div>
+                <div className="tip-card">
+                  <div className="tip-icon">📊</div>
+                  <h3 className="tip-title">Analise Seus Erros</h3>
+                  <p className="tip-description">Revise partidas perdidas. Identifique padrões de morte e ajuste seu posicionamento e timing.</p>
+                </div>
+                <div className="tip-card">
+                  <div className="tip-icon">⏱️</div>
+                  <h3 className="tip-title">Consistência &gt; Grind</h3>
+                  <p className="tip-description">Melhor jogar 3 partidas focado que 10 cansado. Mantenha performance constante para subir ranks.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Ranks CTA */}
+            <div className="ranks-cta">
+              <div className="ranks-cta-content">
+                <div className="cta-icon-large">⚔️</div>
+                <h2 className="cta-title-large">PRONTO PARA A BATALHA?</h2>
+                <p className="cta-description-large">Coloque seu treinamento em prática. Registre suas vitórias e comece sua jornada rumo ao topo.</p>
+                <div className="cta-buttons-large">
+                  <button className="btn-cta-primary-large" onClick={() => setActiveTab('play')}>
+                    <span className="btn-icon">🎮</span>
+                    <span>REGISTRAR BATALHA</span>
+                  </button>
+                  <button className="btn-cta-secondary-large" onClick={() => setActiveTab('profile')}>
+                    <span className="btn-icon">📊</span>
+                    <span>VER MEU PERFIL</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
