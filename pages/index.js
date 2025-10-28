@@ -56,6 +56,35 @@ export default function Home() {
   }, []);
 
   // Small presentational components
+  // Lightweight rank helper (keeps parity with js/ranks.js ranges)
+  const getRankForMMR = (mmr = 999) => {
+    mmr = Number(mmr) || 999;
+    const ranks = [
+      { name: 'Bronze I', min: 999, max: 1099, icon: '🥉', color: '#CD7F32' },
+      { name: 'Bronze II', min: 1100, max: 1199, icon: '🥉', color: '#CD7F32' },
+      { name: 'Bronze III', min: 1200, max: 1299, icon: '🥉', color: '#CD7F32' },
+      { name: 'Prata I', min: 1300, max: 1399, icon: '🥈', color: '#C0C0C0' },
+      { name: 'Prata II', min: 1400, max: 1499, icon: '🥈', color: '#C0C0C0' },
+      { name: 'Prata III', min: 1500, max: 1599, icon: '🥈', color: '#C0C0C0' },
+      { name: 'Ouro I', min: 1600, max: 1699, icon: '🥇', color: '#FFD700' },
+      { name: 'Ouro II', min: 1700, max: 1799, icon: '🥇', color: '#FFD700' },
+      { name: 'Ouro III', min: 1800, max: 1899, icon: '🥇', color: '#FFD700' },
+      { name: 'Platina I', min: 1900, max: 1999, icon: '💎', color: '#E5E4E2' },
+      { name: 'Platina II', min: 2000, max: 2099, icon: '💎', color: '#E5E4E2' },
+      { name: 'Platina III', min: 2100, max: 2199, icon: '💎', color: '#E5E4E2' },
+      { name: 'Diamante I', min: 2200, max: 2299, icon: '💠', color: '#B9F2FF' },
+      { name: 'Diamante II', min: 2300, max: 2399, icon: '💠', color: '#B9F2FF' },
+      { name: 'Diamante III', min: 2400, max: 2499, icon: '💠', color: '#B9F2FF' },
+      { name: 'Mestre', min: 2500, max: 2999, icon: '👑', color: '#9370DB' },
+      { name: 'Lenda', min: 3000, max: Infinity, icon: '⚡', color: '#FF1493' }
+    ];
+    for (let i = ranks.length - 1; i >= 0; i--) {
+      const r = ranks[i];
+      if (mmr >= r.min && mmr <= r.max) return r;
+    }
+    return ranks[0];
+  };
+
   const Podium = ({ players }) => {
     if (!players || players.length === 0) {
       return (
@@ -66,18 +95,46 @@ export default function Home() {
       );
     }
 
+    // Build visual order: second, first, third for a podium layout
+    const layout = [players[1], players[0], players[2]];
+
     return (
-      <div className="podium-grid">
-        {['second','first','third'].map((place, idx) => {
-          // order: second(1), first(0), third(2) for visual podium
-          const mapIdx = place === 'first' ? 0 : place === 'second' ? 1 : 2;
-          const player = players[mapIdx];
-          if (!player) return <div key={place} className={`podium-place ${place}`} />;
+      <div className="podium-grid" style={{display: 'flex', gap: 16, alignItems: 'end', justifyContent: 'center'}}>
+        {layout.map((player, i) => {
+          if (!player) return <div key={i} className="podium-place" style={{flex: 1}} />;
+          const rank = getRankForMMR(player.mmr);
+          const place = i === 0 ? '2º' : i === 1 ? '1º' : '3º';
+          const height = i === 1 ? 220 : i === 0 ? 170 : 140;
           return (
-            <div key={place} className={`podium-place ${place}`} onClick={() => setActiveTab('leaderboard')}>
-              <div className="podium-medal">{mapIdx === 0 ? '🥇' : mapIdx === 1 ? '🥈' : '🥉'}</div>
-              <div className="podium-player-name">{player.username}</div>
-              <div className="podium-mmr">{player.mmr} MMR</div>
+            <div
+              key={player.username}
+              className={`podium-place podium-${i}`}
+              onClick={() => setActiveTab('leaderboard')}
+              style={{
+                cursor: 'pointer',
+                background: 'linear-gradient(135deg, rgba(26,26,26,0.9), rgba(10,10,10,0.9))',
+                border: `2px solid ${rank.color}`,
+                borderRadius: 12,
+                padding: 16,
+                width: 200,
+                height,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: `0 8px 30px ${rank.color}33`
+              }}
+            >
+              <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                <div style={{fontSize: 28}}>{rank.icon}</div>
+                <div>
+                  <div style={{fontWeight: 800, color: rank.color, fontSize: 18}}>{player.username}</div>
+                  <div style={{color: 'var(--text-secondary)', fontSize: 13}}>{rank.name}</div>
+                </div>
+              </div>
+              <div style={{textAlign: 'right'}}>
+                <div style={{fontWeight: 700, color: 'var(--primary-orange)', fontSize: 20}}>{player.mmr} MMR</div>
+                <div style={{fontSize: 12, color: 'var(--text-secondary)'}}>{place}</div>
+              </div>
             </div>
           );
         })}
