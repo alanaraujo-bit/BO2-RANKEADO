@@ -17,6 +17,8 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('home');
   const [topPlayers, setTopPlayers] = useState([]);
   const [top3, setTop3] = useState([]);
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [matchHistory, setMatchHistory] = useState([]);
 
   // Simple localStorage-backed leaderboard reader (fallback to data format used by original app)
   const loadLeaderboardFromStorage = () => {
@@ -54,6 +56,143 @@ export default function Home() {
     const id = setInterval(refresh, 5000);
     return () => clearInterval(id);
   }, []);
+
+  
+
+  
+
+  const loadMatchesFromStorage = () => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('bo2ranked') : null;
+      if (!raw) return { recent: [], history: [] };
+      const parsed = JSON.parse(raw);
+      const matches = parsed.matches || [];
+      const currentUser = parsed.currentUser || null;
+
+      if (!currentUser) return { recent: [], history: [] };
+
+      // Normalize and filter matches involving currentUser
+      const playerMatches = matches
+        .filter(m => {
+          if (Array.isArray(m.players)) return m.players.includes(currentUser);
+          return m.playerA === currentUser || m.playerB === currentUser || (m.winner && (m.playerA === currentUser || m.playerB === currentUser));
+        })
+        .map(m => {
+          const opponent = m.playerA === currentUser ? m.playerB : m.playerB === currentUser ? m.playerA : (m.opponent || 'Desconhecido');
+          const kills = Number(m.kills) || Number(m.killsReported) || 0;
+          const deaths = Number(m.deaths) || Number(m.deathsReported) || 0;
+          const kd = (deaths > 0 ? (kills / deaths) : kills).toFixed(2);
+          const isWinner = m.winner === currentUser || m.result === 'win' || (m.reporter === currentUser && m.confirmed === true && m.winner === currentUser);
+          const mmrChange = (m.mmrDelta && m.mmrDelta.winner) ? (isWinner ? (m.mmrDelta.winner.change || 0) : (m.mmrDelta.loser?.change || 0)) : (m.mmrChange || 0);
+          const date = new Date(m.timestamp || m.date || Date.now()).toLocaleString('pt-BR');
+          return {
+            id: m.id || m.matchId || Math.random().toString(36).slice(2, 9),
+            opponent,
+            map: m.map || m.mapName || 'Mapa',
+            mode: m.mode || m.gameMode || '',
+            kills,
+            deaths,
+            kd,
+            isWinner,
+            mmrChange,
+            date,
+            confirmed: !!m.confirmed
+          };
+        })
+        .sort((a, b) => 0); // keep original order for now
+
+      return {
+        recent: playerMatches.slice(0, 5),
+        history: playerMatches
+      };
+    } catch (e) {
+      console.error('Error reading matches from storage', e);
+      return { recent: [], history: [] };
+    }
+  };
+
+  useEffect(() => {
+    const refresh = () => {
+      const { recent, history } = loadMatchesFromStorage();
+      setRecentMatches(recent);
+      setMatchHistory(history);
+    };
+
+    refresh();
+    const id = setInterval(refresh, 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  const RecentMatches = ({ matches }) => {
+    if (!matches || matches.length === 0) {
+      return (
+        <div className="empty-state">
+          <div className="empty-icon">🎮</div>
+          <p className="empty-text">Nenhuma partida jogada ainda</p>
+          <p className="empty-subtext">Registre sua primeira partida ranqueada para ver seu histórico</p>
+          <button className="btn-empty-action" onClick={() => setActiveTab('play')}>Jogar Agora</button>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        {matches.map((m) => (
+          <div key={m.id} className="match-card">
+            <div className="match-result-icon">{m.isWinner ? '✅' : '❌'}</div>
+            <div className="match-info">
+              <div className="match-opponent">vs {m.opponent}</div>
+              <div className="match-details">{m.map} • {m.mode} • {m.date}</div>
+            </div>
+            <div className="match-stats">
+              <div className="match-stat">
+                <div className="match-stat-label">K/D</div>
+                <div className="match-stat-value">{m.kd}</div>
+              </div>
+              <div className="match-stat">
+                <div className="match-stat-label">KILLS</div>
+                <div className="match-stat-value">{m.kills}</div>
+              </div>
+              <div className="match-stat">
+                <div className="match-stat-label">DEATHS</div>
+                <div className="match-stat-value">{m.deaths}</div>
+              </div>
+            </div>
+            <div className={`match-mmr-change ${m.mmrChange >= 0 ? 'positive' : 'negative'}`}>
+              {m.mmrChange >= 0 ? '+' : ''}{m.mmrChange}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const MatchHistoryList = ({ matches }) => {
+    if (!matches || matches.length === 0) {
+      return <p style={{textAlign: 'center', color: 'var(--text-secondary)'}}>Nenhuma partida jogada ainda.</p>;
+    }
+
+    return (
+      <div>
+        {matches.map(m => (
+          <div key={m.id} style={{background: 'linear-gradient(135deg, rgba(10,10,10,0.9), rgba(20,20,20,0.9))', padding: 16, borderRadius: 10, marginBottom: 12}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+              <div>
+                <div style={{fontSize: 16, fontWeight: 700, color: m.isWinner ? 'var(--success)' : 'var(--error)'}}>{m.isWinner ? 'VITÓRIA' : 'DERROTA'}</div>
+                <div style={{color: 'var(--text-secondary)', marginTop: 6}}>vs {m.opponent} • {m.map} • {m.mode}</div>
+                <div style={{color: 'var(--text-muted)', fontSize: 12, marginTop: 6}}>{m.date}</div>
+              </div>
+              <div style={{textAlign: 'right'}}>
+                <div style={{fontSize: 18, fontWeight: 800, color: 'var(--primary-orange)'}}>{m.kills}/{m.deaths}</div>
+                <div style={{color: 'var(--neon-blue)'}}>K/D: {m.kd}</div>
+                <div style={{marginTop: 6, color: m.confirmed ? 'var(--success)' : 'var(--warning)'}}>{m.confirmed ? 'Confirmado' : 'Pendente'}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   // Small presentational components
   // Lightweight rank helper (keeps parity with js/ranks.js ranges)
@@ -166,6 +305,8 @@ export default function Home() {
       </div>
     );
   };
+
+
 
   return (
     <>
@@ -386,12 +527,7 @@ export default function Home() {
                 <p className="section-subtitle">Analise seu desempenho recente e identifique pontos de melhoria no campo de batalha</p>
               </div>
               <div id="recentMatchesContainer" className="recent-matches-container">
-                <div className="empty-state">
-                  <div className="empty-icon">🎮</div>
-                  <p className="empty-text">Nenhuma batalha registrada</p>
-                  <p className="empty-subtext">Faça login e registre seu primeiro combate para ver seu histórico aqui</p>
-                  <button className="btn-empty-action" onClick={() => setActiveTab('play')}>Entrar em Combate</button>
-                </div>
+                <RecentMatches matches={recentMatches} />
               </div>
             </div>
             {/* TOP JOGADORES / DESTAQUES */}
@@ -793,12 +929,15 @@ export default function Home() {
               {/* Últimas Partidas */}
               <div className="profile-matches-section">
                 <div className="section-header-profile">
-                  <div className="section-title-wrapper">
-                    <span className="section-icon-profile">⚔️</span>
-                    <h2 className="section-title-profile">Últimas Partidas</h2>
-                  </div>
-                  <p className="section-subtitle-profile">Reviva seus últimos combates</p>
+                <div className="section-title-wrapper">
+                  <span className="section-icon-profile">⚔️</span>
+                  <h2 className="section-title-profile">Últimas Partidas</h2>
                 </div>
+                <p className="section-subtitle-profile">Reviva seus últimos combates</p>
+              </div>
+              <div id="matchHistory">
+                <MatchHistoryList matches={matchHistory} />
+              </div>
                 <div className="matches-filters-profile">
                   <button className="filter-btn-profile active">
                     <span>📋 Todas</span>
@@ -1268,12 +1407,7 @@ export default function Home() {
             <div className="section">
               <h2 className="section-title">📜 HISTÓRICO DE PARTIDAS</h2>
               <div id="matchHistory">
-                {/* Histórico de partidas será preenchido via JS/API */}
-                <div className="empty-state" style={{padding: '40px 0', textAlign: 'center'}}>
-                  <div className="empty-state-icon">📜</div>
-                  <div className="empty-state-text">Nenhuma partida registrada</div>
-                  <div className="empty-state-hint">Registre partidas para que seu histórico apareça aqui.</div>
-                </div>
+                <MatchHistoryList matches={matchHistory} />
               </div>
             </div>
 
