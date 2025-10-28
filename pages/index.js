@@ -1095,8 +1095,20 @@ export default function Home() {
         )}
         {activeTab === 'leaderboard' && (
           <div id="leaderboard" className="page active">
-            <div className="hero-banner hero-improved">
-              <h2 style={{color: '#fff'}}>Página RANKING (em construção)</h2>
+            <div className="section">
+              <h2 className="section-title">🏆 RANKING GLOBAL</h2>
+              <div className="leaderboard-filters">
+                <button className="filter-btn active" onClick={() => { /* filtro global */ }}>🌍 GLOBAL</button>
+                <button className="filter-btn" onClick={() => { /* filtro temporada */ }}>📅 TEMPORADA</button>
+              </div>
+              <div id="leaderboardTable">
+                {/* Tabela do ranking será preenchida via JS/API */}
+                <div className="empty-state" style={{padding: '40px 0', textAlign: 'center'}}>
+                  <div className="empty-state-icon">🏆</div>
+                  <div className="empty-state-text">Nenhum dado disponível</div>
+                  <div className="empty-state-hint">O ranking será exibido aqui quando houver jogadores registrados.</div>
+                </div>
+              </div>
             </div>
           </div>
         )}
