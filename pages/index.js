@@ -19,6 +19,8 @@ export default function Home() {
   const [top3, setTop3] = useState([]);
   const [recentMatches, setRecentMatches] = useState([]);
   const [matchHistory, setMatchHistory] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentPlayer, setCurrentPlayer] = useState(null);
 
   // Simple localStorage-backed leaderboard reader (fallback to data format used by original app)
   const loadLeaderboardFromStorage = () => {
@@ -120,6 +122,34 @@ export default function Home() {
 
     refresh();
     const id = setInterval(refresh, 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Load current player info from storage and keep in state
+  const loadCurrentPlayerFromStorage = () => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('bo2ranked') : null;
+      if (!raw) return { currentUser: null, player: null };
+      const parsed = JSON.parse(raw);
+      const cu = parsed.currentUser || null;
+      const players = parsed.players || {};
+      const player = cu && players[cu] ? players[cu] : null;
+      return { currentUser: cu, player };
+    } catch (e) {
+      console.error('Error reading current player from storage', e);
+      return { currentUser: null, player: null };
+    }
+  };
+
+  useEffect(() => {
+    const refresh = () => {
+      const { currentUser: cu, player } = loadCurrentPlayerFromStorage();
+      setCurrentUser(cu);
+      setCurrentPlayer(player);
+    };
+
+    refresh();
+    const id = setInterval(refresh, 3000);
     return () => clearInterval(id);
   }, []);
 
@@ -306,6 +336,44 @@ export default function Home() {
     );
   };
 
+  const HeroPlayerCard = ({ player }) => {
+    if (!player) return null;
+    const rank = getRankForMMR(player.mmr);
+    const winRate = player.gamesPlayed > 0 ? Math.round((player.wins / player.gamesPlayed) * 100) + '%' : '0%';
+    const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : (player.totalKills || 0).toFixed(2);
+    const matchesCount = player.gamesPlayed || 0;
+
+    return (
+      <div style={{display: 'flex', gap: 20, alignItems: 'center'}}>
+        <div className="player-rank-display">
+          <div className="rank-icon-large" id="heroRankIcon" style={{fontSize: 48}}>{rank.icon}</div>
+          <div className="rank-info">
+            <div className="rank-label">SUA PATENTE ATUAL</div>
+            <div className="rank-name-large" id="heroRankName" style={{color: rank.color}}>{rank.name}</div>
+            <div className="rank-mmr-display">
+              <span className="mmr-value" id="heroMMR">{player.mmr}</span>
+              <span className="mmr-label">MMR</span>
+            </div>
+          </div>
+        </div>
+        <div className="player-quick-stats">
+          <div className="quick-stat">
+            <span className="stat-label">V/D</span>
+            <span className="stat-value" id="heroWinRate">{winRate}</span>
+          </div>
+          <div className="quick-stat">
+            <span className="stat-label">K/D</span>
+            <span className="stat-value" id="heroKD">{kd}</span>
+          </div>
+          <div className="quick-stat">
+            <span className="stat-label">BATALHAS</span>
+            <span className="stat-value" id="heroMatches">{matchesCount}</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
 
 
   return (
@@ -378,31 +446,7 @@ export default function Home() {
                   Entre no combate competitivo. Registre suas vitórias, suba de patente e prove que você é o melhor operador do BO2.
                 </p>
                 <div className="hero-player-card" id="heroPlayerCard" style={{display: 'none'}}>
-                  <div className="player-rank-display">
-                    <div className="rank-icon-large" id="heroRankIcon">🥉</div>
-                    <div className="rank-info">
-                      <div className="rank-label">SUA PATENTE ATUAL</div>
-                      <div className="rank-name-large" id="heroRankName">BRONZE</div>
-                      <div className="rank-mmr-display">
-                        <span className="mmr-value" id="heroMMR">0</span>
-                        <span className="mmr-label">MMR</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="player-quick-stats">
-                    <div className="quick-stat">
-                      <span className="stat-label">V/D</span>
-                      <span className="stat-value" id="heroWinRate">0%</span>
-                    </div>
-                    <div className="quick-stat">
-                      <span className="stat-label">K/D</span>
-                      <span className="stat-value" id="heroKD">0.00</span>
-                    </div>
-                    <div className="quick-stat">
-                      <span className="stat-label">BATALHAS</span>
-                      <span className="stat-value" id="heroMatches">0</span>
-                    </div>
-                  </div>
+                  <HeroPlayerCard player={currentPlayer} />
                 </div>
                 <div className="hero-actions">
                   <button className="btn-hero-primary" onClick={() => setActiveTab('play')}>
