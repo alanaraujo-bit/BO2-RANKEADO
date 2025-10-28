@@ -710,8 +710,88 @@ export default function Home() {
         )}
         {activeTab === 'friends' && (
           <div id="friends" className="page active">
-            <div className="hero-banner hero-improved">
-              <h2 style={{color: '#fff'}}>Página AMIGOS (em construção)</h2>
+            <div className="section">
+              <h2 className="section-title">👥 AMIGOS & REDE SOCIAL</h2>
+
+              {/* Search Bar */}
+              <div className="friends-search">
+                <input
+                  type="text"
+                  id="playerSearchInput"
+                  className="form-input"
+                  placeholder="Buscar amigo..."
+                />
+                <div id="searchResults" className="search-results"></div>
+              </div>
+
+              {/* Friend Requests */}
+              <div className="friends-section" id="friendRequestsSection" style={{display: 'none'}}>
+                <h3 className="subsection-title">📬 SOLICITAÇÕES PENDENTES</h3>
+                <div id="friendRequestsList" className="friends-grid">
+                  {/* Preenchido dinamicamente */}
+                </div>
+              </div>
+
+              {/* Friends List */}
+              <div className="friends-section">
+                <div className="subsection-header">
+                  <h3 className="subsection-title">✅ MEUS AMIGOS (<span id="friendsCount">0</span>)</h3>
+                  <div className="friend-filter-buttons">
+                    <button className="filter-btn-small active">TODOS</button>
+                    <button className="filter-btn-small">🟢 ONLINE</button>
+                    <button className="filter-btn-small">🎮 JOGANDO</button>
+                    <button className="filter-btn-small">⚫ OFFLINE</button>
+                  </div>
+                </div>
+                <div id="friendsList" className="friends-grid">
+                  {/* Preenchido dinamicamente */}
+                  <div className="empty-state" id="friendsEmptyState" style={{display: 'none'}}>
+                    <div className="empty-state-icon">👥</div>
+                    <div className="empty-state-text">Você ainda não tem amigos</div>
+                    <div className="empty-state-hint">Use a busca acima para encontrar e adicionar jogadores</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Friends Ranking */}
+              <div className="friends-section">
+                <h3 className="subsection-title">🏆 RANKING ENTRE AMIGOS</h3>
+                <div id="friendsRanking" className="friends-ranking-container">
+                  {/* Preenchido dinamicamente */}
+                  <div className="empty-state" id="rankingEmptyState" style={{display: 'none'}}>
+                    <div className="empty-state-icon">🏆</div>
+                    <div className="empty-state-text">Nenhum ranking disponível</div>
+                    <div className="empty-state-hint">Adicione amigos para ver o ranking</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Activity Feed */}
+              <div className="friends-section">
+                <h3 className="subsection-title">📰 ATIVIDADE RECENTE</h3>
+                <div id="friendsActivity" className="activity-feed">
+                  {/* Preenchido dinamicamente */}
+                  <div className="empty-state" id="activityEmptyState" style={{display: 'none'}}>
+                    <div className="empty-state-icon">📰</div>
+                    <div className="empty-state-text">Nenhuma atividade recente</div>
+                    <div className="empty-state-hint">As atividades dos seus amigos aparecerão aqui</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Suggested Friends */}
+              <div className="friends-section">
+                <h3 className="subsection-title">💡 SUGESTÕES DE AMIZADE</h3>
+                <p className="subsection-description">Jogadores com MMR similar ao seu que você pode conhecer</p>
+                <div id="suggestedFriends" className="friends-grid">
+                  {/* Preenchido dinamicamente */}
+                  <div className="empty-state" id="suggestionsEmptyState" style={{display: 'none'}}>
+                    <div className="empty-state-icon">💡</div>
+                    <div className="empty-state-text">Nenhuma sugestão disponível</div>
+                    <div className="empty-state-hint">Jogue mais partidas para encontrar jogadores compatíveis</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
