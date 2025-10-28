@@ -1,5 +1,8 @@
 // BO2 RANKED - MAIN APPLICATION
 
+// Signal that the main script loaded (helps debug if script is not being included)
+console.log('main.js loaded');
+
 // Global wrapper functions for compatibility between Firebase and LocalStorage
 async function getUserData(username) {
     try {
@@ -599,6 +602,21 @@ try {
     }
 } catch (e) {
     console.warn('Could not attach login helpers to window:', e);
+}
+
+// Listen for legacy custom event dispatched by Next.js pages (pages/index.js)
+try {
+    if (typeof window !== 'undefined') {
+        window.addEventListener('bo2:request-login', () => {
+            try {
+                if (typeof showLoginModal === 'function') showLoginModal();
+            } catch (e) {
+                console.error('Error handling bo2:request-login:', e);
+            }
+        });
+    }
+} catch (e) {
+    console.warn('Could not attach bo2:request-login listener:', e);
 }
 
 async function updateNotifications() {
