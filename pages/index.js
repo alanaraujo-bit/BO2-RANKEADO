@@ -21,6 +21,8 @@ export default function Home() {
   const [matchHistory, setMatchHistory] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [opponents, setOpponents] = useState([]);
+  const [pendingMatchesState, setPendingMatchesState] = useState([]);
 
   // Simple localStorage-backed leaderboard reader (fallback to data format used by original app)
   const loadLeaderboardFromStorage = () => {
@@ -150,6 +152,34 @@ export default function Home() {
 
     refresh();
     const id = setInterval(refresh, 3000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Load opponents list and pending matches
+  const loadOpponentsAndPending = () => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('bo2ranked') : null;
+      if (!raw) return { opponents: [], pending: [] };
+      const parsed = JSON.parse(raw);
+      const playersObj = parsed.players || {};
+      const playersArr = Object.values(playersObj || {}).map(p => p.username).filter(Boolean);
+      const opps = playersArr.filter(u => u !== parsed.currentUser).sort((a,b)=> a.localeCompare(b));
+      const pending = parsed.pendingConfirmations || parsed.pending || parsed.pendingMatches || [];
+      return { opponents: opps, pending };
+    } catch (e) {
+      console.error('Error reading opponents/pending from storage', e);
+      return { opponents: [], pending: [] };
+    }
+  };
+
+  useEffect(() => {
+    const refresh = () => {
+      const { opponents: opps, pending } = loadOpponentsAndPending();
+      setOpponents(opps);
+      setPendingMatchesState(pending || []);
+    };
+    refresh();
+    const id = setInterval(refresh, 4000);
     return () => clearInterval(id);
   }, []);
 
@@ -332,6 +362,46 @@ export default function Home() {
             </div>
           );
         })}
+      </div>
+    );
+  };
+
+  const PendingMatches = ({ pending }) => {
+    if (!pending || pending.length === 0) {
+      return null;
+    }
+
+    return (
+      <div id="pendingSection" className="pending-section section-card">
+        <div className="section-header">
+          <span className="section-badge">⏳</span>
+          <h2 className="section-title">PARTIDAS PENDENTES</h2>
+          <p className="section-subtitle">Partidas que aguardam confirmação do adversário</p>
+        </div>
+        <div id="pendingMatches" className="pending-matches-list">
+          {pending.map((p, idx) => {
+            const match = p.matchData || p;
+            const reporter = p.reporter || match.reporter || 'Relator';
+            const map = match.map || match.mapName || 'Desconhecido';
+            const mode = match.mode || match.gameMode || '';
+            return (
+              <div key={idx} className="pending-card">
+                <div className="pending-info">
+                  <div className="pending-title">Partida reportada por {reporter}</div>
+                  <div className="pending-meta">{map} • {mode}</div>
+                </div>
+                <div className="pending-actions">
+                  <button className="btn-primary" onClick={() => { alert('Confirmar: ' + (p.matchId || match.id)); }}>
+                    CONFIRMAR
+                  </button>
+                  <button className="btn-secondary" onClick={() => { alert('Rejeitar: ' + (p.matchId || match.id)); }}>
+                    REJEITAR
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -655,6 +725,8 @@ export default function Home() {
             </div>
             {/* FORMULÁRIO DE REGISTRO */}
             <div className="match-form-section">
+              {/* Pending matches (if any) */}
+              <PendingMatches pending={pendingMatchesState} />
               <div className="section-header">
                 <span className="section-badge">📋</span>
                 <h2 className="section-title">DADOS DA PARTIDA</h2>
@@ -669,8 +741,11 @@ export default function Home() {
                       <span className="label-text">ADVERSÁRIO</span>
                       <span className="label-required">*</span>
                     </label>
-                    <select className="field-input-bo2" required>
+                    <select id="opponentSelect" className="field-input-bo2" required>
                       <option value="">Selecione o oponente...</option>
+                      {opponents && opponents.length > 0 ? opponents.map(o => (
+                        <option key={o} value={o}>{o}</option>
+                      )) : null}
                     </select>
                     <div className="field-hint">Escolha contra quem você batalhou</div>
                   </div>
