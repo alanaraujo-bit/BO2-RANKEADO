@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Meta collection for app-wide sequences/counters
+    match /meta/{docId} {
+      allow read: if true;
+      // Allow authenticated users to update sequences via transactions
+      allow create, update: if request.auth != null;
+      allow delete: if false;
+    }
+    // Players collection
+    match /players/{userId} {
+      // Anyone can read player profiles (for leaderboard)
+      allow read: if true;
+      
+      // Only authenticated users can create their own profile
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // Only the owner can update their profile
+      allow update: if request.auth != null && request.auth.uid == userId;
+      
+      // No one can delete profiles
+      allow delete: if false;
+    }
+    
+    // Matches collection
+    match /matches/{matchId} {
+      // Anyone can read matches (for history and stats)
+      allow read: if true;
+      
+      // Only authenticated users can create matches
+      allow create: if request.auth != null;
+      
+      // Only authenticated users can update matches (for confirmations)
+      allow update: if request.auth != null;
+      
+      // No one can delete matches
+      allow delete: if false;
+    }
+    
+    // Pending confirmations collection
+    match /pendingConfirmations/{confirmId} {
+      // Anyone can read pending confirmations
+      allow read: if true;
+      
+      // Only authenticated users can create confirmations
+      allow create: if request.auth != null;
+      
+      // Only authenticated users can update confirmations
+      allow update: if request.auth != null;
+      
+      // Only authenticated users can delete confirmations
+      allow delete: if request.auth != null;
+    }
+  }
+}
