@@ -4,7 +4,9 @@
   "description": "BO2 Plutonium Ranked System",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "keywords": [
     "bo2",

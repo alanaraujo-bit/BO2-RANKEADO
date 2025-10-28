@@ -1,6 +1,6 @@
 
 import Head from 'next/head';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const TABS = [
   { id: 'home', label: '🏠 HOME' },
@@ -15,6 +15,100 @@ const TABS = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('home');
+  const [topPlayers, setTopPlayers] = useState([]);
+  const [top3, setTop3] = useState([]);
+
+  // Simple localStorage-backed leaderboard reader (fallback to data format used by original app)
+  const loadLeaderboardFromStorage = () => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('bo2ranked') : null;
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      const playersObj = parsed.players || {};
+      const players = Object.values(playersObj || {}).map(p => ({
+        username: p.username,
+        mmr: typeof p.mmr === 'number' ? p.mmr : Number(p.mmr) || 0,
+        wins: p.wins || 0,
+        losses: p.losses || 0,
+        totalKills: p.totalKills || 0,
+        totalDeaths: p.totalDeaths || 0,
+        gamesPlayed: p.gamesPlayed || 0
+      }));
+      players.sort((a, b) => (b.mmr || 0) - (a.mmr || 0));
+      return players;
+    } catch (e) {
+      console.error('Error reading leaderboard from storage', e);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    // Initial load and periodic refresh
+    const refresh = () => {
+      const lb = loadLeaderboardFromStorage();
+      setTopPlayers(lb.slice(0, 5));
+      setTop3(lb.slice(0, 3));
+    };
+
+    refresh();
+    const id = setInterval(refresh, 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Small presentational components
+  const Podium = ({ players }) => {
+    if (!players || players.length === 0) {
+      return (
+        <div className="empty-state">
+          <div className="empty-icon">🏆</div>
+          <p className="empty-text">Seja o primeiro no ranking!</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="podium-grid">
+        {['second','first','third'].map((place, idx) => {
+          // order: second(1), first(0), third(2) for visual podium
+          const mapIdx = place === 'first' ? 0 : place === 'second' ? 1 : 2;
+          const player = players[mapIdx];
+          if (!player) return <div key={place} className={`podium-place ${place}`} />;
+          return (
+            <div key={place} className={`podium-place ${place}`} onClick={() => setActiveTab('leaderboard')}>
+              <div className="podium-medal">{mapIdx === 0 ? '🥇' : mapIdx === 1 ? '🥈' : '🥉'}</div>
+              <div className="podium-player-name">{player.username}</div>
+              <div className="podium-mmr">{player.mmr} MMR</div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const TopPlayersPreview = ({ players }) => {
+    if (!players || players.length === 0) {
+      return <p style={{textAlign: 'center', color: 'var(--text-secondary)'}}>Nenhum jogador ainda. Seja o primeiro!</p>;
+    }
+
+    return (
+      <div className="top-players-grid">
+        {players.map((player, index) => {
+          const position = index + 1;
+          const kd = player.totalDeaths > 0 ? (player.totalKills / player.totalDeaths).toFixed(2) : (player.totalKills || 0).toFixed(2);
+          const winRate = player.gamesPlayed > 0 ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
+          return (
+            <div key={player.username} className="top-player-card" onClick={() => setActiveTab('leaderboard')}>
+              <div className="top-player-medal">{position <= 3 ? (position === 1 ? '🥇' : position === 2 ? '🥈' : '🥉') : `#${position}`}</div>
+              <div className="top-player-info">
+                <div className="top-player-name">{player.username}</div>
+                <div className="top-player-sub">{player.mmr} MMR • {player.wins}W • {kd} K/D</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -252,11 +346,11 @@ export default function Home() {
               </div>
               <div className="podium-container">
                 <div id="podiumDisplay" className="podium-display">
-                  {/* Will be populated by JS */}
+                  <Podium players={top3} />
                 </div>
               </div>
               <div className="top-players-list" id="topPlayersPreview">
-                {/* Will be populated by JS */}
+                <TopPlayersPreview players={topPlayers} />
               </div>
               <div className="view-all-container">
                 <button className="btn-view-all" onClick={() => setActiveTab('leaderboard')}>
