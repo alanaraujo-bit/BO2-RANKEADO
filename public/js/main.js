@@ -3,6 +3,10 @@
 // Atualização forçada em 28/10/2025 para commit/push
 // Purpose: avoid parse errors and provide minimal functions expected by legacy HTML.
 
+// ...existing code...
+// Remove all duplicate blocks below and keep only one copy of each function, event listener, and global definition.
+// The file should start with the IIFE wrapper and end with its closing.
+
 (function(window){
     // If the real main.js already loaded, do nothing
     if (window.__BO2_MAIN_LOADED__) return;
@@ -20,13 +24,13 @@
              * Login usando Firebase Auth (email/senha)
              */
             login: async function(email, password) {
-                if (!window.firebaseAuth) throw new Error('Firebase não inicializado');
+                if (!window.firebaseAuth) { throw new Error('Firebase não inicializado'); }
                 const userCredential = await window.firebaseAuth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
-                if (!user) throw new Error('Usuário não encontrado');
+                if (!user) { throw new Error('Usuário não encontrado'); }
                 // Buscar dados do jogador no Firestore
                 const playerDoc = await window.firebaseDB.collection('players').doc(user.uid).get();
-                if (!playerDoc.exists) throw new Error('Perfil de jogador não encontrado');
+                if (!playerDoc.exists) { throw new Error('Perfil de jogador não encontrado'); }
                 const playerData = playerDoc.data();
                 this.currentUserId = user.uid;
                 this.currentUser = playerData.username;
@@ -37,11 +41,11 @@
              * Cadastro usando Firebase Auth (email/senha) e salva perfil no Firestore
              */
             createPlayer: async function(username, email, password) {
-                if (!window.firebaseAuth) throw new Error('Firebase não inicializado');
+                if (!window.firebaseAuth) { throw new Error('Firebase não inicializado'); }
                 // Cria usuário no Auth
                 const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(email, password);
                 const user = userCredential.user;
-                if (!user) throw new Error('Falha ao criar usuário');
+                if (!user) { throw new Error('Falha ao criar usuário'); }
                 // Cria perfil no Firestore
                 const playerData = {
                     username: username,
@@ -66,7 +70,7 @@
                 return playerData;
             },
             logout: async function(){
-                if (window.firebaseAuth) await window.firebaseAuth.signOut();
+                if (window.firebaseAuth) { await window.firebaseAuth.signOut(); }
                 this.currentUser = null;
                 this.currentUserId = null;
                 return true;
@@ -138,6 +142,9 @@
     } catch(e){/* ignore */}
 
     console.log('BO2 legacy shim loaded');
+
+    // ...existing code...
+    // All other functions, event listeners, and global definitions should appear only once below this point.
 
 })(window);
 
