@@ -915,3 +915,4 @@ document.addEventListener('click', function(event) {
         dropdown.classList.remove('active');
     }
 });
+// Fim do arquivo main.js
