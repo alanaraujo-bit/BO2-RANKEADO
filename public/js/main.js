@@ -1,4 +1,6 @@
 // Lightweight compatibility shim for legacy main.js
+// Deploy trigger: Força novo deploy Vercel em 28/10/2025
+// Atualização forçada em 28/10/2025 para commit/push
 // Purpose: avoid parse errors and provide minimal functions expected by legacy HTML.
 
 (function(window){
@@ -10,12 +12,65 @@
     if (typeof window.RankedData === 'undefined') {
         window.RankedData = {
             currentUser: null,
+            currentUserId: null,
             players: {},
             init: async function(){ return true; },
             getPlayer: function(name){ return this.players[name] || null; },
-            login: async function(){ throw new Error('RankedData.login not implemented'); },
-            logout: async function(){ this.currentUser = null; return true; },
-            createPlayer: async function(){ throw new Error('RankedData.createPlayer not implemented'); }
+            /**
+             * Login usando Firebase Auth (email/senha)
+             */
+            login: async function(email, password) {
+                if (!window.firebaseAuth) throw new Error('Firebase não inicializado');
+                const userCredential = await window.firebaseAuth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                if (!user) throw new Error('Usuário não encontrado');
+                // Buscar dados do jogador no Firestore
+                const playerDoc = await window.firebaseDB.collection('players').doc(user.uid).get();
+                if (!playerDoc.exists) throw new Error('Perfil de jogador não encontrado');
+                const playerData = playerDoc.data();
+                this.currentUserId = user.uid;
+                this.currentUser = playerData.username;
+                this.players[playerData.username] = playerData;
+                return playerData;
+            },
+            /**
+             * Cadastro usando Firebase Auth (email/senha) e salva perfil no Firestore
+             */
+            createPlayer: async function(username, email, password) {
+                if (!window.firebaseAuth) throw new Error('Firebase não inicializado');
+                // Cria usuário no Auth
+                const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                if (!user) throw new Error('Falha ao criar usuário');
+                // Cria perfil no Firestore
+                const playerData = {
+                    username: username,
+                    email: email,
+                    mmr: 1000,
+                    wins: 0,
+                    losses: 0,
+                    gamesPlayed: 0,
+                    winStreak: 0,
+                    bestStreak: 0,
+                    totalKills: 0,
+                    totalDeaths: 0,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString(),
+                    userId: user.uid,
+                    seasonStats: {}
+                };
+                await window.firebaseDB.collection('players').doc(user.uid).set(playerData);
+                this.currentUserId = user.uid;
+                this.currentUser = username;
+                this.players[username] = playerData;
+                return playerData;
+            },
+            logout: async function(){
+                if (window.firebaseAuth) await window.firebaseAuth.signOut();
+                this.currentUser = null;
+                this.currentUserId = null;
+                return true;
+            }
         };
     }
 
@@ -297,11 +352,11 @@ async function handleLogin(event) {
         console.log('🔐 Iniciando processo de login/registro...');
         console.log('Username:', username);
         console.log('Email:', email);
-        
+
         // Check if we should login or register based on error
         let success = false;
         let isNewUser = false;
-        
+
         try {
             // Always try login first
             console.log('📥 Tentando fazer login com credenciais existentes...');
@@ -311,10 +366,8 @@ async function handleLogin(event) {
             success = true;
         } catch (loginError) {
             console.log('❌ Login falhou:', loginError);
-            console.log('Código do erro:', loginError.code);
-            console.log('Mensagem do erro:', loginError.message);
-            
-            // Extract error code from message if it's in the message string
+            UI.showNotification('Erro no login: ' + (loginError.message || loginError.code), 'error');
+            // Mostra erro detalhado na tela de login
             const errorCode = loginError.code || '';
             const errorMessage = loginError.message || '';
             const isUserNotFound = errorCode.includes('user-not-found') || 
@@ -322,7 +375,7 @@ async function handleLogin(event) {
                                    errorCode.includes('invalid-login-credentials') ||
                                    errorMessage.includes('INVALID_LOGIN_CREDENTIALS') ||
                                    errorMessage.includes('user-not-found');
-            
+
             // Only try to register if user doesn't exist
             if (isUserNotFound) {
                 console.log('👤 Usuário não encontrado, criando nova conta...');
@@ -334,58 +387,43 @@ async function handleLogin(event) {
                     success = true;
                 } catch (registerError) {
                     console.log('❌ Erro ao criar conta:', registerError);
+                    UI.showNotification('Erro ao criar conta: ' + (registerError.message || registerError.code), 'error');
                     throw registerError;
                 }
             } else if (errorCode.includes('wrong-password') || errorMessage.includes('wrong-password')) {
+                UI.showNotification('Senha incorreta! Tente novamente.', 'error');
                 throw new Error('Senha incorreta! Tente novamente.');
             } else if (errorCode.includes('email-already-in-use')) {
+                UI.showNotification('Email já cadastrado! Use a senha correta para fazer login.', 'error');
                 throw new Error('Email já cadastrado! Use a senha correta para fazer login.');
             } else {
                 throw loginError;
             }
         }
-        
+
         if (!success) {
+            UI.showNotification('Falha no login/registro', 'error');
             throw new Error('Falha no login/registro');
         }
-        
+
         // Update UI
         console.log('Atualizando interface...');
         updateUserDisplay();
         closeLoginModal();
         await UI.updateAllViews();
-        
+
         // Initialize friends system
         if (typeof friendsSystem !== 'undefined') {
             await friendsSystem.init();
         }
-        
+
         // Show profile
         console.log('Mostrando pagina de perfil...');
         showPage('profile');
-        
+
     } catch (error) {
         console.error('💥 Erro final no login/registro:', error);
-        console.error('Codigo do erro:', error.code);
-        console.error('Mensagem:', error.message);
-        
-        let message = 'Erro ao fazer login/registro!';
-        
-        if (error.code === 'auth/email-already-in-use') {
-            message = 'Email ja esta em uso! Tente fazer login com a senha correta.';
-        } else if (error.code === 'auth/invalid-email') {
-            message = 'Email invalido!';
-        } else if (error.code === 'auth/weak-password') {
-            message = 'Senha muito fraca! Use no minimo 6 caracteres.';
-        } else if (error.code === 'auth/wrong-password') {
-            message = 'Senha incorreta!';
-        } else if (error.code === 'auth/user-not-found') {
-            message = 'Usuario nao encontrado!';
-        } else {
-            message = 'Erro: ' + (error.message || error.code || 'Desconhecido');
-        }
-        
-        UI.showNotification(message, 'error');
+        UI.showNotification('Erro: ' + (error.message || error.code || 'Desconhecido'), 'error');
     }
 }
 
@@ -959,6 +997,7 @@ async function loadPlayerMatchHistory(username) {
     }
 }
 
+
 // Close notifications when clicking outside
 document.addEventListener('click', function(event) {
     const dropdown = document.getElementById('notificationsDropdown');
@@ -971,6 +1010,7 @@ document.addEventListener('click', function(event) {
         dropdown.classList.remove('active');
     }
 });
+
 document.addEventListener('DOMContentLoaded', async function() {
 // BO2 RANKED - MAIN APPLICATION
 
@@ -2744,17 +2784,3 @@ document.addEventListener('click', function(event) {
     }
 });
 
-window.RankedData.login = async function(provider = 'google', email, password) {
-    if (!window.firebaseAuth) throw new Error('Firebase Auth não está disponível');
-    let userCredential;
-    if (provider === 'google') {
-        const googleProvider = new firebase.auth.GoogleAuthProvider();
-        userCredential = await firebaseAuth.signInWithPopup(googleProvider);
-    } else if (provider === 'email') {
-        userCredential = await firebaseAuth.signInWithEmailAndPassword(email, password);
-    } else {
-        throw new Error('Provider não suportado');
-    }
-    this.currentUser = userCredential.user.displayName || userCredential.user.email;
-    return this.currentUser;
-};
