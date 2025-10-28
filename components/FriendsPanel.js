@@ -1,71 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import useRankedData from '../hooks/useRankedData';
 
 export default function FriendsPanel({ setActiveTab, setCurrentUser }) {
-  const [data, setData] = useState({});
+  const rd = useRankedData(3000);
+  const [data, setData] = useState(rd.state || {});
   const [currentUser, setCU] = useState(null);
   const [userData, setUserData] = useState(null);
   const [search, setSearch] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
-  const readData = () => {
-    try {
-      // Prefer using global RankedData if available (keeps single source of truth)
-      if (typeof window !== 'undefined' && window.RankedData) {
-        try {
-          // Ensure latest from storage
-          window.RankedData.loadFromStorage && window.RankedData.loadFromStorage();
-        } catch (e) {
-          // ignore
-        }
-        return {
-          currentUser: window.RankedData.currentUser,
-          players: window.RankedData.players,
-          matches: window.RankedData.matches,
-          pendingConfirmations: window.RankedData.pendingConfirmations,
-          currentSeason: window.RankedData.currentSeason
-        };
-      }
-
-      const raw = typeof window !== 'undefined' ? localStorage.getItem('bo2ranked') : null;
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch (e) {
-      console.error('Error reading bo2ranked', e);
-      return null;
-    }
-  };
-
-  const saveData = (newData) => {
-    try {
-      // Prefer saving through RankedData if available
-      if (typeof window !== 'undefined' && window.RankedData) {
-        try {
-          // Merge fields into RankedData and save
-          window.RankedData.players = newData.players || window.RankedData.players || {};
-          window.RankedData.matches = newData.matches || window.RankedData.matches || [];
-          window.RankedData.pendingConfirmations = newData.pendingConfirmations || window.RankedData.pendingConfirmations || [];
-          window.RankedData.currentUser = newData.currentUser || window.RankedData.currentUser;
-          window.RankedData.currentSeason = newData.currentSeason || window.RankedData.currentSeason;
-          window.RankedData.save && window.RankedData.save();
-          setData({
-            currentUser: window.RankedData.currentUser,
-            players: window.RankedData.players,
-            matches: window.RankedData.matches,
-            pendingConfirmations: window.RankedData.pendingConfirmations,
-            currentSeason: window.RankedData.currentSeason
-          });
-          return;
-        } catch (e) {
-          console.warn('Error saving via RankedData, falling back to localStorage', e);
-        }
-      }
-
-      localStorage.setItem('bo2ranked', JSON.stringify(newData));
-      setData(newData);
-    } catch (e) {
-      console.error('Error saving bo2ranked', e);
-    }
-  };
+  // Use adapter hook for reads/saves
+  const readData = () => rd.read();
+  const saveData = (newData) => rd.save(newData);
 
   const refresh = () => {
     const d = readData();
@@ -77,8 +23,11 @@ export default function FriendsPanel({ setActiveTab, setCurrentUser }) {
 
   useEffect(() => {
     refresh();
+    const unsubscribe = rd.subscribe((newState) => {
+      setData(newState || {});
+    });
     const id = setInterval(refresh, 3000);
-    return () => clearInterval(id);
+    return () => { clearInterval(id); unsubscribe(); };
   }, []);
 
   useEffect(() => {
@@ -97,68 +46,24 @@ export default function FriendsPanel({ setActiveTab, setCurrentUser }) {
 
   // Friend actions operate on localStorage shape similar to RankedData
   const sendFriendRequest = (target) => {
-    // Try using RankedData APIs if present
-    if (typeof window !== 'undefined' && window.RankedData && window.RankedData.getPlayer && window.RankedData.updatePlayer) {
-      const rd = window.RankedData;
-      const me = rd.getPlayer(currentUser) || { friendRequests: { sent: [], received: [] }, friends: [] };
-      const them = rd.getPlayer(target) || { friendRequests: { sent: [], received: [] }, friends: [] };
-      me.friendRequests = me.friendRequests || { sent: [], received: [] };
-      them.friendRequests = them.friendRequests || { sent: [], received: [] };
-      if ((me.friends || []).includes(target)) return alert('Você já é amigo deste jogador');
-      if ((me.friendRequests.sent || []).some(r => r.to === target)) return alert('Solicitação já enviada');
-      me.friendRequests.sent.push({ to: target, timestamp: Date.now() });
-      them.friendRequests.received.push({ from: currentUser, timestamp: Date.now() });
-      rd.updatePlayer(currentUser, me);
-      rd.updatePlayer(target, them);
-      rd.save && rd.save();
-      refresh();
-      return alert(`✅ Solicitação enviada para ${target}`);
-    }
-
-    // Fallback to localStorage manip
-    const d = readData();
-    if (!d || !currentUser) return alert('Nenhum usuário autenticado');
-    d.players = d.players || {};
-    const me = d.players[currentUser] || { friendRequests: { sent: [], received: [] }, friends: [] };
-    const them = d.players[target] || { friendRequests: { sent: [], received: [] }, friends: [] };
+    const me = rd.getPlayer(currentUser) || (data.players && data.players[currentUser]) || { friendRequests: { sent: [], received: [] }, friends: [] };
+    const them = rd.getPlayer(target) || (data.players && data.players[target]) || { friendRequests: { sent: [], received: [] }, friends: [] };
     me.friendRequests = me.friendRequests || { sent: [], received: [] };
     them.friendRequests = them.friendRequests || { sent: [], received: [] };
     if ((me.friends || []).includes(target)) return alert('Você já é amigo deste jogador');
     if ((me.friendRequests.sent || []).some(r => r.to === target)) return alert('Solicitação já enviada');
     me.friendRequests.sent.push({ to: target, timestamp: Date.now() });
     them.friendRequests.received.push({ from: currentUser, timestamp: Date.now() });
-    d.players[currentUser] = { ...d.players[currentUser], ...me };
-    d.players[target] = { ...d.players[target], ...them };
-    saveData(d);
+    rd.updatePlayer(currentUser, me);
+    rd.updatePlayer(target, them);
+    rd.save && rd.save();
     refresh();
     alert(`✅ Solicitação enviada para ${target}`);
   };
 
   const acceptFriendRequest = (from) => {
-    if (typeof window !== 'undefined' && window.RankedData && window.RankedData.getPlayer && window.RankedData.updatePlayer) {
-      const rd = window.RankedData;
-      const me = rd.getPlayer(currentUser) || { friends: [], friendRequests: { sent: [], received: [] } };
-      const them = rd.getPlayer(from) || { friends: [], friendRequests: { sent: [], received: [] } };
-      me.friends = me.friends || [];
-      them.friends = them.friends || [];
-      me.friendRequests = me.friendRequests || { sent: [], received: [] };
-      them.friendRequests = them.friendRequests || { sent: [], received: [] };
-      if (!me.friends.includes(from)) me.friends.push(from);
-      if (!them.friends.includes(currentUser)) them.friends.push(currentUser);
-      me.friendRequests.received = (me.friendRequests.received || []).filter(r => r.from !== from);
-      them.friendRequests.sent = (them.friendRequests.sent || []).filter(r => r.to !== currentUser);
-      rd.updatePlayer(currentUser, me);
-      rd.updatePlayer(from, them);
-      rd.save && rd.save();
-      refresh();
-      return alert(`✅ Agora você é amigo de ${from}`);
-    }
-
-    const d = readData();
-    if (!d || !currentUser) return;
-    d.players = d.players || {};
-    const me = d.players[currentUser] || { friends: [], friendRequests: { sent: [], received: [] } };
-    const them = d.players[from] || { friends: [], friendRequests: { sent: [], received: [] } };
+    const me = rd.getPlayer(currentUser) || (data.players && data.players[currentUser]) || { friends: [], friendRequests: { sent: [], received: [] } };
+    const them = rd.getPlayer(from) || (data.players && data.players[from]) || { friends: [], friendRequests: { sent: [], received: [] } };
     me.friends = me.friends || [];
     them.friends = them.friends || [];
     me.friendRequests = me.friendRequests || { sent: [], received: [] };
@@ -167,71 +72,36 @@ export default function FriendsPanel({ setActiveTab, setCurrentUser }) {
     if (!them.friends.includes(currentUser)) them.friends.push(currentUser);
     me.friendRequests.received = (me.friendRequests.received || []).filter(r => r.from !== from);
     them.friendRequests.sent = (them.friendRequests.sent || []).filter(r => r.to !== currentUser);
-    d.players[currentUser] = { ...d.players[currentUser], ...me };
-    d.players[from] = { ...d.players[from], ...them };
-    saveData(d);
+    rd.updatePlayer(currentUser, me);
+    rd.updatePlayer(from, them);
+    rd.save && rd.save();
     refresh();
     alert(`✅ Agora você é amigo de ${from}`);
   };
 
   const rejectFriendRequest = (from) => {
-    if (typeof window !== 'undefined' && window.RankedData && window.RankedData.getPlayer && window.RankedData.updatePlayer) {
-      const rd = window.RankedData;
-      const me = rd.getPlayer(currentUser) || { friendRequests: { sent: [], received: [] } };
-      const them = rd.getPlayer(from) || { friendRequests: { sent: [], received: [] } };
-      me.friendRequests = me.friendRequests || { sent: [], received: [] };
-      them.friendRequests = them.friendRequests || { sent: [], received: [] };
-      me.friendRequests.received = (me.friendRequests.received || []).filter(r => r.from !== from);
-      them.friendRequests.sent = (them.friendRequests.sent || []).filter(r => r.to !== currentUser);
-      rd.updatePlayer(currentUser, me);
-      rd.updatePlayer(from, them);
-      rd.save && rd.save();
-      refresh();
-      return alert(`❌ Solicitação de ${from} rejeitada`);
-    }
-
-    const d = readData();
-    if (!d || !currentUser) return;
-    d.players = d.players || {};
-    const me = d.players[currentUser] || { friendRequests: { sent: [], received: [] } };
-    const them = d.players[from] || { friendRequests: { sent: [], received: [] } };
+    const me = rd.getPlayer(currentUser) || (data.players && data.players[currentUser]) || { friendRequests: { sent: [], received: [] } };
+    const them = rd.getPlayer(from) || (data.players && data.players[from]) || { friendRequests: { sent: [], received: [] } };
     me.friendRequests = me.friendRequests || { sent: [], received: [] };
     them.friendRequests = them.friendRequests || { sent: [], received: [] };
     me.friendRequests.received = (me.friendRequests.received || []).filter(r => r.from !== from);
     them.friendRequests.sent = (them.friendRequests.sent || []).filter(r => r.to !== currentUser);
-    d.players[currentUser] = { ...d.players[currentUser], ...me };
-    d.players[from] = { ...d.players[from], ...them };
-    saveData(d);
+    rd.updatePlayer(currentUser, me);
+    rd.updatePlayer(from, them);
+    rd.save && rd.save();
     refresh();
     alert(`❌ Solicitação de ${from} rejeitada`);
   };
 
   const removeFriend = (username) => {
     if (!confirm(`Remover ${username} dos seus amigos?`)) return;
-    // Prefer RankedData
-    if (typeof window !== 'undefined' && window.RankedData && window.RankedData.getPlayer && window.RankedData.updatePlayer) {
-      const rd = window.RankedData;
-      const me = rd.getPlayer(currentUser) || { friends: [] };
-      const them = rd.getPlayer(username) || { friends: [] };
-      me.friends = (me.friends || []).filter(f => f !== username);
-      them.friends = (them.friends || []).filter(f => f !== currentUser);
-      rd.updatePlayer(currentUser, me);
-      rd.updatePlayer(username, them);
-      rd.save && rd.save();
-      refresh();
-      return alert(`❌ ${username} removido dos seus amigos`);
-    }
-
-    const d = readData();
-    if (!d || !currentUser) return;
-    d.players = d.players || {};
-    const me = d.players[currentUser] || { friends: [] };
-    const them = d.players[username] || { friends: [] };
+    const me = rd.getPlayer(currentUser) || (data.players && data.players[currentUser]) || { friends: [] };
+    const them = rd.getPlayer(username) || (data.players && data.players[username]) || { friends: [] };
     me.friends = (me.friends || []).filter(f => f !== username);
     them.friends = (them.friends || []).filter(f => f !== currentUser);
-    d.players[currentUser] = { ...d.players[currentUser], ...me };
-    d.players[username] = { ...d.players[username], ...them };
-    saveData(d);
+    rd.updatePlayer(currentUser, me);
+    rd.updatePlayer(username, them);
+    rd.save && rd.save();
     refresh();
     alert(`❌ ${username} removido dos seus amigos`);
   };

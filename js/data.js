@@ -216,23 +216,63 @@ const RankedData = {
         return true;
     },
 
-    // Confirm match
-    confirmMatch(matchId) {
-        const pendingIndex = this.pendingConfirmations.findIndex(p => p.matchId === matchId);
-        if (pendingIndex === -1) return false;
-        
-        const pending = this.pendingConfirmations[pendingIndex];
-        const match = this.matches.find(m => m.id === matchId);
-        
-        if (match) {
-            match.confirmed = true;
-            // Process MMR updates here
+    // Confirm match: mark confirmed, process MMR/stats and remove pending confirmation
+    async confirmMatch(matchId) {
+        try {
+            const pendingIndex = this.pendingConfirmations.findIndex(p => p.matchId === matchId);
+            const pending = pendingIndex !== -1 ? this.pendingConfirmations[pendingIndex] : null;
+
+            const match = this.matches.find(m => m.id === matchId);
+
+            if (!match && !pending) return false;
+
+            // If match exists but already confirmed, just clean pending and return
+            if (match && match.confirmed) {
+                if (pendingIndex !== -1) this.pendingConfirmations.splice(pendingIndex, 1);
+                this.save();
+                return true;
+            }
+
+            // Ensure match object is present
+            const matchToProcess = match || (pending && pending.matchData) || null;
+            if (!matchToProcess) return false;
+
+            // Mark as confirmed in matches list
+            if (match) {
+                match.confirmed = true;
+                this.updateMatch(match.id, { confirmed: true });
+            } else if (pending && pending.matchData) {
+                // If match wasn't added to matches list for some reason, add it now
+                const added = this.addMatch(pending.matchData);
+                matchToProcess.id = added.id;
+                matchToProcess.confirmed = true;
+            }
+
+            // Process MMR and player/stat updates using MMRSystem if available
+            if (typeof MMRSystem !== 'undefined' && typeof MMRSystem.processMatch === 'function') {
+                try {
+                    await MMRSystem.processMatch(matchToProcess);
+                } catch (e) {
+                    console.error('RankedData.confirmMatch: MMR processing failed', e);
+                    // Continue to remove pending and save state even if MMR processing failed
+                }
+            }
+
+            // Remove pending confirmation if present
+            if (pendingIndex !== -1) {
+                this.pendingConfirmations.splice(pendingIndex, 1);
+            } else if (pending) {
+                this.pendingConfirmations = (this.pendingConfirmations || []).filter(p => p.matchId !== matchToProcess.id);
+            }
+
+            // Persist changes
             this.save();
+
+            return true;
+        } catch (e) {
+            console.error('RankedData.confirmMatch error:', e);
+            return false;
         }
-        
-        this.pendingConfirmations.splice(pendingIndex, 1);
-        this.save();
-        return true;
     },
     
     // Get player match history
