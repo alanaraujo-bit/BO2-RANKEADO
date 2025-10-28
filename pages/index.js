@@ -1,6 +1,7 @@
 
 import Head from 'next/head';
 import { useState, useEffect } from 'react';
+import FriendsPanel from '../components/FriendsPanel';
 
 const TABS = [
   { id: 'home', label: '🏠 HOME' },
@@ -255,33 +256,35 @@ export default function Home() {
   };
 
   // Small presentational components
+  // Rank definitions (shared between helper and grid)
+  const RANKS = [
+    { name: 'Bronze I', min: 999, max: 1099, icon: '🥉', color: '#CD7F32' },
+    { name: 'Bronze II', min: 1100, max: 1199, icon: '🥉', color: '#CD7F32' },
+    { name: 'Bronze III', min: 1200, max: 1299, icon: '🥉', color: '#CD7F32' },
+    { name: 'Prata I', min: 1300, max: 1399, icon: '🥈', color: '#C0C0C0' },
+    { name: 'Prata II', min: 1400, max: 1499, icon: '🥈', color: '#C0C0C0' },
+    { name: 'Prata III', min: 1500, max: 1599, icon: '🥈', color: '#C0C0C0' },
+    { name: 'Ouro I', min: 1600, max: 1699, icon: '🥇', color: '#FFD700' },
+    { name: 'Ouro II', min: 1700, max: 1799, icon: '🥇', color: '#FFD700' },
+    { name: 'Ouro III', min: 1800, max: 1899, icon: '🥇', color: '#FFD700' },
+    { name: 'Platina I', min: 1900, max: 1999, icon: '💎', color: '#E5E4E2' },
+    { name: 'Platina II', min: 2000, max: 2099, icon: '💎', color: '#E5E4E2' },
+    { name: 'Platina III', min: 2100, max: 2199, icon: '💎', color: '#E5E4E2' },
+    { name: 'Diamante I', min: 2200, max: 2299, icon: '💠', color: '#B9F2FF' },
+    { name: 'Diamante II', min: 2300, max: 2399, icon: '💠', color: '#B9F2FF' },
+    { name: 'Diamante III', min: 2400, max: 2499, icon: '💠', color: '#B9F2FF' },
+    { name: 'Mestre', min: 2500, max: 2999, icon: '👑', color: '#9370DB' },
+    { name: 'Lenda', min: 3000, max: Infinity, icon: '⚡', color: '#FF1493' }
+  ];
+
   // Lightweight rank helper (keeps parity with js/ranks.js ranges)
   const getRankForMMR = (mmr = 999) => {
     mmr = Number(mmr) || 999;
-    const ranks = [
-      { name: 'Bronze I', min: 999, max: 1099, icon: '🥉', color: '#CD7F32' },
-      { name: 'Bronze II', min: 1100, max: 1199, icon: '🥉', color: '#CD7F32' },
-      { name: 'Bronze III', min: 1200, max: 1299, icon: '🥉', color: '#CD7F32' },
-      { name: 'Prata I', min: 1300, max: 1399, icon: '🥈', color: '#C0C0C0' },
-      { name: 'Prata II', min: 1400, max: 1499, icon: '🥈', color: '#C0C0C0' },
-      { name: 'Prata III', min: 1500, max: 1599, icon: '🥈', color: '#C0C0C0' },
-      { name: 'Ouro I', min: 1600, max: 1699, icon: '🥇', color: '#FFD700' },
-      { name: 'Ouro II', min: 1700, max: 1799, icon: '🥇', color: '#FFD700' },
-      { name: 'Ouro III', min: 1800, max: 1899, icon: '🥇', color: '#FFD700' },
-      { name: 'Platina I', min: 1900, max: 1999, icon: '💎', color: '#E5E4E2' },
-      { name: 'Platina II', min: 2000, max: 2099, icon: '💎', color: '#E5E4E2' },
-      { name: 'Platina III', min: 2100, max: 2199, icon: '💎', color: '#E5E4E2' },
-      { name: 'Diamante I', min: 2200, max: 2299, icon: '💠', color: '#B9F2FF' },
-      { name: 'Diamante II', min: 2300, max: 2399, icon: '💠', color: '#B9F2FF' },
-      { name: 'Diamante III', min: 2400, max: 2499, icon: '💠', color: '#B9F2FF' },
-      { name: 'Mestre', min: 2500, max: 2999, icon: '👑', color: '#9370DB' },
-      { name: 'Lenda', min: 3000, max: Infinity, icon: '⚡', color: '#FF1493' }
-    ];
-    for (let i = ranks.length - 1; i >= 0; i--) {
-      const r = ranks[i];
+    for (let i = RANKS.length - 1; i >= 0; i--) {
+      const r = RANKS[i];
       if (mmr >= r.min && mmr <= r.max) return r;
     }
-    return ranks[0];
+    return RANKS[0];
   };
 
   const Podium = ({ players }) => {
@@ -341,6 +344,94 @@ export default function Home() {
     );
   };
 
+    // Leaderboard table component (reads from localStorage periodically)
+    const LeaderboardTable = () => {
+      const [players, setPlayers] = useState([]);
+
+      useEffect(() => {
+        const refresh = () => {
+          const lb = loadLeaderboardFromStorage();
+          setPlayers(lb);
+        };
+        refresh();
+        const id = setInterval(refresh, 5000);
+        return () => clearInterval(id);
+      }, []);
+
+      if (!players || players.length === 0) {
+        return (
+          <div className="empty-state" style={{padding: '40px 0', textAlign: 'center'}}>
+            <div className="empty-state-icon">🏆</div>
+            <div className="empty-state-text">Nenhum dado disponível</div>
+            <div className="empty-state-hint">O ranking será exibido aqui quando houver jogadores registrados.</div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="leaderboard-table-wrapper">
+          <table className="leaderboard-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Jogador</th>
+                <th>MMR</th>
+                <th>V</th>
+                <th>D</th>
+                <th>K/D</th>
+              </tr>
+            </thead>
+            <tbody>
+            {players.map((p, idx) => {
+              const rank = getRankForMMR(p.mmr);
+              const kd = p.totalDeaths > 0 ? (p.totalKills / p.totalDeaths).toFixed(2) : (p.totalKills || 0).toFixed(2);
+              return (
+                <tr
+                  key={p.username}
+                  onClick={() => {
+                    // set the current profile and switch to profile tab
+                    try { setCurrentUser && setCurrentUser(p.username); } catch (e) { /* ignore */ }
+                    try { setActiveTab && setActiveTab('profile'); } catch (e) { /* ignore */ }
+                  }}
+                  style={{cursor: 'pointer'}}
+                >
+                  <td>{idx + 1}</td>
+                  <td style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                    <span style={{fontSize: 18}}>{rank.icon}</span>
+                    <span>{p.username}</span>
+                  </td>
+                  <td style={{color: rank.color}}>{p.mmr}</td>
+                  <td>{p.wins || 0}</td>
+                  <td>{p.losses || 0}</td>
+                  <td>{kd}</td>
+                </tr>
+              );
+            })}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    // Ranks grid component
+    const RanksGrid = () => {
+      return (
+        <div className="ranks-grid-cards" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12}}>
+          {RANKS.map((r, i) => (
+            <div key={r.name} className="rank-card" style={{background: 'linear-gradient(135deg, rgba(10,10,10,0.9), rgba(20,20,20,0.9))', padding: 12, borderRadius: 8, border: `2px solid ${r.color}`}}>
+              <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                <div style={{fontSize: 22}}>{r.icon}</div>
+                <div>
+                  <div style={{fontWeight: 800}}>{r.name}</div>
+                  <div style={{fontSize: 12, color: 'var(--text-secondary)'}}>{r.min} - {r.max === Infinity ? '+' : r.max} MMR</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+
   const TopPlayersPreview = ({ players }) => {
     if (!players || players.length === 0) {
       return <p style={{textAlign: 'center', color: 'var(--text-secondary)'}}>Nenhum jogador ainda. Seja o primeiro!</p>;
@@ -391,10 +482,89 @@ export default function Home() {
                   <div className="pending-meta">{map} • {mode}</div>
                 </div>
                 <div className="pending-actions">
-                  <button className="btn-primary" onClick={() => { alert('Confirmar: ' + (p.matchId || match.id)); }}>
+                  <button
+                    className="btn-primary"
+                    onClick={() => {
+                      const matchId = p.matchId || match.id;
+                      // Prefer RankedData API
+                      if (typeof window !== 'undefined' && window.RankedData && typeof window.RankedData.confirmMatch === 'function') {
+                        try {
+                          window.RankedData.confirmMatch(matchId);
+                          window.RankedData.save && window.RankedData.save();
+                        } catch (e) {
+                          console.error('Error confirming via RankedData', e);
+                        }
+                      } else {
+                        try {
+                          const raw = localStorage.getItem('bo2ranked');
+                          if (raw) {
+                            const parsed = JSON.parse(raw);
+                            parsed.pendingConfirmations = (parsed.pendingConfirmations || []).filter(pc => (pc.matchId || pc.matchId === 0 ? pc.matchId : pc.match?.id) !== matchId);
+                            // mark match confirmed if exists
+                            if (Array.isArray(parsed.matches)) {
+                              const mi = parsed.matches.findIndex(m => m.id === matchId || m.matchId === matchId);
+                              if (mi !== -1) parsed.matches[mi].confirmed = true;
+                            }
+                            localStorage.setItem('bo2ranked', JSON.stringify(parsed));
+                          }
+                        } catch (e) {
+                          console.error('Error confirming via localStorage', e);
+                        }
+                      }
+
+                      // Refresh React state
+                      try {
+                        const { opponents: opps, pending } = loadOpponentsAndPending();
+                        setOpponents(opps);
+                        setPendingMatchesState(pending || []);
+                      } catch (e) { /* ignore */ }
+                      try {
+                        const { recent, history } = loadMatchesFromStorage();
+                        setRecentMatches(recent);
+                        setMatchHistory(history);
+                      } catch (e) { /* ignore */ }
+                      alert('Partida confirmada');
+                    }}
+                  >
                     CONFIRMAR
                   </button>
-                  <button className="btn-secondary" onClick={() => { alert('Rejeitar: ' + (p.matchId || match.id)); }}>
+
+                  <button
+                    className="btn-secondary"
+                    onClick={() => {
+                      const matchId = p.matchId || match.id;
+                      if (typeof window !== 'undefined' && window.RankedData && typeof window.RankedData.pendingConfirmations !== 'undefined') {
+                        try {
+                          // remove pending via RankedData
+                          const rd = window.RankedData;
+                          rd.pendingConfirmations = (rd.pendingConfirmations || []).filter(pc => (pc.matchId || pc.match?.id) !== matchId);
+                          rd.save && rd.save();
+                        } catch (e) {
+                          console.error('Error rejecting via RankedData', e);
+                        }
+                      } else {
+                        try {
+                          const raw = localStorage.getItem('bo2ranked');
+                          if (raw) {
+                            const parsed = JSON.parse(raw);
+                            parsed.pendingConfirmations = (parsed.pendingConfirmations || []).filter(pc => (pc.matchId || pc.matchId === 0 ? pc.matchId : pc.match?.id) !== matchId);
+                            localStorage.setItem('bo2ranked', JSON.stringify(parsed));
+                          }
+                        } catch (e) {
+                          console.error('Error rejecting via localStorage', e);
+                        }
+                      }
+
+                      // Refresh React state
+                      try {
+                        const { opponents: opps, pending } = loadOpponentsAndPending();
+                        setOpponents(opps);
+                        setPendingMatchesState(pending || []);
+                      } catch (e) { /* ignore */ }
+
+                      alert('Partida rejeitada');
+                    }}
+                  >
                     REJEITAR
                   </button>
                 </div>
@@ -1121,86 +1291,7 @@ export default function Home() {
           <div id="friends" className="page active">
             <div className="section">
               <h2 className="section-title">👥 AMIGOS & REDE SOCIAL</h2>
-
-              {/* Search Bar */}
-              <div className="friends-search">
-                <input
-                  type="text"
-                  id="playerSearchInput"
-                  className="form-input"
-                  placeholder="Buscar amigo..."
-                />
-                <div id="searchResults" className="search-results"></div>
-              </div>
-
-              {/* Friend Requests */}
-              <div className="friends-section" id="friendRequestsSection" style={{display: 'none'}}>
-                <h3 className="subsection-title">📬 SOLICITAÇÕES PENDENTES</h3>
-                <div id="friendRequestsList" className="friends-grid">
-                  {/* Preenchido dinamicamente */}
-                </div>
-              </div>
-
-              {/* Friends List */}
-              <div className="friends-section">
-                <div className="subsection-header">
-                  <h3 className="subsection-title">✅ MEUS AMIGOS (<span id="friendsCount">0</span>)</h3>
-                  <div className="friend-filter-buttons">
-                    <button className="filter-btn-small active">TODOS</button>
-                    <button className="filter-btn-small">🟢 ONLINE</button>
-                    <button className="filter-btn-small">🎮 JOGANDO</button>
-                    <button className="filter-btn-small">⚫ OFFLINE</button>
-                  </div>
-                </div>
-                <div id="friendsList" className="friends-grid">
-                  {/* Preenchido dinamicamente */}
-                  <div className="empty-state" id="friendsEmptyState" style={{display: 'none'}}>
-                    <div className="empty-state-icon">👥</div>
-                    <div className="empty-state-text">Você ainda não tem amigos</div>
-                    <div className="empty-state-hint">Use a busca acima para encontrar e adicionar jogadores</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Friends Ranking */}
-              <div className="friends-section">
-                <h3 className="subsection-title">🏆 RANKING ENTRE AMIGOS</h3>
-                <div id="friendsRanking" className="friends-ranking-container">
-                  {/* Preenchido dinamicamente */}
-                  <div className="empty-state" id="rankingEmptyState" style={{display: 'none'}}>
-                    <div className="empty-state-icon">🏆</div>
-                    <div className="empty-state-text">Nenhum ranking disponível</div>
-                    <div className="empty-state-hint">Adicione amigos para ver o ranking</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recent Activity Feed */}
-              <div className="friends-section">
-                <h3 className="subsection-title">📰 ATIVIDADE RECENTE</h3>
-                <div id="friendsActivity" className="activity-feed">
-                  {/* Preenchido dinamicamente */}
-                  <div className="empty-state" id="activityEmptyState" style={{display: 'none'}}>
-                    <div className="empty-state-icon">📰</div>
-                    <div className="empty-state-text">Nenhuma atividade recente</div>
-                    <div className="empty-state-hint">As atividades dos seus amigos aparecerão aqui</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Suggested Friends */}
-              <div className="friends-section">
-                <h3 className="subsection-title">💡 SUGESTÕES DE AMIZADE</h3>
-                <p className="subsection-description">Jogadores com MMR similar ao seu que você pode conhecer</p>
-                <div id="suggestedFriends" className="friends-grid">
-                  {/* Preenchido dinamicamente */}
-                  <div className="empty-state" id="suggestionsEmptyState" style={{display: 'none'}}>
-                    <div className="empty-state-icon">💡</div>
-                    <div className="empty-state-text">Nenhuma sugestão disponível</div>
-                    <div className="empty-state-hint">Jogue mais partidas para encontrar jogadores compatíveis</div>
-                  </div>
-                </div>
-              </div>
+              <FriendsPanel setActiveTab={setActiveTab} setCurrentUser={setCurrentUser} />
             </div>
           </div>
         )}
@@ -1302,7 +1393,7 @@ export default function Home() {
                 <p className="section-subtitle">Conheça todos os ranks e seus requisitos de MMR</p>
               </div>
 
-              <div className="ranks-grid"></div>
+              <RanksGrid />
             </div>
 
             {/* Tips */}
@@ -1438,7 +1529,7 @@ export default function Home() {
                 <h2 className="section-title">TODAS AS PATENTES</h2>
                 <p className="section-subtitle">Conheça todos os ranks e seus requisitos de MMR</p>
               </div>
-              <div className="ranks-grid"></div>
+              <RanksGrid />
             </div>
 
             {/* Tips */}
@@ -1511,12 +1602,7 @@ export default function Home() {
                 <button className="filter-btn" onClick={() => { /* filtro temporada */ }}>📅 TEMPORADA</button>
               </div>
               <div id="leaderboardTable">
-                {/* Tabela do ranking será preenchida via JS/API */}
-                <div className="empty-state" style={{padding: '40px 0', textAlign: 'center'}}>
-                  <div className="empty-state-icon">🏆</div>
-                  <div className="empty-state-text">Nenhum dado disponível</div>
-                  <div className="empty-state-hint">O ranking será exibido aqui quando houver jogadores registrados.</div>
-                </div>
+                <LeaderboardTable />
               </div>
             </div>
           </div>
