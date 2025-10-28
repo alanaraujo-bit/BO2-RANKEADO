@@ -519,6 +519,7 @@ const UI = {
         }
     }
 };
+};
 
 // Render ranks grid dynamically from RankSystem
 UI.renderRanks = function() {
