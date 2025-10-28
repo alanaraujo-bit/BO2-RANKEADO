@@ -587,6 +587,20 @@ function toggleNotifications() {
     }
 }
 
+// Expose some functions on window for compatibility with other build artifacts
+// (pages/index.js and inline onclick handlers may rely on window.showLoginModal etc.)
+try {
+    if (typeof window !== 'undefined') {
+        window.showLoginModal = window.showLoginModal || showLoginModal;
+        window.closeLoginModal = window.closeLoginModal || closeLoginModal;
+        window.loginWithGoogle = window.loginWithGoogle || loginWithGoogle;
+        window.handleLogin = window.handleLogin || handleLogin;
+        window.showAccessGranted = window.showAccessGranted || showAccessGranted;
+    }
+} catch (e) {
+    console.warn('Could not attach login helpers to window:', e);
+}
+
 async function updateNotifications() {
     const content = document.getElementById('notificationsContent');
     const badge = document.getElementById('notificationBadge');
