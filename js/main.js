@@ -90,6 +90,17 @@ async function loginWithGoogle() {
     try {
         console.log('🔵 Iniciando login com Google...');
         UI.showNotification('Abrindo janela do Google...', 'info');
+        // UX: disable Google button to avoid double clicks
+        const googleBtn = document.querySelector('.btn-google');
+        let previousHtml = null;
+        if (googleBtn) {
+            try {
+                previousHtml = googleBtn.innerHTML;
+                googleBtn.setAttribute('disabled', 'disabled');
+                googleBtn.classList.add('loading');
+                googleBtn.innerHTML = '<span style="opacity:0.9">Abrindo...</span>';
+            } catch (e) {}
+        }
         
         const provider = new firebase.auth.GoogleAuthProvider();
         provider.setCustomParameters({
@@ -185,6 +196,17 @@ async function loginWithGoogle() {
         } else {
             UI.showNotification('Erro ao fazer login com Google: ' + error.message, 'error');
         }
+    }
+    finally {
+        // restore google button state
+        try {
+            const googleBtn = document.querySelector('.btn-google');
+            if (googleBtn) {
+                googleBtn.removeAttribute('disabled');
+                googleBtn.classList.remove('loading');
+                if (previousHtml !== null) googleBtn.innerHTML = previousHtml;
+            }
+        } catch (e) {}
     }
 }
 
