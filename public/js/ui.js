@@ -96,6 +96,62 @@ const UI = {
         }
     },
 
+    // Simple notification/toast helper (fallback for when a richer UI isn't available)
+    showNotification(message, type = 'info') {
+        try {
+            // Create container if missing
+            let container = document.getElementById('bo2-toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'bo2-toast-container';
+                container.style.position = 'fixed';
+                container.style.right = '16px';
+                container.style.top = '16px';
+                container.style.zIndex = 99999;
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+                container.style.gap = '8px';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'bo2-toast ' + type;
+            toast.textContent = message || '';
+            toast.style.padding = '10px 14px';
+            toast.style.borderRadius = '8px';
+            toast.style.boxShadow = '0 6px 20px rgba(0,0,0,0.45)';
+            toast.style.color = '#fff';
+            toast.style.fontSize = '13px';
+            toast.style.maxWidth = '320px';
+            toast.style.opacity = '1';
+            toast.style.transition = 'opacity 0.4s ease, transform 0.25s ease';
+            toast.style.transform = 'translateY(0)';
+
+            if (type === 'error') {
+                toast.style.background = 'linear-gradient(90deg,#ff4d4f,#d9363e)';
+            } else if (type === 'success') {
+                toast.style.background = 'linear-gradient(90deg,#34c759,#28a745)';
+            } else if (type === 'warning') {
+                toast.style.background = 'linear-gradient(90deg,#f59e0b,#f97316)';
+            } else {
+                toast.style.background = 'linear-gradient(90deg,#0ea5e9,#0369a1)';
+            }
+
+            container.appendChild(toast);
+
+            // Auto remove
+            setTimeout(() => {
+                try {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-6px)';
+                    setTimeout(() => { try { toast.remove(); } catch(_) {} }, 400);
+                } catch (_) {}
+            }, 3500);
+        } catch (e) {
+            try { alert(message); } catch (_) { console.log(message); }
+        }
+    },
+
     async updatePendingMatches() {
         // Minimal stub; pages that expect this will call MatchSystem if available
         try {
