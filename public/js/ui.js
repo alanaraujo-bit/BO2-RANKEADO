@@ -133,5 +133,29 @@ const UI = {
 
 // Expose UI to global scope for legacy code
 window.UI = window.UI || UI;
+// Provide a fallback showLoginModal for legacy callers (pages/index.js expects this)
+UI.showLoginModal = UI.showLoginModal || function() {
+    try {
+        const modal = document.getElementById('loginModal');
+        if (modal) {
+            modal.classList.add('active');
+            const usernameInput = document.getElementById('usernameInput');
+            if (usernameInput) usernameInput.focus();
+
+            // Try to add terminal effect if available
+            try {
+                const evt = new Event('bo2:login-modal-opened');
+                window.dispatchEvent(evt);
+            } catch (e) {}
+        } else {
+            console.warn('UI.showLoginModal: #loginModal not found in DOM');
+        }
+    } catch (e) {
+        console.error('UI.showLoginModal error:', e);
+    }
+};
+
+// Also expose as global function for legacy inline handlers
+window.showLoginModal = window.showLoginModal || UI.showLoginModal;
 
 // End of file
