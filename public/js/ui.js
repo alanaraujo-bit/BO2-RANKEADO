@@ -165,11 +165,29 @@ document.addEventListener('click', function delegateGoogleLogin(e) {
         const btn = e.target.closest && e.target.closest('.btn-google');
         if (!btn) return;
         console.log('Google login button clicked (delegated)');
+
+        // If handler exists, call it immediately
         if (typeof window.loginWithGoogle === 'function') {
             window.loginWithGoogle();
-        } else {
-            console.warn('loginWithGoogle not defined on window');
+            return;
         }
+
+        // Otherwise poll for a short period for the handler to become available
+        let attempts = 0;
+        const maxAttempts = 10; // ~1 second with 100ms interval
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof window.loginWithGoogle === 'function') {
+                clearInterval(interval);
+                try { window.loginWithGoogle(); } catch (e) { console.error('loginWithGoogle error after poll:', e); }
+                return;
+            }
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                console.warn('loginWithGoogle not defined after polling; aborting');
+                UI.showNotification('Serviço de login não disponível no momento. Tente novamente em alguns segundos.', 'error');
+            }
+        }, 100);
     } catch (err) {
         console.error('Error in delegated Google login handler:', err);
     }
