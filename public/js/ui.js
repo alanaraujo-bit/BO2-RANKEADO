@@ -230,7 +230,7 @@ document.addEventListener('click', function delegateGoogleLogin(e) {
 
         // Otherwise poll for a short period for the handler to become available
         let attempts = 0;
-        const maxAttempts = 10; // ~1 second with 100ms interval
+        const maxAttempts = 50; // ~5 seconds with 100ms interval
         const interval = setInterval(() => {
             attempts++;
             if (typeof window.loginWithGoogle === 'function') {
@@ -241,6 +241,9 @@ document.addEventListener('click', function delegateGoogleLogin(e) {
             if (attempts >= maxAttempts) {
                 clearInterval(interval);
                 console.warn('loginWithGoogle not defined after polling; aborting');
+                // dispatch legacy events in case other scripts listen for them
+                try { window.dispatchEvent(new CustomEvent('bo2:request-login-google')); } catch(_) {}
+                try { window.dispatchEvent(new CustomEvent('bo2:request-login')); } catch(_) {}
                 UI.showNotification('Serviço de login não disponível no momento. Tente novamente em alguns segundos.', 'error');
             }
         }, 100);
