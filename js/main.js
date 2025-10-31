@@ -13,6 +13,13 @@ async function getUserData(username) {
     }
 }
 
+// Expose loginWithGoogle to global scope so legacy / delegated handlers can call it
+try {
+    window.loginWithGoogle = window.loginWithGoogle || loginWithGoogle;
+} catch (e) {
+    console.warn('Could not expose loginWithGoogle on window:', e);
+}
+
 async function updateUserData(username, data) {
     try {
         const playerData = await RankedData.getPlayer(username);
