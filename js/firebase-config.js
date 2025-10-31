@@ -2,12 +2,13 @@
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDV95wdCM54M-xJn4hQanKw2unkfvAqxcs",
-    authDomain: "bo2-ranked.firebaseapp.com",
-    projectId: "bo2-ranked",
-    storageBucket: "bo2-ranked.firebasestorage.app",
-    messagingSenderId: "898358094429",
-    appId: "1:898358094429:web:c3fc9088315630abb3fbb4"
+    apiKey: "AIzaSyDBI8FLuPn_Q6YZm1mUYW_YgBqdsH8aMCM",
+    authDomain: "rankops-8d2ea.firebaseapp.com",
+    projectId: "rankops-8d2ea",
+    storageBucket: "rankops-8d2ea.firebasestorage.app",
+    messagingSenderId: "489891182477",
+    appId: "1:489891182477:web:7aad98542de6b060602fc4",
+    measurementId: "G-QJZCYR3TPQ"
 };
 
 // Initialize Firebase immediately when script loads
