@@ -158,4 +158,21 @@ UI.showLoginModal = UI.showLoginModal || function() {
 // Also expose as global function for legacy inline handlers
 window.showLoginModal = window.showLoginModal || UI.showLoginModal;
 
+// Delegate clicks on Google login button to the login handler (fix for builds where
+// inline/onClick handlers or React bindings are not attached)
+document.addEventListener('click', function delegateGoogleLogin(e) {
+    try {
+        const btn = e.target.closest && e.target.closest('.btn-google');
+        if (!btn) return;
+        console.log('Google login button clicked (delegated)');
+        if (typeof window.loginWithGoogle === 'function') {
+            window.loginWithGoogle();
+        } else {
+            console.warn('loginWithGoogle not defined on window');
+        }
+    } catch (err) {
+        console.error('Error in delegated Google login handler:', err);
+    }
+});
+
 // End of file
