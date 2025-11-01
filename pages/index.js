@@ -16,6 +16,7 @@ const TABS = [
 ];
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [topPlayers, setTopPlayers] = useState([]);
   const [top3, setTop3] = useState([]);
@@ -26,6 +27,15 @@ export default function Home() {
   const [opponents, setOpponents] = useState([]);
   const [pendingMatchesState, setPendingMatchesState] = useState([]);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
+
+  // Only render on client-side to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null; // Return null on server-side
+  }
 
   // Load scripts sequentially to ensure proper order
   useEffect(() => {
