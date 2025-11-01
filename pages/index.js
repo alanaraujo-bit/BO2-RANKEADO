@@ -16,7 +16,6 @@ const TABS = [
 ];
 
 export default function Home() {
-  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [topPlayers, setTopPlayers] = useState([]);
   const [top3, setTop3] = useState([]);
@@ -27,15 +26,6 @@ export default function Home() {
   const [opponents, setOpponents] = useState([]);
   const [pendingMatchesState, setPendingMatchesState] = useState([]);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
-
-  // Only render on client-side to avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null; // Return null on server-side
-  }
 
   // Load scripts sequentially to ensure proper order
   useEffect(() => {
@@ -681,7 +671,7 @@ export default function Home() {
 
 
   return (
-    <>
+    <div suppressHydrationWarning>
       <Head>
         <title>BO2 Plutonium Ranked System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -691,8 +681,8 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
   {/* Scripts are loaded sequentially via useEffect to ensure proper order */}
-      <div className="particles" id="particles"></div>
-      <nav className="navbar">
+      <div className="particles" id="particles" suppressHydrationWarning></div>
+      <nav className="navbar" suppressHydrationWarning>
         <div className="nav-container">
           <div className="nav-logo">
             <span className="logo-text">BO2</span>
@@ -742,7 +732,7 @@ export default function Home() {
           </div>
         </div>
       </nav>
-      <div className="notifications-dropdown" id="notificationsDropdown">
+      <div className="notifications-dropdown" id="notificationsDropdown" suppressHydrationWarning>
         <div className="notifications-header">
           <h3>🔔 Notificações</h3>
           <button style={{background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '1.2em'}}>✕</button>
@@ -753,7 +743,7 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <div className="main-container">
+      <div className="main-container" suppressHydrationWarning>
         {/* HOME PAGE */}
         {activeTab === 'home' && (
           <div id="home" className="page active">
@@ -1769,6 +1759,6 @@ export default function Home() {
         </div>
       </div>
 
-    </>
+    </div>
   );
 }
