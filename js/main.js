@@ -86,9 +86,19 @@ function setupEventListeners() {
     }
 }
 
+// Flag to prevent duplicate login attempts
+let isLoggingIn = false;
+
 // Handle Google login
 async function loginWithGoogle() {
+    // Prevent duplicate calls
+    if (isLoggingIn) {
+        console.log('⚠️ Login já em andamento, ignorando chamada duplicada');
+        return;
+    }
+    
     try {
+        isLoggingIn = true;
         console.log('🔵 Iniciando login com Google...');
         UI.showNotification('Abrindo janela do Google...', 'info');
         // UX: disable Google button to avoid double clicks
@@ -194,12 +204,16 @@ async function loginWithGoogle() {
             UI.showNotification('Login cancelado', 'error');
         } else if (error.code === 'auth/popup-blocked') {
             UI.showNotification('Pop-up bloqueado! Permita pop-ups para este site', 'error');
+        } else if (error.code === 'auth/cancelled-popup-request') {
+            console.log('⚠️ Popup cancelado por outra solicitação - ignorando');
+            // Silenciar este erro pois é causado por chamadas duplicadas
         } else {
             UI.showNotification('Erro ao fazer login com Google: ' + error.message, 'error');
         }
     }
     finally {
-        // restore google button state
+        // Reset flag and restore button state
+        isLoggingIn = false;
         try {
             const googleBtn = document.querySelector('.btn-google');
             if (googleBtn) {
