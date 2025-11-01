@@ -1,8 +1,11 @@
 
 import Head from 'next/head';
 import Script from 'next/script';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import FriendsPanel from '../components/FriendsPanel';
+
+const ClientOnly = dynamic(() => import('../components/ClientOnly'), { ssr: false });
 
 const TABS = [
   { id: 'home', label: '🏠 HOME' },
@@ -16,6 +19,7 @@ const TABS = [
 ];
 
 export default function Home() {
+  const contentRef = useRef(null);
   const [activeTab, setActiveTab] = useState('home');
   const [topPlayers, setTopPlayers] = useState([]);
   const [top3, setTop3] = useState([]);
@@ -26,6 +30,14 @@ export default function Home() {
   const [opponents, setOpponents] = useState([]);
   const [pendingMatchesState, setPendingMatchesState] = useState([]);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
+
+  // Prevent React from touching the DOM after scripts load
+  useEffect(() => {
+    if (contentRef.current && scriptsLoaded) {
+      // Mark this node as "hands off" for React
+      contentRef.current.__reactInternalInstance = null;
+    }
+  }, [scriptsLoaded]);
 
   // Load scripts sequentially to ensure proper order
   useEffect(() => {
@@ -671,7 +683,7 @@ export default function Home() {
 
 
   return (
-    <div suppressHydrationWarning>
+    <div suppressHydrationWarning key="app-root">
       <Head>
         <title>BO2 Plutonium Ranked System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -681,8 +693,8 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
   {/* Scripts are loaded sequentially via useEffect to ensure proper order */}
-      <div className="particles" id="particles" suppressHydrationWarning></div>
-      <nav className="navbar" suppressHydrationWarning>
+      <div ref={contentRef} className="particles" id="particles" suppressHydrationWarning key="particles"></div>
+      <nav className="navbar" suppressHydrationWarning key="navbar">
         <div className="nav-container">
           <div className="nav-logo">
             <span className="logo-text">BO2</span>
