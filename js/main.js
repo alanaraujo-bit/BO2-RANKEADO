@@ -14,13 +14,6 @@ async function getUserData(username) {
     }
 }
 
-// Expose loginWithGoogle to global scope so legacy / delegated handlers can call it
-try {
-    window.loginWithGoogle = window.loginWithGoogle || loginWithGoogle;
-} catch (e) {
-    console.warn('Could not expose loginWithGoogle on window:', e);
-}
-
 async function updateUserData(username, data) {
     try {
         const playerData = await RankedData.getPlayer(username);
@@ -624,20 +617,19 @@ function toggleNotifications() {
 // (pages/index.js and inline onclick handlers may rely on window.showLoginModal etc.)
 try {
     if (typeof window !== 'undefined') {
-        window.showLoginModal = window.showLoginModal || showLoginModal;
-        window.closeLoginModal = window.closeLoginModal || closeLoginModal;
-        window.loginWithGoogle = window.loginWithGoogle || loginWithGoogle;
-        window.handleLogin = window.handleLogin || handleLogin;
-        window.showAccessGranted = window.showAccessGranted || showAccessGranted;
+        window.showLoginModal = showLoginModal;
+        window.closeLoginModal = closeLoginModal;
+        window.loginWithGoogle = loginWithGoogle;
+        window.handleLogin = handleLogin;
+        window.showAccessGranted = showAccessGranted;
+        console.log('✅ Login functions exposed to window:', {
+            showLoginModal: typeof window.showLoginModal,
+            loginWithGoogle: typeof window.loginWithGoogle,
+            handleLogin: typeof window.handleLogin
+        });
     }
 } catch (e) {
-    console.warn('Could not attach login helpers to window:', e);
-}
-// Força loginWithGoogle no escopo global após todos os scripts
-try {
-    window.loginWithGoogle = window.loginWithGoogle || loginWithGoogle;
-} catch (e) {
-    console.warn('Could not expose loginWithGoogle on window (final patch):', e);
+    console.error('❌ Could not attach login helpers to window:', e);
 }
 
 // Listen for legacy custom event dispatched by Next.js pages (pages/index.js)
