@@ -1,5 +1,6 @@
 // BO2 RANKED - MAIN APPLICATION
 
+console.log('main.js carregado (vercel deploy)');
 // Signal that the main script loaded (helps debug if script is not being included)
 console.log('main.js loaded');
 
