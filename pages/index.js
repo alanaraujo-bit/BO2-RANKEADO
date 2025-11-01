@@ -634,7 +634,16 @@ export default function Home() {
   <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" strategy="beforeInteractive" />
 
   <Script src="/js/firebase-config.js" strategy="afterInteractive" />
-  <Script src="/js/data.js" strategy="afterInteractive" />
+  <Script src="/js/ranks.js" strategy="afterInteractive" />
+  <Script src="/js/mmr.js" strategy="afterInteractive" />
+  <Script src="/js/anti-abuse.js" strategy="afterInteractive" />
+  <Script src="/js/data-firebase.js" strategy="afterInteractive" />
+  <Script src="/js/friends.js" strategy="afterInteractive" />
+  <Script src="/js/seasons.js" strategy="afterInteractive" />
+  <Script src="/js/seasons-ui.js" strategy="afterInteractive" />
+  <Script src="/js/matches.js" strategy="afterInteractive" />
+  <Script src="/js/match-registration.js" strategy="afterInteractive" />
+  <Script src="/js/profile.js" strategy="afterInteractive" />
   <Script src="/js/ui.js" strategy="afterInteractive" />
   <Script src="/js/main.js" strategy="afterInteractive" />
       <div className="particles" id="particles"></div>
