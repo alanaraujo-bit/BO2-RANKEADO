@@ -5,8 +5,18 @@ let firebaseReady = false;
 
 // Wait for Firebase to be fully loaded
 function waitForFirebase() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 100; // 10 seconds max
+        
         const checkFirebase = setInterval(() => {
+            attempts++;
+            console.log(`🔍 Waiting for Firebase... attempt ${attempts}/${maxAttempts}`, {
+                firebaseAuth: typeof window.firebaseAuth,
+                firebaseDB: typeof window.firebaseDB,
+                firebase: typeof firebase
+            });
+            
             if (window.firebaseAuth && window.firebaseDB) {
                 clearInterval(checkFirebase);
                 auth = window.firebaseAuth;
@@ -14,6 +24,10 @@ function waitForFirebase() {
                 firebaseReady = true;
                 console.log('✅ Data layer connected to Firebase');
                 resolve(true);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkFirebase);
+                console.error('❌ Firebase initialization timeout');
+                reject(new Error('Firebase initialization timeout'));
             }
         }, 100);
     });
@@ -71,6 +85,12 @@ const RankedData = {
     // Allocate next sequential player number using a Firestore transaction
     async allocateNextPlayerNumber() {
         if (!firebaseReady) await waitForFirebase();
+        
+        // Ensure _seqRef is initialized
+        if (!this._seqRef) {
+            this._seqRef = () => db.collection('meta').doc('sequences');
+        }
+        
         const ref = this._seqRef();
         try {
             // If players collection is empty (fresh start), reset sequence to 1
@@ -482,6 +502,12 @@ const RankedData = {
     
     // Get player
     async getPlayer(username, forceRefresh = false) {
+        // Ensure Firebase is ready
+        if (!firebaseReady || !db) {
+            console.log('⏳ Firebase not ready yet, waiting...');
+            await waitForFirebase();
+        }
+        
         // Check local cache first (unless forcing refresh)
         if (!forceRefresh && this.players[username]) {
             console.log('📦 Getting player from cache:', username, 'userId:', this.players[username].userId);
@@ -684,6 +710,9 @@ const RankedData = {
     // Get leaderboard
     async getLeaderboard(type = 'global') {
         try {
+            // Ensure Firebase is ready
+            if (!firebaseReady || !db) await waitForFirebase();
+            
             const querySnapshot = await db.collection('players')
                 .orderBy('mmr', 'desc')
                 .limit(100)
@@ -826,6 +855,9 @@ const RankedData = {
     // Get stats
     async getStats() {
         try {
+            // Ensure Firebase is ready
+            if (!firebaseReady || !db) await waitForFirebase();
+            
             const playersSnapshot = await db.collection('players').get();
             const matchesSnapshot = await db.collection('matches').get();
             

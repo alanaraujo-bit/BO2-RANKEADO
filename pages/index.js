@@ -25,6 +25,59 @@ export default function Home() {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [opponents, setOpponents] = useState([]);
   const [pendingMatchesState, setPendingMatchesState] = useState([]);
+  const [scriptsLoaded, setScriptsLoaded] = useState(false);
+
+  // Load scripts sequentially to ensure proper order
+  useEffect(() => {
+    const loadScriptsSequentially = async () => {
+      const loadScript = (src) => {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.onload = () => {
+            console.log(`✅ Loaded: ${src}`);
+            resolve();
+          };
+          script.onerror = reject;
+          document.body.appendChild(script);
+        });
+      };
+
+      try {
+        // Firebase SDK first
+        await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+        await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+        await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js');
+        
+        // Then firebase config
+        await loadScript('/js/firebase-config.js');
+        
+        // Wait a bit for Firebase to initialize
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Then other scripts
+        await loadScript('/js/ranks.js');
+        await loadScript('/js/mmr.js');
+        await loadScript('/js/anti-abuse.js');
+        await loadScript('/js/data-firebase.js');
+        await loadScript('/js/friends.js');
+        await loadScript('/js/seasons.js');
+        await loadScript('/js/seasons-ui.js');
+        await loadScript('/js/matches.js');
+        await loadScript('/js/match-registration.js');
+        await loadScript('/js/profile.js');
+        await loadScript('/js/ui.js');
+        await loadScript('/js/main.js');
+        
+        console.log('✅ All scripts loaded successfully');
+        setScriptsLoaded(true);
+      } catch (error) {
+        console.error('❌ Error loading scripts:', error);
+      }
+    };
+
+    loadScriptsSequentially();
+  }, []);
 
   // Simple localStorage-backed leaderboard reader (fallback to data format used by original app)
   const loadLeaderboardFromStorage = () => {
@@ -627,25 +680,7 @@ export default function Home() {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Head>
-  {/* Legacy scripts: load after hydration so legacy globals (RankedData, UI, etc.) are available for the old scripts */}
-  {/* Firebase SDK (compat) - must load before our firebase-config.js which uses global `firebase` */}
-  <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" strategy="beforeInteractive" />
-  <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" strategy="beforeInteractive" />
-  <Script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" strategy="beforeInteractive" />
-
-  <Script src="/js/firebase-config.js" strategy="afterInteractive" />
-  <Script src="/js/ranks.js" strategy="afterInteractive" />
-  <Script src="/js/mmr.js" strategy="afterInteractive" />
-  <Script src="/js/anti-abuse.js" strategy="afterInteractive" />
-  <Script src="/js/data-firebase.js" strategy="afterInteractive" />
-  <Script src="/js/friends.js" strategy="afterInteractive" />
-  <Script src="/js/seasons.js" strategy="afterInteractive" />
-  <Script src="/js/seasons-ui.js" strategy="afterInteractive" />
-  <Script src="/js/matches.js" strategy="afterInteractive" />
-  <Script src="/js/match-registration.js" strategy="afterInteractive" />
-  <Script src="/js/profile.js" strategy="afterInteractive" />
-  <Script src="/js/ui.js" strategy="afterInteractive" />
-  <Script src="/js/main.js" strategy="afterInteractive" />
+  {/* Scripts are loaded sequentially via useEffect to ensure proper order */}
       <div className="particles" id="particles"></div>
       <nav className="navbar">
         <div className="nav-container">
