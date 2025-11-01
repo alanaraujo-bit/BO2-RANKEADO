@@ -632,6 +632,12 @@ try {
 } catch (e) {
     console.warn('Could not attach login helpers to window:', e);
 }
+// Força loginWithGoogle no escopo global após todos os scripts
+try {
+    window.loginWithGoogle = window.loginWithGoogle || loginWithGoogle;
+} catch (e) {
+    console.warn('Could not expose loginWithGoogle on window (final patch):', e);
+}
 
 // Listen for legacy custom event dispatched by Next.js pages (pages/index.js)
 try {
