@@ -220,35 +220,53 @@ document.addEventListener('click', function delegateGoogleLogin(e) {
     try {
         const btn = e.target.closest && e.target.closest('.btn-google');
         if (!btn) return;
-        console.log('Google login button clicked (delegated)');
+        console.log('🔵 Google login button clicked (delegated)');
+        console.log('🔍 Checking if loginWithGoogle is available:', typeof window.loginWithGoogle);
 
         // If handler exists, call it immediately
         if (typeof window.loginWithGoogle === 'function') {
-            window.loginWithGoogle();
+            console.log('✅ loginWithGoogle found, calling it now');
+            try {
+                window.loginWithGoogle();
+            } catch (e) {
+                console.error('❌ Error calling loginWithGoogle:', e);
+                UI.showNotification('Erro ao iniciar login: ' + e.message, 'error');
+            }
             return;
         }
 
         // Otherwise poll for a short period for the handler to become available
+        console.log('⏳ loginWithGoogle not found, starting polling...');
         let attempts = 0;
-        const maxAttempts = 50; // ~5 seconds with 100ms interval
+        const maxAttempts = 100; // ~10 seconds with 100ms interval
         const interval = setInterval(() => {
             attempts++;
+            console.log(`⏱️ Polling attempt ${attempts}/${maxAttempts} - loginWithGoogle type:`, typeof window.loginWithGoogle);
+            
             if (typeof window.loginWithGoogle === 'function') {
                 clearInterval(interval);
-                try { window.loginWithGoogle(); } catch (e) { console.error('loginWithGoogle error after poll:', e); }
+                console.log('✅ loginWithGoogle found after polling, calling it now');
+                try { 
+                    window.loginWithGoogle(); 
+                } catch (e) { 
+                    console.error('❌ loginWithGoogle error after poll:', e); 
+                    UI.showNotification('Erro ao iniciar login: ' + e.message, 'error');
+                }
                 return;
             }
             if (attempts >= maxAttempts) {
                 clearInterval(interval);
-                console.warn('loginWithGoogle not defined after polling; aborting');
+                console.error('❌ loginWithGoogle not defined after polling; aborting');
+                console.log('📋 Available window functions:', Object.keys(window).filter(k => k.includes('login')));
                 // dispatch legacy events in case other scripts listen for them
                 try { window.dispatchEvent(new CustomEvent('bo2:request-login-google')); } catch(_) {}
                 try { window.dispatchEvent(new CustomEvent('bo2:request-login')); } catch(_) {}
-                UI.showNotification('Serviço de login não disponível no momento. Tente novamente em alguns segundos.', 'error');
+                UI.showNotification('Serviço de login não disponível no momento. Verifique o console para mais detalhes.', 'error');
             }
         }, 100);
     } catch (err) {
-        console.error('Error in delegated Google login handler:', err);
+        console.error('❌ Error in delegated Google login handler:', err);
+        UI.showNotification('Erro crítico no login: ' + err.message, 'error');
     }
 });
 
