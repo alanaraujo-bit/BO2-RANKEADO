@@ -614,30 +614,42 @@ class FriendsSystem {
                 : (playerData.totalKills || 0).toFixed(2);
 
             // Safe setter
-            const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+            const setText = (id, value) => { 
+                const el = document.getElementById(id); 
+                if (el) el.textContent = value; 
+            };
 
-            // Modal header basics
-            setText('profileModalTitle', `PERFIL DE ${username.toUpperCase()}`);
+            // Profile header - NEW DESIGN
             setText('profileUsername', username);
-            const idStr = playerData.playerNumberStr || (playerData.playerNumber ? String(playerData.playerNumber).padStart(2, '0') : '00');
-            setText('profileUserId', `#${idStr}`);
+            setText('profileAvatarLetter', username.charAt(0).toUpperCase());
+            
+            // Rank badge icon
+            const rankIcon = document.getElementById('profileRankIcon');
+            if (rankIcon) rankIcon.textContent = rankData.icon;
 
-            // New stat chips
+            // Rank and MMR display
             setText('modalRankName', rankData.name);
             setText('modalMMR', playerData.mmr || 999);
+
+            // Stats grid - NEW DESIGN
+            setText('profileTotalMatches', gamesPlayed);
+            setText('profileWins', playerData.wins || 0);
+            setText('profileLosses', playerData.losses || 0);
+            setText('profileWinrate', `${winrate}%`);
+
+            // Performance metrics
             setText('modalKD', kd);
-            setText('modalWR', `${winrate}%`);
-            setText('modalMatches', gamesPlayed);
+            
+            // K/D bar width (normalize to 0-100%, 3.0+ KD = 100%)
+            const kdPercent = Math.min((parseFloat(kd) / 3.0) * 100, 100);
+            const kdBar = document.getElementById('kdBar');
+            if (kdBar) kdBar.style.width = `${kdPercent}%`;
 
             // Rank progress
             const progress = RankSystem.getRankProgress(playerData.mmr || 999);
-            const progText = progress.next
-                ? `${progress.current.name} → ${progress.next.name} • ${progress.progress}% (faltam ${progress.mmrNeeded} MMR)`
-                : `${progress.current.name} • Máximo`;
-            setText('modalRankProgressText', progText);
             setText('modalRankProgressValue', `${progress.progress}%`);
-            const bar = document.getElementById('modalRankProgressBar');
-            if (bar) bar.style.width = `${progress.progress}%`;
+            const progBar = document.getElementById('modalRankProgressBar');
+            if (progBar) progBar.style.width = `${progress.progress}%`;
 
             // Action buttons
             const actionButtons = document.getElementById('profileActionButtons');
@@ -680,7 +692,12 @@ class FriendsSystem {
             if (!historyDiv) return;
 
             if (!playerMatches || playerMatches.length === 0) {
-                historyDiv.innerHTML = '<div class="empty-state">Nenhuma partida registrada</div>';
+                historyDiv.innerHTML = `
+                    <div class="empty-matches">
+                        <div class="empty-icon">🎮</div>
+                        <p>Nenhuma partida registrada</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -689,24 +706,33 @@ class FriendsSystem {
                 const opponent = match.playerA === username ? match.playerB : match.playerA;
                 const delta = match.mmrDelta ? (isWinner ? match.mmrDelta.winner?.change : match.mmrDelta.loser?.change) : null;
                 const mmrChange = (typeof delta === 'number') ? `${delta >= 0 ? '+' : ''}${delta}` : (isWinner ? '+25' : '-25');
-                const resultClass = isWinner ? 'match-win' : 'match-loss';
-                const date = match.timestamp ? new Date(match.timestamp).toLocaleDateString('pt-BR') : '';
+                const resultClass = isWinner ? 'win' : 'loss';
+                const resultText = isWinner ? 'VITÓRIA' : 'DERROTA';
+                const resultIcon = isWinner ? '🏆' : '💀';
+                const date = match.timestamp ? new Date(match.timestamp).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : '';
 
                 return `
-                    <div class="profile-match-item ${resultClass}">
-                        <div class="match-result-icon">${isWinner ? '🏆' : '💔'}</div>
-                        <div class="match-details">
-                            <div class="match-opponent">${isWinner ? 'VITÓRIA' : 'DERROTA'} vs ${opponent}</div>
-                            <div class="match-date">${date}</div>
+                    <div class="match-timeline-item ${resultClass}">
+                        <div class="match-result-badge">${resultIcon}</div>
+                        <div class="match-info-block">
+                            <div class="match-versus">${resultText} <span class="match-opponent-name">vs ${opponent}</span></div>
+                            <div class="match-timestamp">${date}</div>
                         </div>
-                        <div class="match-mmr ${isWinner ? 'mmr-gain' : 'mmr-loss'}">${mmrChange} MMR</div>
+                        <div class="match-mmr-change">${mmrChange} MMR</div>
                     </div>
                 `;
             }).join('');
         } catch (error) {
             console.error('Error loading match history:', error);
             const historyDiv = document.getElementById('profileMatchHistory');
-            if (historyDiv) historyDiv.innerHTML = '<div class="error-state">Erro ao carregar histórico</div>';
+            if (historyDiv) {
+                historyDiv.innerHTML = `
+                    <div class="empty-matches">
+                        <div class="empty-icon">⚠️</div>
+                        <p>Erro ao carregar histórico</p>
+                    </div>
+                `;
+            }
         }
     }
 
