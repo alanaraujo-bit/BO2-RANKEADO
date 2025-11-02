@@ -114,9 +114,47 @@ def enviar_dados(evento_tipo: str, dados: dict, retry=0) -> bool:
 # ===============================
 # PARSERS DE LINHAS
 # ===============================
+def parse_plutonium_kill(linha: str):
+    """
+    Parse de kills do Plutonium
+    Formato: timestamp K;attacker_guid;attacker_num;attacker_team;attacker_name;victim_guid;victim_num;victim_team;victim_name;weapon;damage;means_of_death;hitloc
+    Exemplo: 111:21 K;5962719;0;axis;alanzeira_AP;5962719;-1;axis;alanzeira_AP;destructible_car_mp;176;MOD_EXPLOSIVE;none
+    """
+    s = linha.strip()
+    if " K;" not in s:
+        return None
+    
+    try:
+        # Split timestamp e dados
+        parts = s.split(" ", 1)
+        if len(parts) < 2:
+            return None
+        
+        data = parts[1].split(";")
+        if len(data) < 13:
+            return None
+        
+        killer_name = data[4]
+        victim_name = data[8]
+        weapon = data[9]
+        hitloc = data[12] if len(data) > 12 else "none"
+        
+        # Se killer e victim são iguais, é suicídio
+        if killer_name == victim_name:
+            return None
+        
+        return {
+            "killer": killer_name,
+            "victim": victim_name,
+            "weapon": weapon,
+            "headshot": hitloc.lower() == "head"
+        }
+    except Exception:
+        return None
+
 def parse_kill_line(linha: str):
     """
-    Parse de linhas de kill
+    Parse de linhas de kill (formato customizado para testes)
     Formatos aceitos:
     - KILL: PlayerA -> PlayerB
     - KILL: PlayerA -> PlayerB [M4A1]
@@ -162,8 +200,98 @@ def parse_kill_line(linha: str):
         "headshot": headshot
     }
 
+def parse_plutonium_join(linha: str):
+    """
+    Parse de player join do Plutonium
+    Formato: timestamp J;guid;num;name
+    Exemplo: 111:00 J;5962719;0;alanzeira_AP
+    """
+    s = linha.strip()
+    if " J;" not in s:
+        return None
+    
+    try:
+        parts = s.split(" ", 1)
+        if len(parts) < 2:
+            return None
+        
+        data = parts[1].split(";")
+        if len(data) < 4:
+            return None
+        
+        return {
+            "player": data[3],
+            "guid": data[1]
+        }
+    except Exception:
+        return None
+
+def parse_plutonium_quit(linha: str):
+    """
+    Parse de player quit do Plutonium
+    Formato: timestamp Q;guid;num;name
+    Exemplo: 122:51 Q;6120270;1;samuwuu
+    """
+    s = linha.strip()
+    if " Q;" not in s:
+        return None
+    
+    try:
+        parts = s.split(" ", 1)
+        if len(parts) < 2:
+            return None
+        
+        data = parts[1].split(";")
+        if len(data) < 4:
+            return None
+        
+        return {
+            "player": data[3],
+            "guid": data[1]
+        }
+    except Exception:
+        return None
+
+def parse_plutonium_init_game(linha: str):
+    """
+    Parse de InitGame do Plutonium para detectar início de partida
+    Formato: timestamp InitGame: \key\value\key\value...
+    """
+    s = linha.strip()
+    if "InitGame:" not in s:
+        return None
+    
+    try:
+        # Extrair valores importantes
+        mapname = "Unknown"
+        gametype = "Unknown"
+        maxclients = "Unknown"
+        
+        if "\\mapname\\" in s:
+            idx = s.index("\\mapname\\") + 9
+            end = s.find("\\", idx)
+            mapname = s[idx:end] if end > idx else s[idx:]
+        
+        if "\\g_gametype\\" in s:
+            idx = s.index("\\g_gametype\\") + 12
+            end = s.find("\\", idx)
+            gametype = s[idx:end] if end > idx else s[idx:]
+        
+        if "\\com_maxclients\\" in s:
+            idx = s.index("\\com_maxclients\\") + 16
+            end = s.find("\\", idx)
+            maxclients = s[idx:end] if end > idx else s[idx:]
+        
+        return {
+            "map": mapname,
+            "mode": gametype,
+            "players": f"{maxclients} players"
+        }
+    except Exception:
+        return None
+
 def parse_match_start(linha: str):
-    """Parse de início de partida"""
+    """Parse de início de partida (formato customizado)"""
     # MATCH_START: Nuketown, TDM, 8 players
     if not linha.strip().startswith("MATCH_START:"):
         return None
@@ -178,7 +306,7 @@ def parse_match_start(linha: str):
     }
 
 def parse_match_end(linha: str):
-    """Parse de fim de partida"""
+    """Parse de fim de partida (formato customizado)"""
     # MATCH_END: Blue Team, 75-50, 10:30
     if not linha.strip().startswith("MATCH_END:"):
         return None
@@ -234,14 +362,60 @@ def monitorar_log():
                     if not linha:
                         continue
                     
-                    # KILL events
-                    if "KILL:" in linha:
+                    # PLUTONIUM KILL events (formato real do jogo)
+                    if " K;" in linha:
+                        dados = parse_plutonium_kill(linha)
+                        if dados:
+                            session_stats["kills"] += 1
+                            enviar_dados("kill", dados)
+                    
+                    # PLUTONIUM PLAYER JOIN
+                    elif " J;" in linha:
+                        dados = parse_plutonium_join(linha)
+                        if dados:
+                            log_info(f"Player joined: {dados['player']}")
+                            enviar_dados("player_join", dados)
+                    
+                    # PLUTONIUM PLAYER QUIT
+                    elif " Q;" in linha:
+                        dados = parse_plutonium_quit(linha)
+                        if dados:
+                            log_info(f"Player left: {dados['player']}")
+                            enviar_dados("player_quit", dados)
+                    
+                    # PLUTONIUM INIT GAME (início de partida)
+                    elif "InitGame:" in linha:
+                        dados = parse_plutonium_init_game(linha)
+                        if dados:
+                            session_stats["match_active"] = True
+                            session_stats["start_time"] = datetime.now()
+                            session_stats["kills"] = 0
+                            session_stats["deaths"] = 0
+                            enviar_dados("match_start", dados)
+                    
+                    # PLUTONIUM SHUTDOWN GAME (fim de partida)
+                    elif "ShutdownGame:" in linha:
+                        if session_stats["match_active"]:
+                            session_stats["match_active"] = False
+                            dados = {
+                                "kills": session_stats["kills"],
+                                "deaths": session_stats["deaths"]
+                            }
+                            enviar_dados("match_end", dados)
+                            
+                            # Log session summary
+                            log_info("-" * 60)
+                            log_info(f"Session Summary - Kills: {session_stats['kills']}, Deaths: {session_stats['deaths']}")
+                            log_info("-" * 60)
+                    
+                    # CUSTOM TEST FORMAT - KILL events
+                    elif "KILL:" in linha:
                         dados = parse_kill_line(linha)
                         if dados:
                             session_stats["kills"] += 1
                             enviar_dados("kill", dados)
                     
-                    # MATCH START events
+                    # CUSTOM TEST FORMAT - MATCH START events
                     elif "MATCH_START:" in linha:
                         dados = parse_match_start(linha)
                         if dados:
@@ -249,7 +423,7 @@ def monitorar_log():
                             session_stats["start_time"] = datetime.now()
                             enviar_dados("match_start", dados)
                     
-                    # MATCH END events
+                    # CUSTOM TEST FORMAT - MATCH END events
                     elif "MATCH_END:" in linha:
                         dados = parse_match_end(linha)
                         if dados:
