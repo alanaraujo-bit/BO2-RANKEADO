@@ -308,14 +308,21 @@ function updateUserDisplay() {
                                player.username === 'Alan Araújo' ||
                                RankedData.currentUser === 'Alan Araújo';
                 
-                console.log('Admin Check:', {
+                console.log('🔍 ADMIN DEBUG:', {
                     displayName: player.displayName,
                     username: player.username,
                     currentUser: RankedData.currentUser,
-                    isAdmin: isAdmin
+                    isAdmin: isAdmin,
+                    displayNameMatch: player.displayName === 'Alan Araújo',
+                    usernameMatch: player.username === 'Alan Araújo',
+                    currentUserMatch: RankedData.currentUser === 'Alan Araújo'
                 });
                 
-                if (isAdmin) {
+                // DEBUG VISUAL TEMPORÁRIO
+                if (player.displayName && player.displayName.includes('Alan')) {
+                    console.log('⚠️ FORÇANDO MENU ADMIN - DETECTADO ALAN');
+                    adminMenuItem.style.display = 'block';
+                } else if (isAdmin) {
                     adminMenuItem.style.display = 'block';
                 } else {
                     adminMenuItem.style.display = 'none';
