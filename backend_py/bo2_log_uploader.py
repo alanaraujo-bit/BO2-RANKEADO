@@ -40,7 +40,8 @@ session_stats = {
     "start_time": None,
     "last_init_game": None,  # Guarda último InitGame para evitar duplicatas
     "match_info": {},  # Info da partida atual
-    "players": {}  # Estatísticas por player
+    "players": {},  # Estatísticas por player
+    "team_scores": {"allies": 0, "axis": 0}  # Score por equipe
 }
 
 # Estrutura de stats por player
@@ -48,20 +49,28 @@ def init_player_stats(player_name):
     """Inicializa estatísticas de um player"""
     return {
         "name": player_name,
+        "team": None,  # allies ou axis
         "kills": 0,
         "deaths": 0,
+        "assists": 0,
         "headshots": 0,
         "suicides": 0,
+        "teamkills": 0,
         "current_streak": 0,
         "best_streak": 0,
         "death_streak": 0,
-        "weapons_used": {},  # {weapon: {kills, headshots}}
+        "damage_dealt": 0,
+        "damage_taken": 0,
+        "weapons_used": {},  # {weapon: {kills, headshots, damage}}
         "victims": {},  # {victim_name: kill_count}
         "killed_by": {},  # {killer_name: death_count}
+        "hit_locations": {},  # {hitloc: count} - mapa de calor
+        "recent_damage": {},  # {victim_name: {damage, timestamp}} - para calcular assists
         "first_blood": False,
         "join_time": None,
         "quit_time": None,
-        "playtime": 0
+        "playtime": 0,
+        "chat_messages": []  # Mensagens enviadas no chat
     }
 
 # ===============================
@@ -294,6 +303,60 @@ def parse_plutonium_quit(linha: str):
     except Exception:
         return None
 
+def parse_plutonium_weapon(linha: str):
+    """
+    Parse de troca de arma do Plutonium
+    Formato: timestamp Weapon;guid;num;name;weapon
+    Exemplo: 9:16 Weapon;5962719;1;alanzeira_AP;870mcs_mp+extbarrel+reflex
+    """
+    s = linha.strip()
+    if " Weapon;" not in s:
+        return None
+    
+    try:
+        parts = s.split(" ", 1)
+        if len(parts) < 2:
+            return None
+        
+        data = parts[1].split(";")
+        if len(data) < 5:
+            return None
+        
+        return {
+            "player": data[3],
+            "guid": data[1],
+            "weapon": data[4]
+        }
+    except Exception:
+        return None
+
+def parse_plutonium_say(linha: str):
+    """
+    Parse de mensagem de chat do Plutonium
+    Formato: timestamp say;guid;num;name;message
+    Exemplo: 11:58 say;6104210;2;[OpTc]HVDEZXL6;lol
+    """
+    s = linha.strip()
+    if " say;" not in s:
+        return None
+    
+    try:
+        parts = s.split(" ", 1)
+        if len(parts) < 2:
+            return None
+        
+        data = parts[1].split(";", 4)  # Limita split para não quebrar a mensagem
+        if len(data) < 5:
+            return None
+        
+        return {
+            "player": data[3],
+            "guid": data[1],
+            "message": data[4]
+        }
+    except Exception:
+        return None
+
 def parse_plutonium_init_game(linha: str):
     r"""
     Parse de InitGame do Plutonium para detectar início de partida
@@ -365,6 +428,51 @@ def parse_match_end(linha: str):
 # ===============================
 # PROCESSAMENTO DE ESTATÍSTICAS
 # ===============================
+def process_damage_stats(damage_data):
+    """Processa estatísticas de dano"""
+    attacker = damage_data["killer"]
+    victim = damage_data["victim"]
+    weapon = damage_data["weapon"]
+    damage = int(damage_data["damage"]) if damage_data["damage"].isdigit() else 0
+    hitloc = damage_data["hitloc"]
+    
+    # Inicializa players se não existirem
+    if attacker not in session_stats["players"]:
+        session_stats["players"][attacker] = init_player_stats(attacker)
+    if victim not in session_stats["players"]:
+        session_stats["players"][victim] = init_player_stats(victim)
+    
+    attacker_stats = session_stats["players"][attacker]
+    victim_stats = session_stats["players"][victim]
+    
+    # Atualiza team do player
+    if damage_data.get("killer_team"):
+        attacker_stats["team"] = damage_data["killer_team"]
+    if damage_data.get("victim_team"):
+        victim_stats["team"] = damage_data["victim_team"]
+    
+    # Dano causado
+    attacker_stats["damage_dealt"] += damage
+    
+    # Dano recebido
+    victim_stats["damage_taken"] += damage
+    
+    # Hit location tracking
+    if hitloc not in attacker_stats["hit_locations"]:
+        attacker_stats["hit_locations"][hitloc] = 0
+    attacker_stats["hit_locations"][hitloc] += 1
+    
+    # Weapon tracking
+    if weapon not in attacker_stats["weapons_used"]:
+        attacker_stats["weapons_used"][weapon] = {"kills": 0, "headshots": 0, "damage": 0}
+    attacker_stats["weapons_used"][weapon]["damage"] += damage
+    
+    # Recent damage para cálculo de assists
+    if victim not in attacker_stats["recent_damage"]:
+        attacker_stats["recent_damage"][victim] = {"damage": 0, "timestamp": datetime.now()}
+    attacker_stats["recent_damage"][victim]["damage"] += damage
+    attacker_stats["recent_damage"][victim]["timestamp"] = datetime.now()
+
 def process_kill_stats(kill_data):
     """Processa estatísticas de uma kill"""
     killer = kill_data["killer"]
@@ -373,6 +481,7 @@ def process_kill_stats(kill_data):
     headshot = kill_data["headshot"]
     is_suicide = kill_data.get("is_suicide", False)
     is_world_kill = kill_data.get("is_world_kill", False)
+    is_teamkill = kill_data.get("is_teamkill", False)
     
     # Inicializa players se não existirem
     if killer not in session_stats["players"]:
@@ -383,9 +492,24 @@ def process_kill_stats(kill_data):
     killer_stats = session_stats["players"][killer]
     victim_stats = session_stats["players"][victim]
     
+    # Atualiza team do player
+    if kill_data.get("killer_team"):
+        killer_stats["team"] = kill_data["killer_team"]
+    if kill_data.get("victim_team"):
+        victim_stats["team"] = kill_data["victim_team"]
+    
     # Atualiza kills (se não for world kill ou suicide)
     if not is_world_kill and not is_suicide:
         killer_stats["kills"] += 1
+        
+        # Team score
+        killer_team = kill_data.get("killer_team")
+        if killer_team in ["allies", "axis"]:
+            session_stats["team_scores"][killer_team] += 1
+        
+        # Teamkill
+        if is_teamkill:
+            killer_stats["teamkills"] += 1
         
         # Headshot
         if headshot:
@@ -403,7 +527,7 @@ def process_kill_stats(kill_data):
         
         # Armas usadas
         if weapon not in killer_stats["weapons_used"]:
-            killer_stats["weapons_used"][weapon] = {"kills": 0, "headshots": 0}
+            killer_stats["weapons_used"][weapon] = {"kills": 0, "headshots": 0, "damage": 0}
         killer_stats["weapons_used"][weapon]["kills"] += 1
         if headshot:
             killer_stats["weapons_used"][weapon]["headshots"] += 1
@@ -412,6 +536,25 @@ def process_kill_stats(kill_data):
         if victim not in killer_stats["victims"]:
             killer_stats["victims"][victim] = 0
         killer_stats["victims"][victim] += 1
+        
+        # Calcular assists (quem deu dano na vítima nos últimos 5 segundos)
+        for player_name, player_stats in session_stats["players"].items():
+            if player_name == killer or player_name == victim:
+                continue
+            
+            if victim in player_stats["recent_damage"]:
+                recent = player_stats["recent_damage"][victim]
+                time_diff = (datetime.now() - recent["timestamp"]).total_seconds()
+                
+                # Se deu dano nos últimos 5 segundos, conta como assist
+                if time_diff <= 5 and recent["damage"] >= 10:
+                    player_stats["assists"] += 1
+                    log_info(f"Assist: {player_name} helped kill {victim}")
+        
+        # Limpa recent_damage da vítima
+        for player_stats in session_stats["players"].values():
+            if victim in player_stats["recent_damage"]:
+                del player_stats["recent_damage"][victim]
     
     # Atualiza deaths
     victim_stats["deaths"] += 1
@@ -451,20 +594,33 @@ def get_match_summary():
         if stats["killed_by"]:
             nemesis = max(stats["killed_by"].items(), key=lambda x: x[1])[0]
         
+        # Hit location mais comum
+        favorite_hitloc = "N/A"
+        if stats["hit_locations"]:
+            favorite_hitloc = max(stats["hit_locations"].items(), key=lambda x: x[1])[0]
+        
         players_summary.append({
             "player": player_name,
+            "team": stats["team"],
             "kills": stats["kills"],
             "deaths": stats["deaths"],
+            "assists": stats["assists"],
             "kd_ratio": round(kd_ratio, 2),
             "headshots": stats["headshots"],
             "headshot_ratio": round(headshot_ratio, 1),
             "best_streak": stats["best_streak"],
+            "damage_dealt": stats["damage_dealt"],
+            "damage_taken": stats["damage_taken"],
             "suicides": stats["suicides"],
+            "teamkills": stats["teamkills"],
             "first_blood": stats["first_blood"],
             "favorite_weapon": favorite_weapon,
             "favorite_victim": favorite_victim,
+            "favorite_hitloc": favorite_hitloc,
             "nemesis": nemesis,
-            "weapons_stats": stats["weapons_used"]
+            "weapons_stats": stats["weapons_used"],
+            "hit_locations": stats["hit_locations"],
+            "chat_messages": stats["chat_messages"]
         })
     
     # Ordena por kills
@@ -474,10 +630,30 @@ def get_match_summary():
     if players_summary:
         players_summary[0]["is_mvp"] = True
     
+    # Determina vencedor
+    winner_team = None
+    gametype = session_stats["match_info"].get("mode", "")
+    
+    if gametype == "dm":  # Free-for-all
+        if players_summary:
+            winner_team = players_summary[0]["player"]  # Vencedor individual
+    else:  # Team modes (tdm, dom, etc)
+        allies_score = session_stats["team_scores"]["allies"]
+        axis_score = session_stats["team_scores"]["axis"]
+        
+        if allies_score > axis_score:
+            winner_team = "allies"
+        elif axis_score > allies_score:
+            winner_team = "axis"
+        else:
+            winner_team = "draw"
+    
     return {
         "match_info": session_stats["match_info"],
         "total_kills": session_stats["kills"],
         "total_deaths": sum(p["deaths"] for p in players_summary),
+        "team_scores": session_stats["team_scores"],
+        "winner_team": winner_team,
         "players": players_summary,
         "duration": (datetime.now() - session_stats["start_time"]).total_seconds() if session_stats["start_time"] else 0
     }
@@ -533,8 +709,14 @@ def monitorar_log():
                     if not linha:
                         continue
                     
+                    # PLUTONIUM DAMAGE events (para assists e stats de dano)
+                    if " D;" in linha:
+                        dados = parse_plutonium_kill(linha)  # Usa mesmo parser (formato igual)
+                        if dados:
+                            process_damage_stats(dados)
+                    
                     # PLUTONIUM KILL events (formato real do jogo)
-                    if " K;" in linha:
+                    elif " K;" in linha:
                         dados = parse_plutonium_kill(linha)
                         if dados and not dados.get("is_suicide") and not dados.get("is_world_kill"):
                             session_stats["kills"] += 1
@@ -571,6 +753,32 @@ def monitorar_log():
                             
                             enviar_dados("player_quit", dados)
                     
+                    # PLUTONIUM WEAPON CHANGE
+                    elif " Weapon;" in linha:
+                        dados = parse_plutonium_weapon(linha)
+                        if dados:
+                            player_name = dados['player']
+                            weapon = dados['weapon']
+                            log_info(f"{player_name} equipped: {weapon}")
+                            enviar_dados("weapon_change", dados)
+                    
+                    # PLUTONIUM CHAT MESSAGE
+                    elif " say;" in linha:
+                        dados = parse_plutonium_say(linha)
+                        if dados:
+                            player_name = dados['player']
+                            message = dados['message']
+                            
+                            # Salva no histórico do player
+                            if player_name in session_stats["players"]:
+                                session_stats["players"][player_name]["chat_messages"].append({
+                                    "timestamp": datetime.now().isoformat(),
+                                    "message": message
+                                })
+                            
+                            log_info(f"{player_name}: {message}")
+                            enviar_dados("chat_message", dados)
+                    
                     # PLUTONIUM INIT GAME (início de partida)
                     elif "InitGame:" in linha:
                         dados = parse_plutonium_init_game(linha)
@@ -585,6 +793,7 @@ def monitorar_log():
                                 session_stats["deaths"] = 0
                                 session_stats["match_info"] = dados
                                 session_stats["players"] = {}  # Reset players
+                                session_stats["team_scores"] = {"allies": 0, "axis": 0}  # Reset team scores
                                 enviar_dados("match_start", dados)
                     
                     # PLUTONIUM SHUTDOWN GAME (fim de partida)
@@ -602,12 +811,25 @@ def monitorar_log():
                             log_info("=" * 60)
                             log_info(f"Duration: {int(match_summary['duration'])}s")
                             log_info(f"Total Kills: {match_summary['total_kills']}")
+                            
+                            # Winner
+                            winner = match_summary.get('winner_team', 'Unknown')
+                            if winner in ['allies', 'axis']:
+                                team_scores = match_summary['team_scores']
+                                log_info(f"WINNER: {winner.upper()} ({team_scores[winner]} kills)")
+                                log_info(f"Score: Allies {team_scores['allies']} x {team_scores['axis']} Axis")
+                            elif winner == 'draw':
+                                log_info("RESULT: DRAW")
+                            else:
+                                log_info(f"WINNER: {winner}")
+                            
                             log_info("")
                             log_info("TOP PLAYERS:")
                             for i, p in enumerate(match_summary["players"][:5], 1):
                                 mvp = " 👑 MVP" if p.get("is_mvp") else ""
                                 fb = " 🩸 First Blood" if p.get("first_blood") else ""
-                                log_info(f"  {i}. {p['player']}: {p['kills']}K / {p['deaths']}D (K/D: {p['kd_ratio']}) - HS: {p['headshot_ratio']}%{mvp}{fb}")
+                                team = f" [{p.get('team', '?').upper()}]" if p.get('team') else ""
+                                log_info(f"  {i}. {p['player']}{team}: {p['kills']}K / {p['deaths']}D / {p['assists']}A (K/D: {p['kd_ratio']}) - HS: {p['headshot_ratio']}%{mvp}{fb}")
                             log_info("=" * 60)
                     
                     # CUSTOM TEST FORMAT - KILL events
