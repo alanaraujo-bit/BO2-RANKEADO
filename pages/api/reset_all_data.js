@@ -42,6 +42,8 @@ export default async function handler(req, res) {
     let deletedKills = 0;
     let deletedMatches = 0;
     let deletedEvents = 0;
+    let deletedPendingConfirmations = 0;
+    let deletedPlayerMatches = 0;
     let resetPlayers = 0;
     
     // PASSO 1: Deletar TODAS as kills
@@ -68,6 +70,14 @@ export default async function handler(req, res) {
     deletedEvents = eventsSnapshot.size;
     console.log(`[reset_all_data] ✅ ${deletedEvents} events deletados`);
     
+    // PASSO 3.5: Deletar TODAS as pendingConfirmations
+    console.log('[reset_all_data] 🗑️  Deletando collection: pendingConfirmations...');
+    const pendingSnapshot = await db.collection('pendingConfirmations').get();
+    const pendingDeletePromises = pendingSnapshot.docs.map(doc => doc.ref.delete());
+    await Promise.all(pendingDeletePromises);
+    deletedPendingConfirmations = pendingSnapshot.size;
+    console.log(`[reset_all_data] ✅ ${deletedPendingConfirmations} pending confirmations deletadas`);
+    
     // PASSO 4: RESETAR estatísticas de TODOS os players (mantém identidade)
     console.log('[reset_all_data] 🔄 Resetando estatísticas dos players...');
     const playersSnapshot = await db.collection('players').get();
@@ -79,36 +89,71 @@ export default async function handler(req, res) {
       const playerMatchesSnapshot = await doc.ref.collection('matches').get();
       const deletePlayerMatches = playerMatchesSnapshot.docs.map(m => m.ref.delete());
       await Promise.all(deletePlayerMatches);
+      deletedPlayerMatches += playerMatchesSnapshot.size;
       
-      // Reseta apenas estatísticas, mantém identidade
-      return doc.ref.update({
-        // MANTÉM: userId, username, email, plutoniumName, displayName, photoURL
-        // RESETA: todas as stats
+      // Deleta subcollection de friends do player (se existir)
+      try {
+        const playerFriendsSnapshot = await doc.ref.collection('friends').get();
+        const deleteFriends = playerFriendsSnapshot.docs.map(f => f.ref.delete());
+        await Promise.all(deleteFriends);
+      } catch (e) {
+        // Ignora se não existir
+      }
+      
+      // Reseta COMPLETAMENTE mantendo apenas identidade
+      const resetData = {
+        // MANTÉM identidade
+        userId: data.userId,
+        username: data.username,
+        email: data.email,
+        plutoniumName: data.plutoniumName || null,
+        displayName: data.displayName || data.username,
+        photoURL: data.photoURL || null,
+        createdAt: data.createdAt || Date.now(),
+        
+        // ZERA TODAS as estatísticas
         kills: 0,
         deaths: 0,
         wins: 0,
         losses: 0,
         headshots: 0,
         assists: 0,
+        suicides: 0,
+        teamkills: 0,
+        damageDealt: 0,
+        damageTaken: 0,
         mmr: 1000,
         rank: 'bronze',
         rankNumber: 1,
+        playerNumber: data.playerNumber || 0,
+        playerNumberStr: data.playerNumberStr || '00',
+        
+        // LIMPA mapas/objetos
         victims: {},
         killedBy: {},
         weaponsUsed: {},
         hitLocations: {},
+        
+        // ZERA contadores
         matchesPlayed: 0,
         winStreak: 0,
         lossStreak: 0,
         bestWinStreak: 0,
+        bestKillStreak: 0,
+        
+        // LIMPA timestamps
         lastMatch: null,
         lastKill: null,
         lastDeath: null,
         lastSeen: null,
         lastJoin: null,
         lastQuit: null,
+        
         updatedAt: Date.now()
-      });
+      };
+      
+      // Usa SET para sobrescrever TUDO (não merge)
+      return doc.ref.set(resetData);
     });
     
     await Promise.all(resetPlayersPromises);
@@ -124,8 +169,10 @@ export default async function handler(req, res) {
         deletedKills,
         deletedMatches,
         deletedEvents,
+        deletedPendingConfirmations,
+        deletedPlayerMatches,
         resetPlayers,
-        totalDeleted: deletedKills + deletedMatches + deletedEvents
+        totalDeleted: deletedKills + deletedMatches + deletedEvents + deletedPendingConfirmations + deletedPlayerMatches
       }
     });
     
