@@ -298,6 +298,16 @@ function updateUserDisplay() {
             userNameEl.textContent = `${rank.icon} ${RankedData.currentUser}`;
             userNameEl.style.cursor = 'pointer';
             userNameEl.onclick = () => showPage('profile');
+            
+            // Show admin menu item only for Alan Araújo
+            const adminMenuItem = document.getElementById('adminMenuItem');
+            if (adminMenuItem) {
+                if (player.displayName === 'Alan Araújo' || player.email === 'alan@example.com') {
+                    adminMenuItem.style.display = 'block';
+                } else {
+                    adminMenuItem.style.display = 'none';
+                }
+            }
         }
         btnLogin.textContent = 'SAIR';
         btnLogin.onclick = logout;
@@ -318,6 +328,10 @@ function updateUserDisplay() {
         // Hide notification bell
         const bell = document.getElementById('notificationBell');
         if (bell) bell.style.display = 'none';
+        
+        // Hide admin menu item for non-logged users
+        const adminMenuItem = document.getElementById('adminMenuItem');
+        if (adminMenuItem) adminMenuItem.style.display = 'none';
         
         // Reset hero section
         UI.updateHeroSection();
