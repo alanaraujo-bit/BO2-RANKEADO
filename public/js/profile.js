@@ -656,6 +656,118 @@ ProfileManager.updateKDChart = function(player) {
     }).join('');
 };
 
+// ===============================================================================
+// RIVALS & NEMESIS SECTION
+// ===============================================================================
+
+ProfileManager.updateRivalsSection = function(player) {
+    // Get victims and killedBy data
+    const victims = player.victims || {};
+    const killedBy = player.killedBy || {};
+    
+    // Find top rival (quem você mais matou)
+    let topRival = null;
+    let topRivalKills = 0;
+    for (const [name, kills] of Object.entries(victims)) {
+        if (kills > topRivalKills) {
+            topRivalKills = kills;
+            topRival = name;
+        }
+    }
+    
+    // Find top nemesis (quem mais te matou)
+    let topNemesis = null;
+    let topNemesisDeaths = 0;
+    for (const [name, deaths] of Object.entries(killedBy)) {
+        if (deaths > topNemesisDeaths) {
+            topNemesisDeaths = deaths;
+            topNemesis = name;
+        }
+    }
+    
+    // Update Rival Card
+    if (topRival) {
+        const rivalInfo = document.querySelector('#rivalPlayerInfo .rival-player-name');
+        const rivalKills = document.getElementById('rivalKills');
+        const rivalDominanceBar = document.getElementById('rivalDominanceBar');
+        const rivalDominance = document.getElementById('rivalDominance');
+        
+        if (rivalInfo) rivalInfo.textContent = topRival;
+        if (rivalKills) rivalKills.textContent = topRivalKills;
+        
+        // Calculate dominance (percentage vs total interactions)
+        const totalDeaths = killedBy[topRival] || 0;
+        const totalInteractions = topRivalKills + totalDeaths;
+        const dominancePercent = totalInteractions > 0 ? ((topRivalKills / totalInteractions) * 100).toFixed(0) : 0;
+        
+        if (rivalDominanceBar) rivalDominanceBar.style.width = dominancePercent + '%';
+        if (rivalDominance) rivalDominance.textContent = dominancePercent + '%';
+    }
+    
+    // Update Nemesis Card
+    if (topNemesis) {
+        const nemesisInfo = document.querySelector('#nemesisPlayerInfo .rival-player-name');
+        const nemesisDeaths = document.getElementById('nemesisDeaths');
+        const nemesisDominanceBar = document.getElementById('nemesisDominanceBar');
+        const nemesisDominance = document.getElementById('nemesisDominance');
+        
+        if (nemesisInfo) nemesisInfo.textContent = topNemesis;
+        if (nemesisDeaths) nemesisDeaths.textContent = topNemesisDeaths;
+        
+        // Calculate dominance (percentage vs total interactions)
+        const totalKills = victims[topNemesis] || 0;
+        const totalInteractions = topNemesisDeaths + totalKills;
+        const dominancePercent = totalInteractions > 0 ? ((topNemesisDeaths / totalInteractions) * 100).toFixed(0) : 0;
+        
+        if (nemesisDominanceBar) nemesisDominanceBar.style.width = dominancePercent + '%';
+        if (nemesisDominance) nemesisDominance.textContent = dominancePercent + '%';
+    }
+    
+    // Update Top 5 Victims List
+    const topVictimsList = document.getElementById('topVictimsList');
+    if (topVictimsList) {
+        const sortedVictims = Object.entries(victims)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+        
+        if (sortedVictims.length === 0) {
+            topVictimsList.innerHTML = '<div style="text-align: center; color: var(--neutral-400); padding: 20px;">Nenhum dado ainda</div>';
+        } else {
+            topVictimsList.innerHTML = sortedVictims.map(([name, kills], index) => `
+                <div class="rival-list-item">
+                    <div class="rival-list-item-info">
+                        <span class="rival-list-position">#${index + 1}</span>
+                        <span class="rival-list-name">${name}</span>
+                    </div>
+                    <span class="rival-list-count">${kills}</span>
+                </div>
+            `).join('');
+        }
+    }
+    
+    // Update Top 5 Killers List
+    const topKillersList = document.getElementById('topKillersList');
+    if (topKillersList) {
+        const sortedKillers = Object.entries(killedBy)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+        
+        if (sortedKillers.length === 0) {
+            topKillersList.innerHTML = '<div style="text-align: center; color: var(--neutral-400); padding: 20px;">Nenhum dado ainda</div>';
+        } else {
+            topKillersList.innerHTML = sortedKillers.map(([name, deaths], index) => `
+                <div class="rival-list-item">
+                    <div class="rival-list-item-info">
+                        <span class="rival-list-position">#${index + 1}</span>
+                        <span class="rival-list-name">${name}</span>
+                    </div>
+                    <span class="rival-list-count">${deaths}</span>
+                </div>
+            `).join('');
+        }
+    }
+};
+
 // Update main renderProfile to include new sections
 const originalRenderProfile = ProfileManager.renderProfile;
 ProfileManager.renderProfile = async function() {
@@ -667,6 +779,7 @@ ProfileManager.renderProfile = async function() {
     if (!player) return;
 
     // Update new sections
+    this.updateRivalsSection(player);
     this.updateWeaponsSection(player);
     this.updatePerformanceSection(player);
 };
