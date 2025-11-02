@@ -14,7 +14,7 @@ set "SCRIPT_DIR=%~dp0"
 cd /d "%SCRIPT_DIR%"
 
 REM Defaults (apenas para esta sessao)
-if not defined BO2_API_URL set "BO2_API_URL=https://bo2-ranked.vercel.app/api/update_stats"
+if not defined BO2_API_URL set "BO2_API_URL=https://rankops.vercel.app/api/update_stats"
 if not defined BO2_LOG_FILE set "BO2_LOG_FILE=C:\Program Files (x86)\Steam\steamapps\common\Call of Duty Black Ops II\player_stats.txt"
 
 echo Iniciando uploader...
