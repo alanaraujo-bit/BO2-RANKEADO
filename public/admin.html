@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - BO2 Ranked</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 30px;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .admin-header h1 {
+            font-size: 3rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .admin-header .subtitle {
+            color: var(--neutral-400);
+            font-size: 1.1rem;
+        }
+
+        .admin-section {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .admin-section h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .admin-section p {
+            color: var(--neutral-300);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-recalculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-recalculate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-cleanup {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-cleanup:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .admin-result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .admin-result.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgb(16, 185, 129);
+            color: rgb(16, 185, 129);
+            display: block;
+        }
+
+        .admin-result.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgb(239, 68, 68);
+            color: rgb(239, 68, 68);
+            display: block;
+        }
+
+        .admin-result.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgb(245, 158, 11);
+            color: rgb(245, 158, 11);
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            color: var(--neutral-400);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .danger-zone {
+            border-color: #f5576c !important;
+        }
+
+        .danger-zone h2 {
+            color: #f5576c !important;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .access-denied h1 {
+            font-size: 4rem;
+            color: #f5576c;
+            margin-bottom: 20px;
+        }
+
+        .access-denied p {
+            font-size: 1.2rem;
+            color: var(--neutral-400);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">BO2</span>
+                <span class="logo-ranked">ADMIN</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/app.html" class="nav-link">🏠 VOLTAR</a></li>
+            </ul>
+            <div class="nav-user">
+                <span class="user-name" id="currentUserName">Verificando...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Content -->
+    <div class="admin-container" id="adminContent" style="display: none;">
+        <div class="admin-header">
+            <h1>🛠️ PAINEL DE ADMINISTRAÇÃO</h1>
+            <p class="subtitle">Gerenciamento avançado do sistema BO2 Ranked</p>
+        </div>
+
+        <!-- Recalcular Estatísticas -->
+        <div class="admin-section">
+            <h2>🔄 Recalcular Estatísticas</h2>
+            <p>
+                Re-processa TODAS as kills salvas no Firestore e recalcula as estatísticas dos players do zero.
+                Útil quando há inconsistências nos dados.
+            </p>
+            <div class="admin-actions">
+                <button class="admin-btn btn-recalculate" onclick="recalculateStats()">
+                    <span>🔄</span>
+                    <span>Recalcular Stats</span>
+                </button>
+            </div>
+            <div class="admin-result" id="recalculateResult"></div>
+        </div>
+
+        <!-- Limpar Players Inválidos -->
+        <div class="admin-section">
+            <h2>🧹 Limpar Players Inválidos</h2>
+            <p>
+                Remove players cadastrados que não possuem nome do Plutonium configurado.
+                Mantém apenas players válidos com plutoniumName definido.
+            </p>
+            <div class="admin-actions">
+                <button class="admin-btn btn-cleanup" onclick="cleanupInvalidPlayers()">
+                    <span>🧹</span>
+                    <span>Limpar Invalidos</span>
+                </button>
+            </div>
+            <div class="admin-result" id="cleanupResult"></div>
+        </div>
+
+        <!-- ZONA DE PERIGO -->
+        <div class="admin-section danger-zone">
+            <h2>🔥 ZONA DE PERIGO</h2>
+            <p>
+                <strong>⚠️ ATENÇÃO:</strong> Esta operação é <strong>IRREVERSÍVEL</strong>!<br>
+                Deleta TODAS as kills, matches, events e reseta estatísticas de TODOS os players para ZERO.
+                Os players continuam cadastrados, mas todas as estatísticas são perdidas.
+            </p>
+            <div class="admin-actions">
+                <button class="admin-btn btn-reset" onclick="confirmResetAll()">
+                    <span>💣</span>
+                    <span>Resetar TUDO</span>
+                </button>
+            </div>
+            <div class="admin-result" id="resetResult"></div>
+        </div>
+    </div>
+
+    <!-- Access Denied -->
+    <div class="access-denied" id="accessDenied" style="display: none;">
+        <h1>🚫</h1>
+        <p>Acesso negado. Esta página é restrita ao administrador.</p>
+        <br>
+        <a href="/app.html" class="btn-primary">Voltar para o Site</a>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore-compat.js"></script>
+    <script src="/js/firebase-config.js"></script>
+
+    <script>
+        let currentUser = null;
+
+        // Verifica se é admin
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                showAccessDenied();
+                return;
+            }
+
+            const db = firebase.firestore();
+            const userDoc = await db.collection('players').doc(user.uid).get();
+            
+            if (!userDoc.exists) {
+                showAccessDenied();
+                return;
+            }
+
+            const userData = userDoc.data();
+            currentUser = userData;
+
+            // Verifica se é o admin (Alan Araújo - Principal)
+            const isAdmin = userData.displayName === 'Alan Araújo' || 
+                           userData.username === 'Alan Araújo' ||
+                           userData.email === user.email; // Fallback: primeiro usuário
+
+            if (!isAdmin) {
+                showAccessDenied();
+                return;
+            }
+
+            // É admin! Mostra painel
+            document.getElementById('currentUserName').textContent = userData.displayName || userData.username;
+            document.getElementById('adminContent').style.display = 'block';
+        });
+
+        function showAccessDenied() {
+            document.getElementById('accessDenied').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
+        }
+
+        async function recalculateStats() {
+            const btn = event.target.closest('.admin-btn');
+            const resultDiv = document.getElementById('recalculateResult');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span><span>Recalculando...</span>';
+            resultDiv.className = 'admin-result';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/recalculate_stats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    resultDiv.className = 'admin-result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Estatísticas Recalculadas com Sucesso!</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Players Resetados</div>
+                                <div class="stat-value">${data.stats.playersReset}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Kills Processadas</div>
+                                <div class="stat-value">${data.stats.killsProcessed}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Erros</div>
+                                <div class="stat-value">${data.stats.errors}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+            } catch (error) {
+                resultDiv.className = 'admin-result error';
+                resultDiv.innerHTML = `<h3>❌ Erro</h3><p>${error.message}</p>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>🔄</span><span>Recalcular Stats</span>';
+            }
+        }
+
+        async function cleanupInvalidPlayers() {
+            const btn = event.target.closest('.admin-btn');
+            const resultDiv = document.getElementById('cleanupResult');
+            
+            if (!confirm('Tem certeza que deseja remover players sem nome do Plutonium?')) {
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span><span>Limpando...</span>';
+            resultDiv.className = 'admin-result';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/cleanup_invalid_players', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.ok || data.deleted !== undefined) {
+                    resultDiv.className = 'admin-result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Limpeza Concluída!</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Players Deletados</div>
+                                <div class="stat-value">${data.deleted || 0}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Players Mantidos</div>
+                                <div class="stat-value">${data.kept || 0}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+            } catch (error) {
+                resultDiv.className = 'admin-result error';
+                resultDiv.innerHTML = `<h3>❌ Erro</h3><p>${error.message}</p>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>🧹</span><span>Limpar Invalidos</span>';
+            }
+        }
+
+        async function confirmResetAll() {
+            const confirmed1 = prompt('⚠️ ATENÇÃO! Digite "RESETAR TUDO" para confirmar (tudo em maiúsculo):');
+            if (confirmed1 !== 'RESETAR TUDO') {
+                alert('❌ Operação cancelada.');
+                return;
+            }
+
+            const confirmed2 = confirm('🚨 ÚLTIMA CHANCE!\n\nEsta operação é IRREVERSÍVEL!\n\nTODOS os dados serão DELETADOS:\n- Kills\n- Matches\n- Events\n- Estatísticas dos players\n\nDeseja realmente continuar?');
+            if (!confirmed2) {
+                alert('✅ Operação cancelada.');
+                return;
+            }
+
+            await resetAllData();
+        }
+
+        async function resetAllData() {
+            const btn = event.target.closest('.admin-btn');
+            const resultDiv = document.getElementById('resetResult');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span><span>Deletando...</span>';
+            resultDiv.className = 'admin-result';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/reset_all_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    resultDiv.className = 'admin-result success';
+                    resultDiv.innerHTML = `
+                        <h3>🔥 Reset Completo Executado!</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Kills Deletadas</div>
+                                <div class="stat-value">${data.stats.deletedKills}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Matches Deletadas</div>
+                                <div class="stat-value">${data.stats.deletedMatches}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Events Deletados</div>
+                                <div class="stat-value">${data.stats.deletedEvents}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Players Resetados</div>
+                                <div class="stat-value">${data.stats.resetPlayers}</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 20px;">Todos começam do ZERO novamente! 🎮</p>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+            } catch (error) {
+                resultDiv.className = 'admin-result error';
+                resultDiv.innerHTML = `<h3>❌ Erro</h3><p>${error.message}</p>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>💣</span><span>Resetar TUDO</span>';
+            }
+        }
+    </script>
+</body>
+</html>
