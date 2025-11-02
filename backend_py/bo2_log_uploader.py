@@ -78,18 +78,26 @@ def init_player_stats(player_name):
 # ===============================
 def log_info(msg):
     """Loga mensagem informativa com timestamp"""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] INFO: {msg}")
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] ℹ️  {msg}")
 
 def log_error(msg):
     """Loga mensagem de erro com timestamp"""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] ERROR: {msg}", file=sys.stderr)
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] ❌ {msg}", file=sys.stderr)
 
 def log_success(msg):
     """Loga mensagem de sucesso com timestamp"""
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] ✓ {msg}")
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] ✅ {msg}")
+
+def log_event(icon, title, details):
+    """Loga evento formatado de forma organizada"""
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"\n[{timestamp}] {icon} {title}")
+    for key, value in details.items():
+        print(f"  │ {key:<20} {value}")
+    print(f"  └{'─' * 50}")
 
 # ===============================
 # ENVIO DE DADOS
@@ -121,27 +129,27 @@ def enviar_dados(evento_tipo: str, dados: dict, retry=0) -> bool:
         response = requests.post(API_URL, headers=headers, json=payload, timeout=10)
         
         if response.status_code == 200:
-            log_success(f"{evento_tipo.upper()}: {json.dumps(dados, ensure_ascii=False)}")
+            # Silencioso - não loga sucesso de envio (já temos logs dos eventos)
             return True
         else:
-            log_error(f"Server returned {response.status_code}: {response.text[:100]}")
+            log_error(f"Servidor retornou {response.status_code}: {response.text[:100]}")
             
             if retry < MAX_RETRIES:
-                log_info(f"Retrying in {RETRY_DELAY}s... (attempt {retry + 1}/{MAX_RETRIES})")
+                log_info(f"Tentando novamente em {RETRY_DELAY}s... (tentativa {retry + 1}/{MAX_RETRIES})")
                 time.sleep(RETRY_DELAY)
                 return enviar_dados(evento_tipo, dados, retry + 1)
             return False
             
     except requests.exceptions.ConnectionError:
-        log_error(f"Connection failed to {API_URL}")
+        log_error(f"Falha na conexão com {API_URL}")
         if retry < MAX_RETRIES:
-            log_info(f"Retrying in {RETRY_DELAY}s... (attempt {retry + 1}/{MAX_RETRIES})")
+            log_info(f"Tentando novamente em {RETRY_DELAY}s... (tentativa {retry + 1}/{MAX_RETRIES})")
             time.sleep(RETRY_DELAY)
             return enviar_dados(evento_tipo, dados, retry + 1)
         return False
         
     except Exception as e:
-        log_error(f"Exception sending data: {repr(e)}")
+        log_error(f"Erro ao enviar dados: {repr(e)}")
         return False
 
 # ===============================
@@ -549,7 +557,12 @@ def process_kill_stats(kill_data):
                 # Se deu dano nos últimos 5 segundos, conta como assist
                 if time_diff <= 5 and recent["damage"] >= 10:
                     player_stats["assists"] += 1
-                    log_info(f"Assist: {player_name} helped kill {victim}")
+                    log_event("🤝", "ASSISTÊNCIA", {
+                        "Jogador": player_name,
+                        "Dano dado": f"{recent['damage']} HP",
+                        "Vítima": victim,
+                        "Matador": killer
+                    })
         
         # Limpa recent_damage da vítima
         for player_stats in session_stats["players"].values():
@@ -664,23 +677,23 @@ def get_match_summary():
 def monitorar_log():
     """Loop principal de monitoramento do log"""
     
-    log_info("=" * 60)
-    log_info("BO2 RANKED - LOG MONITOR STARTED")
-    log_info("=" * 60)
-    log_info(f"API URL: {API_URL}")
-    log_info(f"Log File: {LOG_FILE}")
-    log_info(f"Check Interval: {CHECK_INTERVAL}s")
+    print("\n" + "=" * 70)
+    print(f"{'🎮 BO2 RANKED - MONITOR DE LOGS':^70}")
+    print("=" * 70)
+    print(f"\n📡 API URL:      {API_URL}")
+    print(f"📁 Arquivo Log:  {LOG_FILE}")
+    print(f"⏱️  Intervalo:    {CHECK_INTERVAL}s")
     
     if not SECRET_KEY:
-        log_error("BO2_SECRET not set! Define with: setx BO2_SECRET \"your_secret\" /M")
+        log_error("BO2_SECRET não configurado! Use: setx BO2_SECRET \"sua_chave\" /M")
         return
     else:
-        log_info(f"Secret Key: {'*' * len(SECRET_KEY)} (length: {len(SECRET_KEY)})")
+        print(f"🔑 Secret Key:   {'*' * min(len(SECRET_KEY), 40)} ({len(SECRET_KEY)} chars)")
     
     # Verifica se o arquivo de log existe
     log_path = Path(LOG_FILE)
     if not log_path.exists():
-        log_info(f"Creating log file: {LOG_FILE}")
+        print(f"\n⚠️  Criando arquivo de log: {LOG_FILE}")
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.touch()
     
@@ -690,12 +703,12 @@ def monitorar_log():
         with open(LOG_FILE, "r", encoding="utf-8", errors="ignore") as file:
             file.seek(0, 2)  # Vai para o final do arquivo
             ultima_posicao = file.tell()
-            log_info(f"Starting from end of file (position: {ultima_posicao})")
+            print(f"\n✅ Iniciando monitoramento (posição: {ultima_posicao} bytes)")
     except Exception:
         pass
     
-    log_info("Monitoring started. Waiting for NEW log entries...")
-    log_info("-" * 60)
+    print("👀 Aguardando novos eventos no log...")
+    print("=" * 70 + "\n")
     
     while True:
         try:
@@ -714,6 +727,7 @@ def monitorar_log():
                         dados = parse_plutonium_kill(linha)  # Usa mesmo parser (formato igual)
                         if dados:
                             process_damage_stats(dados)
+                            # Silencioso - não loga dano individual (muito spam)
                     
                     # PLUTONIUM KILL events (formato real do jogo)
                     elif " K;" in linha:
@@ -727,18 +741,57 @@ def monitorar_log():
                                 
                                 process_kill_stats(dados)
                                 enviar_dados("kill", dados)
+                                
+                                # Log formatado
+                                killer = dados["killer"]
+                                victim = dados["victim"]
+                                weapon = dados["weapon"]
+                                
+                                if dados.get("is_suicide"):
+                                    log_event("💀", "SUICÍDIO", {
+                                        "Jogador": killer,
+                                        "Arma": weapon,
+                                        "Time": dados.get("killer_team", "N/A").upper()
+                                    })
+                                elif dados.get("is_teamkill"):
+                                    log_event("🔫", "TEAMKILL", {
+                                        "Matador": killer,
+                                        "Vítima": victim,
+                                        "Arma": weapon,
+                                        "Time": dados.get("killer_team", "N/A").upper()
+                                    })
+                                elif dados.get("headshot"):
+                                    log_event("🎯", "HEADSHOT", {
+                                        "Matador": killer,
+                                        "Vítima": victim,
+                                        "Arma": weapon,
+                                        "Streak": session_stats["players"][killer]["current_streak"]
+                                    })
+                                else:
+                                    log_event("💥", "KILL", {
+                                        "Matador": killer,
+                                        "Vítima": victim,
+                                        "Arma": weapon,
+                                        "Local do Hit": dados.get("hitloc", "N/A"),
+                                        "Streak": session_stats["players"][killer]["current_streak"]
+                                    })
                     
                     # PLUTONIUM PLAYER JOIN
                     elif " J;" in linha:
                         dados = parse_plutonium_join(linha)
                         if dados:
                             player_name = dados['player']
-                            log_info(f"Player joined: {player_name}")
                             
                             # Inicializa stats do player
                             if player_name not in session_stats["players"]:
                                 session_stats["players"][player_name] = init_player_stats(player_name)
                             session_stats["players"][player_name]["join_time"] = datetime.now()
+                            
+                            log_event("🟢", "JOGADOR ENTROU", {
+                                "Nome": player_name,
+                                "GUID": dados['guid'],
+                                "Jogadores Online": len(session_stats["players"])
+                            })
                             
                             enviar_dados("player_join", dados)
                     
@@ -747,14 +800,27 @@ def monitorar_log():
                         dados = parse_plutonium_quit(linha)
                         if dados:
                             player_name = dados['player']
-                            log_info(f"Player left: {player_name}")
                             
                             # Calcula tempo de jogo
+                            playtime = 0
+                            stats_summary = {}
                             if player_name in session_stats["players"]:
                                 player_stats = session_stats["players"][player_name]
                                 if player_stats["join_time"]:
                                     player_stats["quit_time"] = datetime.now()
                                     player_stats["playtime"] = (player_stats["quit_time"] - player_stats["join_time"]).total_seconds()
+                                    playtime = int(player_stats["playtime"] / 60)  # minutos
+                                
+                                stats_summary = {
+                                    "Nome": player_name,
+                                    "Tempo de Jogo": f"{playtime} min",
+                                    "K/D/A": f"{player_stats['kills']}/{player_stats['deaths']}/{player_stats['assists']}",
+                                    "Melhor Streak": player_stats['best_streak']
+                                }
+                            else:
+                                stats_summary = {"Nome": player_name}
+                            
+                            log_event("🔴", "JOGADOR SAIU", stats_summary)
                             
                             enviar_dados("player_quit", dados)
                     
@@ -762,9 +828,7 @@ def monitorar_log():
                     elif " Weapon;" in linha:
                         dados = parse_plutonium_weapon(linha)
                         if dados:
-                            player_name = dados['player']
-                            weapon = dados['weapon']
-                            log_info(f"{player_name} equipped: {weapon}")
+                            # Silencioso - não loga troca de arma (muito spam)
                             enviar_dados("weapon_change", dados)
                     
                     # PLUTONIUM CHAT MESSAGE
@@ -781,7 +845,11 @@ def monitorar_log():
                                     "message": message
                                 })
                             
-                            log_info(f"{player_name}: {message}")
+                            log_event("💬", "CHAT", {
+                                "Jogador": player_name,
+                                "Mensagem": message
+                            })
+                            
                             enviar_dados("chat_message", dados)
                     
                     # PLUTONIUM INIT GAME (início de partida)
@@ -799,6 +867,15 @@ def monitorar_log():
                                 session_stats["match_info"] = dados
                                 session_stats["players"] = {}  # Reset players
                                 session_stats["team_scores"] = {"allies": 0, "axis": 0}  # Reset team scores
+                                
+                                print("\n" + "=" * 70)
+                                log_event("🎮", "PARTIDA INICIADA", {
+                                    "Mapa": dados.get("map", "Desconhecido"),
+                                    "Modo": dados.get("mode", "Desconhecido").upper(),
+                                    "Max Jogadores": dados.get("players", "?")
+                                })
+                                print("=" * 70)
+                                
                                 enviar_dados("match_start", dados)
                     
                     # PLUTONIUM SHUTDOWN GAME (fim de partida)
@@ -810,32 +887,55 @@ def monitorar_log():
                             match_summary = get_match_summary()
                             enviar_dados("match_end", match_summary)
                             
-                            # Log session summary
-                            log_info("=" * 60)
-                            log_info(f"MATCH ENDED - {match_summary['match_info'].get('map', 'Unknown')}")
-                            log_info("=" * 60)
-                            log_info(f"Duration: {int(match_summary['duration'])}s")
-                            log_info(f"Total Kills: {match_summary['total_kills']}")
+                            # Log resumo da partida
+                            print("\n" + "=" * 70)
+                            print(f"{'🏁 PARTIDA FINALIZADA':^70}")
+                            print("=" * 70)
                             
-                            # Winner
-                            winner = match_summary.get('winner_team', 'Unknown')
+                            # Info da partida
+                            map_name = match_summary['match_info'].get('map', 'Desconhecido')
+                            duration_min = int(match_summary['duration'] / 60)
+                            duration_sec = int(match_summary['duration'] % 60)
+                            
+                            print(f"\n📍 Mapa: {map_name}")
+                            print(f"⏱️  Duração: {duration_min}:{duration_sec:02d}")
+                            print(f"💀 Total de Kills: {match_summary['total_kills']}")
+                            
+                            # Vencedor
+                            winner = match_summary.get('winner_team', 'Desconhecido')
+                            print(f"\n{'─' * 70}")
                             if winner in ['allies', 'axis']:
                                 team_scores = match_summary['team_scores']
-                                log_info(f"WINNER: {winner.upper()} ({team_scores[winner]} kills)")
-                                log_info(f"Score: Allies {team_scores['allies']} x {team_scores['axis']} Axis")
+                                winner_name = "ALIADOS" if winner == "allies" else "EIXO"
+                                print(f"🏆 VENCEDOR: {winner_name}")
+                                print(f"📊 Placar: Aliados {team_scores['allies']} x {team_scores['axis']} Eixo")
                             elif winner == 'draw':
-                                log_info("RESULT: DRAW")
+                                print(f"🤝 RESULTADO: EMPATE")
                             else:
-                                log_info(f"WINNER: {winner}")
+                                print(f"🏆 VENCEDOR: {winner}")
                             
-                            log_info("")
-                            log_info("TOP PLAYERS:")
+                            # Top 5 jogadores
+                            print(f"\n{'─' * 70}")
+                            print(f"{'👥 TOP 5 JOGADORES':^70}")
+                            print(f"{'─' * 70}")
+                            
                             for i, p in enumerate(match_summary["players"][:5], 1):
-                                mvp = " 👑 MVP" if p.get("is_mvp") else ""
-                                fb = " 🩸 First Blood" if p.get("first_blood") else ""
-                                team = f" [{p.get('team', '?').upper()}]" if p.get('team') else ""
-                                log_info(f"  {i}. {p['player']}{team}: {p['kills']}K / {p['deaths']}D / {p['assists']}A (K/D: {p['kd_ratio']}) - HS: {p['headshot_ratio']}%{mvp}{fb}")
-                            log_info("=" * 60)
+                                mvp = " 👑" if p.get("is_mvp") else ""
+                                fb = " 🩸" if p.get("first_blood") else ""
+                                team = f"[{p.get('team', '?').upper()}]" if p.get('team') else ""
+                                
+                                name_display = f"{p['player']}{team}{mvp}{fb}"
+                                kda = f"{p['kills']}K/{p['deaths']}D/{p['assists']}A"
+                                kd_ratio = f"K/D: {p['kd_ratio']}"
+                                hs = f"HS: {p['headshot_ratio']}%"
+                                
+                                print(f"\n  {i}º {name_display}")
+                                print(f"     │ KDA:        {kda}")
+                                print(f"     │ {kd_ratio:<12} {hs}")
+                                print(f"     │ Streak:     {p['best_streak']}")
+                                print(f"     │ Dano:       {p['damage_dealt']}")
+                            
+                            print(f"\n{'=' * 70}\n")
                     
                     # CUSTOM TEST FORMAT - KILL events
                     elif "KILL:" in linha:
@@ -865,18 +965,17 @@ def monitorar_log():
                             log_info("-" * 60)
         
         except FileNotFoundError:
-            log_error(f"Log file not found: {LOG_FILE}")
+            log_error(f"Arquivo de log não encontrado: {LOG_FILE}")
             time.sleep(CHECK_INTERVAL * 2)
         
         except KeyboardInterrupt:
-            log_info("\nShutdown requested by user")
-            log_info("=" * 60)
-            log_info("BO2 RANKED - LOG MONITOR STOPPED")
-            log_info("=" * 60)
+            print("\n\n" + "=" * 70)
+            print(f"{'⏹️  MONITOR ENCERRADO PELO USUÁRIO':^70}")
+            print("=" * 70 + "\n")
             sys.exit(0)
         
         except Exception as e:
-            log_error(f"Unexpected error: {repr(e)}")
+            log_error(f"Erro inesperado: {repr(e)}")
         
         time.sleep(CHECK_INTERVAL)
 
@@ -887,5 +986,5 @@ if __name__ == "__main__":
     try:
         monitorar_log()
     except KeyboardInterrupt:
-        log_info("\nShutdown complete")
+        print("\n✅ Encerramento completo\n")
         sys.exit(0)
