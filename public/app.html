@@ -1734,41 +1734,131 @@
     </div>
 
     <!-- Player Profile Modal -->
-    <!-- PLAYER PROFILE MODAL - REDESIGNED -->
+    <!-- PLAYER PROFILE MODAL - ULTIMATE REDESIGN -->
     <div class="modal-overlay" id="playerProfileModal">
-        <div class="player-profile-card">
+        <div class="player-profile-ultimate">
             <!-- Close Button -->
-            <button class="profile-close-btn" onclick="closePlayerProfile()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <button class="profile-close-ultimate" onclick="closePlayerProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </button>
 
-            <!-- Profile Banner -->
-            <div class="profile-banner">
-                <div class="profile-banner-bg"></div>
-                <div class="profile-rank-badge" id="profileRankIcon">🎖️</div>
+            <!-- HERO SECTION -->
+            <div class="profile-hero-section">
+                <div class="profile-hero-bg"></div>
+                <div class="profile-hero-content">
+                    <div class="profile-avatar-mega">
+                        <div class="avatar-glow-ring"></div>
+                        <div class="avatar-inner" id="profileAvatarImg">
+                            <span class="avatar-letter-mega" id="profileAvatarLetter">U</span>
+                        </div>
+                        <div class="avatar-rank-badge" id="profileRankIcon">🎖️</div>
+                    </div>
+                    <div class="profile-hero-info">
+                        <h1 class="profile-name-mega" id="profileUsername">USERNAME</h1>
+                        <div class="profile-rank-mega">
+                            <span class="rank-name-mega" id="modalRankName">BRONZE I</span>
+                            <span class="rank-mmr-mega"><span id="modalMMR">1000</span> MMR</span>
+                        </div>
+                        <div class="profile-quick-stats">
+                            <div class="quick-stat-item">
+                                <span class="qs-value" id="profileWins">0</span>
+                                <span class="qs-label">W</span>
+                            </div>
+                            <div class="quick-stat-divider"></div>
+                            <div class="quick-stat-item">
+                                <span class="qs-value" id="profileLosses">0</span>
+                                <span class="qs-label">L</span>
+                            </div>
+                            <div class="quick-stat-divider"></div>
+                            <div class="quick-stat-item highlight">
+                                <span class="qs-value" id="profileWinrate">0%</span>
+                                <span class="qs-label">WR</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions-hero" id="profileActionButtons"></div>
+                </div>
             </div>
 
-            <!-- Profile Header -->
-            <div class="profile-header-new">
-                <div class="profile-avatar-container">
-                    <div class="profile-avatar-ring"></div>
-                    <div class="profile-avatar-img" id="profileAvatarImg">
-                        <span class="avatar-letter" id="profileAvatarLetter">U</span>
+            <!-- COMPARISON SECTION (YOU VS THEM) -->
+            <div class="profile-comparison-section" id="comparisonSection" style="display: none;">
+                <div class="comparison-header">
+                    <div class="comparison-title">
+                        <span class="comp-icon">⚔️</span>
+                        <span>COMPARAÇÃO</span>
+                    </div>
+                    <div class="comparison-subtitle">Você vs <span id="compVsName">Jogador</span></div>
+                </div>
+                <div class="comparison-grid">
+                    <!-- MMR Comparison -->
+                    <div class="comparison-item">
+                        <div class="comp-label">MMR</div>
+                        <div class="comp-bars">
+                            <div class="comp-bar-row you">
+                                <span class="comp-player-label">VOCÊ</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-you" id="compMMRYou" style="width: 50%"></div>
+                                    <span class="comp-value" id="compMMRYouValue">0</span>
+                                </div>
+                            </div>
+                            <div class="comp-bar-row them">
+                                <span class="comp-player-label">ELE</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-them" id="compMMRThem" style="width: 50%"></div>
+                                    <span class="comp-value" id="compMMRThemValue">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Winrate Comparison -->
+                    <div class="comparison-item">
+                        <div class="comp-label">WINRATE</div>
+                        <div class="comp-bars">
+                            <div class="comp-bar-row you">
+                                <span class="comp-player-label">VOCÊ</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-you" id="compWRYou" style="width: 50%"></div>
+                                    <span class="comp-value" id="compWRYouValue">0%</span>
+                                </div>
+                            </div>
+                            <div class="comp-bar-row them">
+                                <span class="comp-player-label">ELE</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-them" id="compWRThem" style="width: 50%"></div>
+                                    <span class="comp-value" id="compWRThemValue">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- K/D Comparison -->
+                    <div class="comparison-item">
+                        <div class="comp-label">K/D RATIO</div>
+                        <div class="comp-bars">
+                            <div class="comp-bar-row you">
+                                <span class="comp-player-label">VOCÊ</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-you" id="compKDYou" style="width: 50%"></div>
+                                    <span class="comp-value" id="compKDYouValue">0.00</span>
+                                </div>
+                            </div>
+                            <div class="comp-bar-row them">
+                                <span class="comp-player-label">ELE</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-them" id="compKDThem" style="width: 50%"></div>
+                                    <span class="comp-value" id="compKDThemValue">0.00</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="profile-identity">
-                    <h1 class="profile-name" id="profileUsername">USERNAME</h1>
-                    <div class="profile-rank-display">
-                        <span class="rank-tier" id="modalRankName">BRONZE I</span>
-                        <span class="rank-divider">•</span>
-                        <span class="rank-mmr"><span id="modalMMR">1000</span> MMR</span>
-                    </div>
-                </div>
-                <div class="profile-actions" id="profileActionButtons">
-                    <!-- Buttons will be injected here -->
+                <div class="comparison-verdict" id="comparisonVerdict">
+                    <div class="verdict-icon">🏆</div>
+                    <div class="verdict-text">Analisando estatísticas...</div>
                 </div>
             </div>
 
