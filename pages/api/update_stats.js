@@ -159,6 +159,7 @@ export default async function handler(req, res) {
           // Atualiza kills, headshots, victims, weaponsUsed, hitLocations
           const killerUpdates = {
             kills: (killerData.kills || 0) + 1,
+            totalKills: (killerData.totalKills || 0) + 1,
             headshots: (killerData.headshots || 0) + (headshot ? 1 : 0),
             [`victims.${eventData.victim}`]: (killerData.victims?.[eventData.victim] || 0) + 1,
             [`weaponsUsed.${weapon}.kills`]: ((killerData.weaponsUsed?.[weapon]?.kills) || 0) + 1,
@@ -177,6 +178,7 @@ export default async function handler(req, res) {
           
           const victimUpdates = {
             deaths: (victimData.deaths || 0) + 1,
+            totalDeaths: (victimData.totalDeaths || 0) + 1,
             [`killedBy.${eventData.killer}`]: (victimData.killedBy?.[eventData.killer] || 0) + 1,
             lastDeath: timestamp,
             updatedAt: Date.now()

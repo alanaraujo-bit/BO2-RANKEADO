@@ -46,6 +46,8 @@ export default async function handler(req, res) {
         kills: 0,
         deaths: 0,
         headshots: 0,
+        totalKills: 0,
+        totalDeaths: 0,
         victims: {},
         killedBy: {},
         weaponsUsed: {},
@@ -103,6 +105,7 @@ export default async function handler(req, res) {
         // INCREMENTA killer stats
         await killerRef.update({
           kills: (killerData.kills || 0) + 1,
+          totalKills: (killerData.totalKills || 0) + 1,
           headshots: (killerData.headshots || 0) + (headshotBool ? 1 : 0),
           [`victims.${victim}`]: (killerData.victims?.[victim] || 0) + 1,
           [`weaponsUsed.${weaponKey}.kills`]: (killerData.weaponsUsed?.[weaponKey]?.kills || 0) + 1,
@@ -114,6 +117,7 @@ export default async function handler(req, res) {
         // INCREMENTA victim stats
         await victimRef.update({
           deaths: (victimData.deaths || 0) + 1,
+          totalDeaths: (victimData.totalDeaths || 0) + 1,
           [`killedBy.${killer}`]: (victimData.killedBy?.[killer] || 0) + 1,
           updatedAt: Date.now()
         });
