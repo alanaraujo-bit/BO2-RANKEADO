@@ -213,6 +213,8 @@ const RankedData = {
 
     // Realtime: listen to current player doc
     subscribeToPlayer(username) {
+        let updateTimeout = null;
+        
         const q = db.collection('players').where('username', '==', username).limit(1);
         const unsub = q.onSnapshot((snap) => {
             if (snap.empty) return;
@@ -237,12 +239,13 @@ const RankedData = {
             }
             this._lastMMR[username] = data.mmr;
 
-            // Update UI in real-time
+            // Update UI in real-time with debounce
             if (window.UI && typeof UI.updateAllViews === 'function') {
                 UI.updateAllViews();
             }
             
             // Update profile page if currently viewing it - BUT only if data actually changed
+            // Use debounce to prevent flickering
             if (window.ProfileManager && typeof ProfileManager.renderProfile === 'function') {
                 const profileSection = document.getElementById('profile');
                 if (profileSection && profileSection.classList.contains('page-active')) {
@@ -255,8 +258,14 @@ const RankedData = {
                         prev.mmr !== data.mmr;
                     
                     if (hasSignificantChange) {
-                        console.log('🔄 Updating profile page in real-time');
-                        ProfileManager.renderProfile();
+                        // Clear previous timeout to debounce
+                        if (updateTimeout) clearTimeout(updateTimeout);
+                        
+                        // Wait 500ms before updating to avoid flickering
+                        updateTimeout = setTimeout(() => {
+                            console.log('🔄 Updating profile page in real-time (debounced)');
+                            ProfileManager.renderProfile();
+                        }, 500);
                     }
                 }
             }
