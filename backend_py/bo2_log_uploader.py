@@ -718,10 +718,15 @@ def monitorar_log():
                     # PLUTONIUM KILL events (formato real do jogo)
                     elif " K;" in linha:
                         dados = parse_plutonium_kill(linha)
-                        if dados and not dados.get("is_suicide") and not dados.get("is_world_kill"):
-                            session_stats["kills"] += 1
-                            process_kill_stats(dados)
-                            enviar_dados("kill", dados)
+                        if dados:
+                            # Processa kill (inclusive suicídios e world kills)
+                            if not dados.get("is_world_kill"):
+                                # Suicídios e kills normais incrementam contador
+                                if not dados.get("is_suicide"):
+                                    session_stats["kills"] += 1
+                                
+                                process_kill_stats(dados)
+                                enviar_dados("kill", dados)
                     
                     # PLUTONIUM PLAYER JOIN
                     elif " J;" in linha:
