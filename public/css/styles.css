@@ -8338,5 +8338,566 @@ select.form-input,
     }
 }
 
+/* ============================================================================
+   PROFILE PAGE - WEAPONS SECTION
+   ============================================================================ */
+
+.profile-weapons-section {
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(10, 10, 10, 0.98));
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 122, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-weapons-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+    opacity: 0.5;
+}
+
+.weapons-filters-profile {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.weapons-grid-profile {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.weapon-card-profile {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.9));
+    border: 1px solid rgba(255, 122, 0, 0.15);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.weapon-card-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 122, 0, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.weapon-card-profile:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-500);
+    box-shadow: 0 8px 24px rgba(255, 122, 0, 0.2);
+}
+
+.weapon-card-profile:hover::before {
+    left: 100%;
+}
+
+.weapon-card-header-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.weapon-icon-profile {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 8px rgba(255, 122, 0, 0.3));
+}
+
+.weapon-info-profile h4 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--neutral-100);
+    margin: 0 0 var(--space-1);
+}
+
+.weapon-type-profile {
+    font-size: var(--text-xs);
+    color: var(--neutral-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.weapon-stats-profile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+}
+
+.weapon-stat-item-profile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.weapon-stat-label-profile {
+    font-size: var(--text-xs);
+    color: var(--neutral-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.weapon-stat-value-profile {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    color: var(--primary-500);
+    font-weight: var(--font-bold);
+}
+
+.weapon-progress-profile {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 122, 0, 0.2);
+}
+
+.weapon-progress-label-profile {
+    font-size: var(--text-sm);
+    color: var(--neutral-300);
+    margin-bottom: var(--space-2);
+    display: flex;
+    justify-content: space-between;
+}
+
+.weapon-progress-bar-profile {
+    height: 6px;
+    background: rgba(255, 122, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.weapon-progress-fill-profile {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-600), var(--primary-400));
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.weapon-progress-fill-profile::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ============================================================================
+   PROFILE PAGE - PERFORMANCE & ANALYTICS SECTION
+   ============================================================================ */
+
+.profile-performance-section {
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.95), rgba(10, 10, 10, 0.98));
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(0, 217, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-performance-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-500), transparent);
+    opacity: 0.5;
+}
+
+.performance-grid-profile {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.performance-card-profile {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.9));
+    border: 1px solid rgba(0, 217, 255, 0.15);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.performance-card-profile:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-500);
+    box-shadow: 0 8px 24px rgba(0, 217, 255, 0.2);
+}
+
+.performance-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.performance-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.3));
+}
+
+.performance-title {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    color: var(--neutral-100);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.performance-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-400);
+}
+
+.metric-value {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--accent-500);
+    font-weight: var(--font-semibold);
+}
+
+.performance-bar {
+    margin-top: var(--space-4);
+    height: 4px;
+    background: rgba(0, 217, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.performance-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-600), var(--accent-400));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.performance-bar-fill.combat {
+    background: linear-gradient(90deg, #FF4466, #FF6680);
+}
+
+.performance-bar-fill.survival {
+    background: linear-gradient(90deg, #00FF88, #33FFB0);
+}
+
+.performance-bar-fill.streak {
+    background: linear-gradient(90deg, #FFB800, #FFD633);
+}
+
+/* Hit Heatmap */
+.heatmap-container-profile {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.9));
+    border: 1px solid rgba(0, 217, 255, 0.15);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.heatmap-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.heatmap-title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    color: var(--neutral-100);
+    margin: 0 0 var(--space-2);
+    text-transform: uppercase;
+}
+
+.heatmap-subtitle {
+    font-size: var(--text-sm);
+    color: var(--neutral-400);
+    margin: 0;
+}
+
+.heatmap-body-silhouette {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.body-part {
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.1), rgba(255, 122, 0, 0.05));
+    border: 2px solid rgba(255, 122, 0, 0.3);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+    cursor: default;
+}
+
+.body-part:hover {
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.2), rgba(255, 122, 0, 0.1));
+    border-color: var(--primary-500);
+}
+
+.body-part.head {
+    border-color: #FF4466;
+    background: linear-gradient(135deg, rgba(255, 68, 102, 0.1), rgba(255, 68, 102, 0.05));
+}
+
+.body-part.torso {
+    border-color: var(--primary-500);
+}
+
+.body-part.arms {
+    border-color: #FFB800;
+    background: linear-gradient(135deg, rgba(255, 184, 0, 0.1), rgba(255, 184, 0, 0.05));
+}
+
+.body-part.legs {
+    border-color: #00D9FF;
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(0, 217, 255, 0.05));
+}
+
+.hit-count {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    color: var(--neutral-100);
+    font-weight: var(--font-bold);
+}
+
+.hit-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-400);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Chart Container */
+.chart-container-profile {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.9));
+    border: 1px solid rgba(0, 217, 255, 0.15);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+}
+
+.chart-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.chart-title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    color: var(--neutral-100);
+    margin: 0 0 var(--space-2);
+    text-transform: uppercase;
+}
+
+.chart-subtitle {
+    font-size: var(--text-sm);
+    color: var(--neutral-400);
+    margin: 0;
+}
+
+.chart-body {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-sm);
+}
+
+.chart-bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--primary-500), var(--primary-600));
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: all 0.3s;
+    min-height: 10px;
+}
+
+.chart-bar:hover {
+    background: linear-gradient(180deg, var(--primary-400), var(--primary-500));
+    transform: scaleY(1.05);
+}
+
+.chart-bar.positive {
+    background: linear-gradient(180deg, #00FF88, #00D970);
+}
+
+.chart-bar.negative {
+    background: linear-gradient(180deg, #FF4466, #E6334D);
+}
+
+.chart-bar-value {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--text-xs);
+    color: var(--neutral-300);
+    font-weight: var(--font-semibold);
+    white-space: nowrap;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - PROFILE SECTIONS
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+    .profile-weapons-section,
+    .profile-performance-section {
+        padding: var(--space-6);
+        margin-top: var(--space-8);
+    }
+
+    .weapons-grid-profile {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    .performance-grid-profile {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-weapons-section,
+    .profile-performance-section {
+        padding: var(--space-5);
+        margin-top: var(--space-6);
+    }
+
+    .weapons-filters-profile {
+        flex-direction: column;
+    }
+
+    .filter-btn-profile {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .weapons-grid-profile {
+        grid-template-columns: 1fr;
+    }
+
+    .performance-grid-profile {
+        grid-template-columns: 1fr;
+    }
+
+    .heatmap-body-silhouette {
+        max-width: 100%;
+    }
+
+    .chart-body {
+        height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-weapons-section,
+    .profile-performance-section {
+        padding: var(--space-4);
+        margin-top: var(--space-5);
+        border-radius: var(--radius-md);
+    }
+
+    .section-header-profile {
+        margin-bottom: var(--space-4);
+    }
+
+    .section-title-profile {
+        font-size: var(--text-xl);
+    }
+
+    .weapon-card-profile,
+    .performance-card-profile {
+        padding: var(--space-4);
+    }
+
+    .weapon-icon-profile {
+        font-size: 1.5rem;
+    }
+
+    .weapon-info-profile h4 {
+        font-size: var(--text-base);
+    }
+
+    .weapon-stat-value-profile {
+        font-size: var(--text-lg);
+    }
+
+    .performance-icon {
+        font-size: 1.5rem;
+    }
+
+    .heatmap-title,
+    .chart-title {
+        font-size: var(--text-xl);
+    }
+
+    .hit-count {
+        font-size: var(--text-2xl);
+    }
+
+    .chart-body {
+        height: 120px;
+        gap: var(--space-1);
+    }
+
+    .chart-bar-value {
+        font-size: 0.65rem;
+        top: -20px;
+    }
+}
+
+
+
+
 
 

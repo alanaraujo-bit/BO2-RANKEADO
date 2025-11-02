@@ -1,5 +1,12 @@
 // BO2 RANKED - PROFILE PAGE MANAGEMENT
 
+// Expose renderProfile to window for UI.js to call
+window.renderProfile = async function() {
+    if (typeof ProfileManager !== 'undefined' && ProfileManager.renderProfile) {
+        await ProfileManager.renderProfile();
+    }
+};
+
 const ProfileManager = {
     currentFilter: 'all',
     matchesDisplayed: 10,
@@ -398,3 +405,268 @@ function loadMoreMatches() {
         if (player) ProfileManager.updateMatchHistory(player);
     });
 }
+
+// ============================================================================
+// WEAPONS & ARSENAL SECTION
+// ============================================================================
+
+ProfileManager.weaponsFilter = 'all';
+
+ProfileManager.filterWeapons = function(type) {
+    this.weaponsFilter = type;
+    
+    // Update active button
+    document.querySelectorAll('.weapons-filters-profile .filter-btn-profile').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-filter') === type) {
+            btn.classList.add('active');
+        }
+    });
+
+    // Re-render weapons
+    RankedData.getPlayer(RankedData.currentUser, true).then(player => {
+        if (player) this.updateWeaponsSection(player);
+    });
+};
+
+ProfileManager.updateWeaponsSection = async function(player) {
+    const weaponsList = document.getElementById('profileWeaponsList');
+    const emptyState = document.getElementById('weaponsEmptyState');
+    
+    if (!weaponsList) return;
+
+    // Get weapons data from player stats
+    const weapons = player.weaponsUsed || {};
+    const weaponsArray = Object.entries(weapons).map(([name, stats]) => ({
+        name,
+        kills: stats.kills || 0,
+        headshots: stats.headshots || 0,
+        damage: stats.damage || 0,
+        ...stats
+    })).filter(w => w.kills > 0);
+
+    if (weaponsArray.length === 0) {
+        weaponsList.innerHTML = '';
+        if (emptyState) emptyState.style.display = 'flex';
+        return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+
+    // Sort by kills
+    weaponsArray.sort((a, b) => b.kills - a.kills);
+
+    // Filter by type
+    let filteredWeapons = weaponsArray;
+    if (this.weaponsFilter !== 'all') {
+        filteredWeapons = weaponsArray.filter(w => this.getWeaponType(w.name) === this.weaponsFilter);
+    }
+
+    // Render weapon cards
+    weaponsList.innerHTML = filteredWeapons.map((weapon, index) => {
+        const headshotRate = weapon.kills > 0 ? ((weapon.headshots / weapon.kills) * 100).toFixed(1) : '0';
+        const avgDamage = weapon.kills > 0 ? (weapon.damage / weapon.kills).toFixed(0) : '0';
+        const icon = this.getWeaponIcon(weapon.name);
+        const type = this.getWeaponType(weapon.name);
+        const progress = Math.min(100, (weapon.kills / 100) * 100); // Progress to 100 kills
+
+        return `
+            <div class="weapon-card-profile" style="animation-delay: ${index * 0.1}s">
+                <div class="weapon-card-header-profile">
+                    <span class="weapon-icon-profile">${icon}</span>
+                    <div class="weapon-info-profile">
+                        <h4>${weapon.name}</h4>
+                        <span class="weapon-type-profile">${type}</span>
+                    </div>
+                </div>
+                <div class="weapon-stats-profile">
+                    <div class="weapon-stat-item-profile">
+                        <span class="weapon-stat-label-profile">Kills</span>
+                        <span class="weapon-stat-value-profile">${weapon.kills}</span>
+                    </div>
+                    <div class="weapon-stat-item-profile">
+                        <span class="weapon-stat-label-profile">Headshots</span>
+                        <span class="weapon-stat-value-profile">${weapon.headshots}</span>
+                    </div>
+                    <div class="weapon-stat-item-profile">
+                        <span class="weapon-stat-label-profile">HS Rate</span>
+                        <span class="weapon-stat-value-profile">${headshotRate}%</span>
+                    </div>
+                    <div class="weapon-stat-item-profile">
+                        <span class="weapon-stat-label-profile">Avg Dmg</span>
+                        <span class="weapon-stat-value-profile">${avgDamage}</span>
+                    </div>
+                </div>
+                <div class="weapon-progress-profile">
+                    <div class="weapon-progress-label-profile">
+                        <span>Progresso</span>
+                        <span>${weapon.kills}/100</span>
+                    </div>
+                    <div class="weapon-progress-bar-profile">
+                        <div class="weapon-progress-fill-profile" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+};
+
+ProfileManager.getWeaponIcon = function(weaponName) {
+    const name = weaponName.toLowerCase();
+    if (name.includes('sniper') || name.includes('dsr') || name.includes('ballista')) return '🎯';
+    if (name.includes('ar') || name.includes('assault') || name.includes('m8') || name.includes('an94')) return '🔫';
+    if (name.includes('smg') || name.includes('skorpion') || name.includes('pdw')) return '💨';
+    if (name.includes('lmg') || name.includes('lsat')) return '⚡';
+    if (name.includes('shotgun') || name.includes('r870')) return '💥';
+    if (name.includes('pistol') || name.includes('tac45')) return '🔪';
+    if (name.includes('knife') || name.includes('combat')) return '🗡️';
+    if (name.includes('grenade') || name.includes('lethal')) return '💣';
+    return '🔫';
+};
+
+ProfileManager.getWeaponType = function(weaponName) {
+    const name = weaponName.toLowerCase();
+    if (name.includes('sniper') || name.includes('dsr') || name.includes('ballista')) return 'primary';
+    if (name.includes('ar') || name.includes('assault') || name.includes('m8') || name.includes('an94')) return 'primary';
+    if (name.includes('smg') || name.includes('skorpion') || name.includes('pdw')) return 'primary';
+    if (name.includes('lmg') || name.includes('lsat')) return 'primary';
+    if (name.includes('shotgun') || name.includes('r870')) return 'primary';
+    if (name.includes('pistol') || name.includes('tac45')) return 'secondary';
+    if (name.includes('knife') || name.includes('combat')) return 'secondary';
+    if (name.includes('grenade') || name.includes('lethal')) return 'special';
+    return 'primary';
+};
+
+// ============================================================================
+// PERFORMANCE & ANALYTICS SECTION
+// ============================================================================
+
+ProfileManager.updatePerformanceSection = function(player) {
+    // Calculate advanced metrics
+    const totalKills = player.totalKills || 0;
+    const totalDeaths = player.totalDeaths || 0;
+    const gamesPlayed = player.gamesPlayed || 0;
+    const headshots = player.totalHeadshots || 0;
+    const assists = player.totalAssists || 0;
+    const damage = player.totalDamage || 0;
+    
+    // Accuracy metrics
+    const headshotRate = totalKills > 0 ? ((headshots / totalKills) * 100).toFixed(1) : '0';
+    const accuracy = player.accuracy || '0';
+    
+    // Combat metrics
+    const avgDamage = gamesPlayed > 0 ? (damage / gamesPlayed).toFixed(0) : '0';
+    
+    // Survival metrics
+    const avgDeaths = gamesPlayed > 0 ? (totalDeaths / gamesPlayed).toFixed(1) : '0';
+    const avgLifetime = player.avgLifetime || '0';
+    const revengeRate = player.revengeRate || '0';
+    
+    // Consistency metrics
+    const currentStreak = player.winStreak || 0;
+    const bestStreak = player.bestStreak || 0;
+
+    // Update DOM elements
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    };
+
+    // Accuracy
+    setText('statHeadshots', headshots);
+    setText('statHeadshotRate', headshotRate + '%');
+    setText('statAccuracy', accuracy + '%');
+    
+    // Combat
+    setText('statAssists', assists);
+    setText('statTotalDamage', damage);
+    setText('statAvgDamage', avgDamage);
+    
+    // Survival
+    setText('statAvgDeaths', avgDeaths);
+    setText('statAvgLifetime', avgLifetime + 's');
+    setText('statRevengeRate', revengeRate + '%');
+    
+    // Consistency
+    setText('statCurrentStreak', currentStreak);
+    setText('statBestStreakPerf', bestStreak);
+    setText('statTotalGamesPerf', gamesPlayed);
+
+    // Update progress bars
+    const setProgressBar = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.style.width = Math.min(100, value) + '%';
+    };
+
+    setProgressBar('accuracyBarFill', parseFloat(headshotRate));
+    setProgressBar('combatBarFill', Math.min(100, avgDamage / 50)); // Assuming 5000 is max avg damage
+    setProgressBar('survivalBarFill', Math.max(0, 100 - (parseFloat(avgDeaths) * 10))); // Inverse deaths
+    setProgressBar('streakBarFill', Math.min(100, (currentStreak / 10) * 100)); // Progress to 10 streak
+
+    // Update hit heatmap
+    this.updateHitHeatmap(player);
+
+    // Update K/D chart
+    this.updateKDChart(player);
+};
+
+ProfileManager.updateHitHeatmap = function(player) {
+    const hitLocations = player.hitLocations || {};
+    
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) {
+            const countEl = el.querySelector('.hit-count');
+            if (countEl) countEl.textContent = value;
+        }
+    };
+
+    setText('heatmapHead', hitLocations.head || 0);
+    setText('heatmapTorso', hitLocations.torso || 0);
+    setText('heatmapArms', hitLocations.arms || 0);
+    setText('heatmapLegs', hitLocations.legs || 0);
+};
+
+ProfileManager.updateKDChart = function(player) {
+    const chartBody = document.getElementById('kdChart');
+    if (!chartBody) return;
+
+    const matches = (player.matchHistory || []).slice(-10).reverse();
+    
+    if (matches.length === 0) {
+        chartBody.innerHTML = '<div style="text-align: center; color: var(--neutral-400); padding: 40px;">Nenhuma partida para exibir</div>';
+        return;
+    }
+
+    const maxKD = Math.max(...matches.map(m => {
+        const kd = m.deaths > 0 ? m.kills / m.deaths : m.kills;
+        return kd;
+    }), 3); // Min max of 3
+
+    chartBody.innerHTML = matches.map((match, index) => {
+        const kd = match.deaths > 0 ? (match.kills / match.deaths).toFixed(2) : match.kills.toFixed(2);
+        const height = ((parseFloat(kd) / maxKD) * 100).toFixed(1);
+        const isPositive = parseFloat(kd) >= 1;
+
+        return `
+            <div class="chart-bar ${isPositive ? 'positive' : 'negative'}" style="height: ${height}%">
+                <span class="chart-bar-value">${kd}</span>
+            </div>
+        `;
+    }).join('');
+};
+
+// Update main renderProfile to include new sections
+const originalRenderProfile = ProfileManager.renderProfile;
+ProfileManager.renderProfile = async function() {
+    await originalRenderProfile.call(this);
+    
+    if (!RankedData.currentUser) return;
+    
+    const player = await RankedData.getPlayer(RankedData.currentUser, true);
+    if (!player) return;
+
+    // Update new sections
+    this.updateWeaponsSection(player);
+    this.updatePerformanceSection(player);
+};

@@ -890,7 +890,195 @@
                     </div>
                 </div>
 
-                <!-- 🏅 4. CONQUISTAS - Badges Visuais -->
+                <!-- 🔫 4. ARSENAL & WEAPONS - Estatísticas Detalhadas de Armas -->
+                <div class="profile-weapons-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">🔫</span>
+                            <h2 class="section-title-profile">Arsenal & Armamento</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Suas armas favoritas e performance detalhada</p>
+                    </div>
+
+                    <!-- Filtros de Armas -->
+                    <div class="weapons-filters-profile">
+                        <button class="filter-btn-profile active" onclick="ProfileManager.filterWeapons('all')" data-filter="all">
+                            <span>🎯 TODAS</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="ProfileManager.filterWeapons('primary')" data-filter="primary">
+                            <span>🔫 PRIMÁRIAS</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="ProfileManager.filterWeapons('secondary')" data-filter="secondary">
+                            <span>🔪 SECUNDÁRIAS</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="ProfileManager.filterWeapons('special')" data-filter="special">
+                            <span>💥 ESPECIAIS</span>
+                        </button>
+                    </div>
+
+                    <!-- Grid de Armas -->
+                    <div class="weapons-grid-profile" id="profileWeaponsList">
+                        <!-- Será preenchido via JavaScript -->
+                        <div class="empty-state" style="display: none;" id="weaponsEmptyState">
+                            <div class="empty-icon">🔫</div>
+                            <p class="empty-text">Nenhuma arma utilizada ainda</p>
+                            <p class="empty-subtext">Registre partidas para ver suas estatísticas de armas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📊 5. PERFORMANCE & ANALYTICS - Gráficos e Métricas Avançadas -->
+                <div class="profile-performance-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">📊</span>
+                            <h2 class="section-title-profile">Performance & Analytics</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Análise detalhada do seu desempenho em combate</p>
+                    </div>
+
+                    <!-- Grid de Métricas Avançadas -->
+                    <div class="performance-grid-profile">
+                        <!-- Accuracy & Precision -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">🎯</span>
+                                <h3 class="performance-title">Precisão</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Headshots</span>
+                                    <span class="metric-value" id="statHeadshots">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Taxa de HS</span>
+                                    <span class="metric-value" id="statHeadshotRate">0%</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Accuracy</span>
+                                    <span class="metric-value" id="statAccuracy">0%</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill" id="accuracyBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Combat Effectiveness -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">⚔️</span>
+                                <h3 class="performance-title">Efetividade em Combate</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Assists</span>
+                                    <span class="metric-value" id="statAssists">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Dano Total</span>
+                                    <span class="metric-value" id="statTotalDamage">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Dano/Partida</span>
+                                    <span class="metric-value" id="statAvgDamage">0</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill combat" id="combatBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Survival & Aggression -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">🛡️</span>
+                                <h3 class="performance-title">Sobrevivência</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Mortes/Partida</span>
+                                    <span class="metric-value" id="statAvgDeaths">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Tempo de Vida Médio</span>
+                                    <span class="metric-value" id="statAvgLifetime">0s</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Taxa de Revanche</span>
+                                    <span class="metric-value" id="statRevengeRate">0%</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill survival" id="survivalBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Consistency & Streaks -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">🔥</span>
+                                <h3 class="performance-title">Consistência</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Streak Atual</span>
+                                    <span class="metric-value" id="statCurrentStreak">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Melhor Streak</span>
+                                    <span class="metric-value" id="statBestStreakPerf">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Partidas Jogadas</span>
+                                    <span class="metric-value" id="statTotalGamesPerf">0</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill streak" id="streakBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hit Heatmap (onde acerta mais) -->
+                    <div class="heatmap-container-profile">
+                        <div class="heatmap-header">
+                            <h3 class="heatmap-title">🎯 Mapa de Acertos</h3>
+                            <p class="heatmap-subtitle">Onde você acerta seus oponentes</p>
+                        </div>
+                        <div class="heatmap-body-silhouette">
+                            <div class="body-part head" id="heatmapHead">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">CABEÇA</span>
+                            </div>
+                            <div class="body-part torso" id="heatmapTorso">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">TORSO</span>
+                            </div>
+                            <div class="body-part arms" id="heatmapArms">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">BRAÇOS</span>
+                            </div>
+                            <div class="body-part legs" id="heatmapLegs">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">PERNAS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de K/D Over Time (Simplified version) -->
+                    <div class="chart-container-profile">
+                        <div class="chart-header">
+                            <h3 class="chart-title">📈 Evolução K/D</h3>
+                            <p class="chart-subtitle">Suas últimas 10 partidas</p>
+                        </div>
+                        <div class="chart-body" id="kdChart">
+                            <!-- Será renderizado via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🏅 6. CONQUISTAS - Badges Visuais -->
                 <div class="profile-achievements-section">
                     <div class="section-header-profile">
                         <div class="section-title-wrapper">
