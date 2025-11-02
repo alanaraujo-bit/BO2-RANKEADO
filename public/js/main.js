@@ -304,25 +304,20 @@ function updateUserDisplay() {
             // Show admin menu item only for Alan Araújo
             const adminMenuItem = document.getElementById('adminMenuItem');
             if (adminMenuItem) {
-                const isAdmin = player.displayName === 'Alan Araújo' || 
-                               player.username === 'Alan Araújo' ||
-                               RankedData.currentUser === 'Alan Araújo';
+                // Check if user is Alan Araújo (accepts both "Alan Araújo" and "Alan Araújo - Principal")
+                const isAdmin = (player.displayName && player.displayName.includes('Alan Araújo')) || 
+                               (player.username && player.username.includes('Alan Araújo')) ||
+                               (RankedData.currentUser && RankedData.currentUser.includes('Alan Araújo'));
                 
                 console.log('🔍 ADMIN DEBUG:', {
                     displayName: player.displayName,
                     username: player.username,
                     currentUser: RankedData.currentUser,
-                    isAdmin: isAdmin,
-                    displayNameMatch: player.displayName === 'Alan Araújo',
-                    usernameMatch: player.username === 'Alan Araújo',
-                    currentUserMatch: RankedData.currentUser === 'Alan Araújo'
+                    isAdmin: isAdmin
                 });
                 
-                // DEBUG VISUAL TEMPORÁRIO
-                if (player.displayName && player.displayName.includes('Alan')) {
-                    console.log('⚠️ FORÇANDO MENU ADMIN - DETECTADO ALAN');
-                    adminMenuItem.style.display = 'block';
-                } else if (isAdmin) {
+                if (isAdmin) {
+                    console.log('✅ MENU ADMIN ATIVADO!');
                     adminMenuItem.style.display = 'block';
                 } else {
                     adminMenuItem.style.display = 'none';
