@@ -288,11 +288,13 @@ function handleScreenshotUpload(event) {
 
 // Update user display in navbar
 function updateUserDisplay() {
+    console.log('🔧 updateUserDisplay() chamada');
     const userNameEl = document.getElementById('currentUserName');
     const btnLogin = document.getElementById('btnLogin');
     
     if (RankedData.currentUser) {
         const player = RankedData.getPlayer(RankedData.currentUser);
+        console.log('👤 Player data:', player);
         if (player) {
             const rank = RankSystem.getRank(player.mmr);
             userNameEl.textContent = `${rank.icon} ${RankedData.currentUser}`;
