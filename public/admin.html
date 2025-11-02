@@ -199,6 +199,66 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, #ffa500 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .progress-status {
+            color: var(--neutral-300);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .progress-logs {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .progress-log-item {
+            padding: 5px 0;
+            color: var(--neutral-400);
+        }
+
+        .progress-log-item.success {
+            color: rgb(16, 185, 129);
+        }
+
+        .progress-log-item.error {
+            color: rgb(239, 68, 68);
+        }
     </style>
 </head>
 <body>
@@ -241,6 +301,13 @@
                     <span>Recalcular Stats</span>
                 </button>
             </div>
+            <div class="progress-container" id="recalculateProgress">
+                <div class="progress-status" id="recalculateStatus">Processando...</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="recalculateBar" style="width: 0%">0%</div>
+                </div>
+                <div class="progress-logs" id="recalculateLogs"></div>
+            </div>
             <div class="admin-result" id="recalculateResult"></div>
         </div>
 
@@ -256,6 +323,13 @@
                     <span>🧹</span>
                     <span>Limpar Invalidos</span>
                 </button>
+            </div>
+            <div class="progress-container" id="cleanupProgress">
+                <div class="progress-status" id="cleanupStatus">Processando...</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="cleanupBar" style="width: 0%">0%</div>
+                </div>
+                <div class="progress-logs" id="cleanupLogs"></div>
             </div>
             <div class="admin-result" id="cleanupResult"></div>
         </div>
@@ -273,6 +347,13 @@
                     <span>💣</span>
                     <span>Resetar TUDO</span>
                 </button>
+            </div>
+            <div class="progress-container" id="resetProgress">
+                <div class="progress-status" id="resetStatus">Deletando dados...</div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="resetBar" style="width: 0%">0%</div>
+                </div>
+                <div class="progress-logs" id="resetLogs"></div>
             </div>
             <div class="admin-result" id="resetResult"></div>
         </div>
@@ -336,13 +417,41 @@
         async function recalculateStats() {
             const btn = event.target.closest('.admin-btn');
             const resultDiv = document.getElementById('recalculateResult');
+            const progressDiv = document.getElementById('recalculateProgress');
+            const statusDiv = document.getElementById('recalculateStatus');
+            const barDiv = document.getElementById('recalculateBar');
+            const logsDiv = document.getElementById('recalculateLogs');
             
             btn.disabled = true;
             btn.innerHTML = '<span class="loading-spinner"></span><span>Recalculando...</span>';
             resultDiv.className = 'admin-result';
             resultDiv.style.display = 'none';
+            progressDiv.className = 'progress-container active';
+            logsDiv.innerHTML = '';
+
+            // Simula progresso
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.random() * 10;
+                    if (progress > 90) progress = 90;
+                    barDiv.style.width = progress + '%';
+                    barDiv.textContent = Math.round(progress) + '%';
+                }
+            }, 500);
+
+            function addLog(message, type = '') {
+                const logItem = document.createElement('div');
+                logItem.className = 'progress-log-item ' + type;
+                logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                logsDiv.appendChild(logItem);
+                logsDiv.scrollTop = logsDiv.scrollHeight;
+            }
+
+            addLog('Iniciando recálculo de estatísticas...');
 
             try {
+                addLog('Conectando com servidor...');
                 const response = await fetch('/api/recalculate_stats', {
                     method: 'POST',
                     headers: {
@@ -350,9 +459,19 @@
                     }
                 });
 
+                addLog('Processando resposta...');
                 const data = await response.json();
 
+                clearInterval(progressInterval);
+                barDiv.style.width = '100%';
+                barDiv.textContent = '100%';
+
                 if (data.ok) {
+                    addLog(`✅ ${data.stats.playersReset} players resetados`, 'success');
+                    addLog(`✅ ${data.stats.killsProcessed} kills processadas`, 'success');
+                    addLog(`✅ ${data.stats.errors} erros encontrados`, 'success');
+                    addLog('Recálculo concluído com sucesso!', 'success');
+                    
                     resultDiv.className = 'admin-result success';
                     resultDiv.innerHTML = `
                         <h3>✅ Estatísticas Recalculadas com Sucesso!</h3>
@@ -375,11 +494,16 @@
                     throw new Error(data.error || 'Erro desconhecido');
                 }
             } catch (error) {
+                clearInterval(progressInterval);
+                addLog('❌ Erro: ' + error.message, 'error');
                 resultDiv.className = 'admin-result error';
                 resultDiv.innerHTML = `<h3>❌ Erro</h3><p>${error.message}</p>`;
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<span>🔄</span><span>Recalcular Stats</span>';
+                setTimeout(() => {
+                    progressDiv.className = 'progress-container';
+                }, 5000);
             }
         }
 
@@ -452,13 +576,58 @@
         async function resetAllData() {
             const btn = event.target.closest('.admin-btn');
             const resultDiv = document.getElementById('resetResult');
+            const progressDiv = document.getElementById('resetProgress');
+            const statusDiv = document.getElementById('resetStatus');
+            const barDiv = document.getElementById('resetBar');
+            const logsDiv = document.getElementById('resetLogs');
             
             btn.disabled = true;
             btn.innerHTML = '<span class="loading-spinner"></span><span>Deletando...</span>';
             resultDiv.className = 'admin-result';
             resultDiv.style.display = 'none';
+            progressDiv.className = 'progress-container active';
+            logsDiv.innerHTML = '';
+
+            // Simula progresso gradual
+            let progress = 0;
+            const stages = [
+                { name: 'Deletando kills...', target: 20 },
+                { name: 'Deletando matches...', target: 40 },
+                { name: 'Deletando events...', target: 60 },
+                { name: 'Resetando players...', target: 80 },
+                { name: 'Finalizando...', target: 95 }
+            ];
+            let currentStage = 0;
+
+            const progressInterval = setInterval(() => {
+                if (currentStage < stages.length) {
+                    const stage = stages[currentStage];
+                    statusDiv.textContent = stage.name;
+                    
+                    if (progress < stage.target) {
+                        progress += Math.random() * 5;
+                        if (progress > stage.target) progress = stage.target;
+                        barDiv.style.width = progress + '%';
+                        barDiv.textContent = Math.round(progress) + '%';
+                    } else {
+                        currentStage++;
+                    }
+                }
+            }, 800);
+
+            function addLog(message, type = '') {
+                const logItem = document.createElement('div');
+                logItem.className = 'progress-log-item ' + type;
+                logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                logsDiv.appendChild(logItem);
+                logsDiv.scrollTop = logsDiv.scrollHeight;
+            }
+
+            addLog('🔥 Iniciando RESET COMPLETO do sistema...');
+            addLog('⚠️  Esta operação não pode ser desfeita!');
 
             try {
+                addLog('🗑️  Conectando com servidor...');
                 const response = await fetch('/api/reset_all_data', {
                     method: 'POST',
                     headers: {
@@ -466,9 +635,24 @@
                     }
                 });
 
+                addLog('📦 Processando resposta do servidor...');
                 const data = await response.json();
 
+                clearInterval(progressInterval);
+                barDiv.style.width = '100%';
+                barDiv.textContent = '100%';
+                statusDiv.textContent = 'Concluído!';
+
                 if (data.ok) {
+                    addLog(`🗑️  ${data.stats.deletedKills} kills deletadas`, 'success');
+                    addLog(`🗑️  ${data.stats.deletedMatches} matches deletadas`, 'success');
+                    addLog(`🗑️  ${data.stats.deletedEvents} events deletados`, 'success');
+                    addLog(`🗑️  ${data.stats.deletedPendingConfirmations || 0} pending confirmations deletadas`, 'success');
+                    addLog(`🗑️  ${data.stats.deletedPlayerMatches || 0} player matches deletadas`, 'success');
+                    addLog(`🔄 ${data.stats.resetPlayers} players resetados`, 'success');
+                    addLog(`✅ TOTAL: ${data.stats.totalDeleted} registros deletados!`, 'success');
+                    addLog('🔥 Reset completo! Sistema zerado.', 'success');
+                    
                     resultDiv.className = 'admin-result success';
                     resultDiv.innerHTML = `
                         <h3>🔥 Reset Completo Executado!</h3>
@@ -489,6 +673,10 @@
                                 <div class="stat-label">Players Resetados</div>
                                 <div class="stat-value">${data.stats.resetPlayers}</div>
                             </div>
+                            <div class="stat-item">
+                                <div class="stat-label">TOTAL Deletado</div>
+                                <div class="stat-value">${data.stats.totalDeleted}</div>
+                            </div>
                         </div>
                         <p style="margin-top: 20px;">Todos começam do ZERO novamente! 🎮</p>
                     `;
@@ -496,6 +684,8 @@
                     throw new Error(data.error || 'Erro desconhecido');
                 }
             } catch (error) {
+                clearInterval(progressInterval);
+                addLog('❌ Erro fatal: ' + error.message, 'error');
                 resultDiv.className = 'admin-result error';
                 resultDiv.innerHTML = `<h3>❌ Erro</h3><p>${error.message}</p>`;
             } finally {
