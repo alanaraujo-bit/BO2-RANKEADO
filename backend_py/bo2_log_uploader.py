@@ -129,7 +129,27 @@ def enviar_dados(evento_tipo: str, dados: dict, retry=0) -> bool:
         response = requests.post(API_URL, headers=headers, json=payload, timeout=10)
         
         if response.status_code == 200:
-            # Silencioso - não loga sucesso de envio (já temos logs dos eventos)
+            # Verifica se a resposta indica sucesso no Firebase
+            try:
+                response_data = response.json()
+                firebase_info = response_data.get("firebase", {})
+                
+                # Log apenas para eventos importantes (não para dano ou weapon change)
+                if evento_tipo in ["kill", "match_start", "match_end", "player_join", "player_quit"]:
+                    if firebase_info.get("saved"):
+                        # Firebase salvou com sucesso - silencioso
+                        pass
+                    elif firebase_info.get("error"):
+                        # Firebase teve erro - avisa apenas uma vez por sessão
+                        if not hasattr(enviar_dados, "_firebase_warning_shown"):
+                            log_error(f"⚠️  Firebase não está salvando: {firebase_info['error']}")
+                            log_info("💡 Configure as credenciais do Firebase no Vercel para persistir dados")
+                            enviar_dados._firebase_warning_shown = True
+                
+                if response_data.get("ok"):
+                    return True
+            except:
+                pass
             return True
         else:
             log_error(f"Servidor retornou {response.status_code}: {response.text[:100]}")

@@ -39,6 +39,8 @@ export default async function handler(req, res) {
   }
 
   // Tenta persistir no Firestore (se estiver configurado)
+  let firebaseSaved = false;
+  let firebaseError = null;
   try {
     const { getFirestoreSafe, isFirebaseConfigured } = await import('./_firebaseAdmin.js');
     if (await isFirebaseConfigured()) {
@@ -48,11 +50,24 @@ export default async function handler(req, res) {
         ...body,
       };
       await db.collection('events').add(doc);
+      firebaseSaved = true;
+      console.log('[update_stats] ✅ Salvo no Firestore!');
+    } else {
+      firebaseError = 'Firebase não configurado (variáveis de ambiente ausentes)';
+      console.log('[update_stats] ⚠️  Firebase não configurado');
     }
   } catch (e) {
-    console.log('[update_stats] Firestore skip/erro:', e && e.message);
+    firebaseError = e.message;
+    console.log('[update_stats] ❌ Firestore erro:', e && e.message);
   }
 
-  // Confirma o recebimento
-  return res.status(200).json({ ok: true, recebido: body });
+  // Confirma o recebimento com status do Firebase
+  return res.status(200).json({ 
+    ok: true, 
+    recebido: body,
+    firebase: {
+      saved: firebaseSaved,
+      error: firebaseError
+    }
+  });
 }
