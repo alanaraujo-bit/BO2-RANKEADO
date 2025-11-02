@@ -11,11 +11,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
+  // Aceita requisições da interface web (sem auth) ou com Bearer token
   const SECRET = process.env.BO2_SECRET || 'fallback_secreto';
   const auth = req.headers.authorization;
   const isAuthMatch = !!auth && auth === `Bearer ${SECRET}`;
   
-  if (!isAuthMatch) {
+  // Permite acesso sem autenticação apenas se vier da própria aplicação
+  const referer = req.headers.referer || req.headers.referrer || '';
+  const isFromWebApp = referer.includes('/admin.html');
+  
+  if (!isAuthMatch && !isFromWebApp) {
     return res.status(403).json({ error: 'Não autorizado' });
   }
 
