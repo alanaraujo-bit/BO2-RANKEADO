@@ -619,7 +619,7 @@ class FriendsSystem {
                 if (el) el.textContent = value; 
             };
 
-            // Profile header - NEW DESIGN
+            // Profile header - ULTIMATE DESIGN
             setText('profileUsername', username);
             setText('profileAvatarLetter', username.charAt(0).toUpperCase());
             
@@ -627,29 +627,61 @@ class FriendsSystem {
             const rankIcon = document.getElementById('profileRankIcon');
             if (rankIcon) rankIcon.textContent = rankData.icon;
 
-            // Rank and MMR display
+            // Rank and MMR display (HERO SECTION)
             setText('modalRankName', rankData.name);
             setText('modalMMR', playerData.mmr || 999);
 
-            // Stats grid - NEW DESIGN
-            setText('profileTotalMatches', gamesPlayed);
+            // Quick stats in hero (using same IDs as detailed stats for now)
             setText('profileWins', playerData.wins || 0);
             setText('profileLosses', playerData.losses || 0);
             setText('profileWinrate', `${winrate}%`);
 
-            // Performance metrics
-            setText('modalKD', kd);
-            
-            // K/D bar width (normalize to 0-100%, 3.0+ KD = 100%)
+            // Detailed stats grid (4 cards)
+            setText('profileMatchesDetailed', gamesPlayed);
+            setText('profileWinsDetailed', playerData.wins || 0);
+            setText('profileLossesDetailed', playerData.losses || 0);
+            setText('profileWinrateDetailed', `${winrate}%`);
+
+            // Winrate progress bar on detailed card
+            const winrateBar = document.getElementById('winrateProgressBar');
+            if (winrateBar) winrateBar.style.width = `${winrate}%`;
+
+            // K/D detailed card
+            setText('profileKDDetailed', kd);
             const kdPercent = Math.min((parseFloat(kd) / 3.0) * 100, 100);
-            const kdBar = document.getElementById('kdBar');
+            const kdBar = document.getElementById('kdProgressBar');
             if (kdBar) kdBar.style.width = `${kdPercent}%`;
 
-            // Rank progress
+            // Streaks (calculate from match history)
+            const matches = await RankedData.getPlayerMatches(username, 50);
+            const streaks = this.calculateStreaks(matches, username);
+            setText('profileWinStreak', streaks.winStreak);
+            setText('profileLoseStreak', streaks.loseStreak);
+
+            // Rank progression
             const progress = RankSystem.getRankProgress(playerData.mmr || 999);
-            setText('modalRankProgressValue', `${progress.progress}%`);
-            const progBar = document.getElementById('modalRankProgressBar');
+            setText('rankProgressPercent', `${progress.progress}%`);
+            const progBar = document.getElementById('rankProgressBar');
             if (progBar) progBar.style.width = `${progress.progress}%`;
+            
+            const progInfo = document.getElementById('rankProgressInfo');
+            if (progInfo) {
+                if (progress.nextRank) {
+                    progInfo.innerHTML = `Faltam <strong>${progress.mmrToNext} MMR</strong> para alcançar <strong>${progress.nextRank.icon} ${progress.nextRank.name}</strong>`;
+                } else {
+                    progInfo.textContent = 'Você já está no rank máximo! 🏆';
+                }
+            }
+
+            // Comparison section (if not viewing own profile)
+            if (username !== currentUser) {
+                const yourData = await getUserData(currentUser);
+                if (yourData) {
+                    this.showComparison(yourData, playerData, username);
+                }
+            } else {
+                this.hideComparison();
+            }
 
             // Action buttons
             const actionButtons = document.getElementById('profileActionButtons');
@@ -683,6 +715,120 @@ class FriendsSystem {
     }
 
     /**
+     * Calculate win/loss streaks from match history
+     */
+    calculateStreaks(matches, username) {
+        if (!matches || matches.length === 0) {
+            return { winStreak: 0, loseStreak: 0 };
+        }
+
+        let maxWinStreak = 0;
+        let maxLoseStreak = 0;
+        let currentWinStreak = 0;
+        let currentLoseStreak = 0;
+
+        // Sort by timestamp desc (most recent first)
+        const sorted = [...matches].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        for (const match of sorted) {
+            const isWinner = match.winner === username;
+            
+            if (isWinner) {
+                currentWinStreak++;
+                currentLoseStreak = 0;
+                maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
+            } else {
+                currentLoseStreak++;
+                currentWinStreak = 0;
+                maxLoseStreak = Math.max(maxLoseStreak, currentLoseStreak);
+            }
+        }
+
+        return { winStreak: maxWinStreak, loseStreak: maxLoseStreak };
+    }
+
+    /**
+     * Show comparison between current user and viewed player
+     */
+    showComparison(yourData, theirData, theirName) {
+        const compSection = document.getElementById('comparisonSection');
+        if (compSection) compSection.style.display = 'block';
+
+        // Update versus name
+        const vsName = document.getElementById('compVsName');
+        if (vsName) vsName.textContent = theirName;
+
+        // Calculate stats
+        const yourGames = yourData.gamesPlayed || yourData.totalMatches || 0;
+        const theirGames = theirData.gamesPlayed || theirData.totalMatches || 0;
+
+        const yourWinrate = yourGames > 0 ? ((yourData.wins || 0) / yourGames * 100) : 0;
+        const theirWinrate = theirGames > 0 ? ((theirData.wins || 0) / theirGames * 100) : 0;
+
+        const yourKD = (yourData.totalDeaths || 0) > 0 ? (yourData.totalKills / yourData.totalDeaths) : (yourData.totalKills || 0);
+        const theirKD = (theirData.totalDeaths || 0) > 0 ? (theirData.totalKills / theirData.totalDeaths) : (theirData.totalKills || 0);
+
+        const yourMMR = yourData.mmr || 999;
+        const theirMMR = theirData.mmr || 999;
+
+        // Update comparison bars (use max of both values for relative comparison)
+        const maxMMR = Math.max(yourMMR, theirMMR);
+        this.updateCompBar('compMMRYou', yourMMR, maxMMR, yourMMR);
+        this.updateCompBar('compMMRThem', theirMMR, maxMMR, theirMMR);
+
+        this.updateCompBar('compWRYou', yourWinrate, 100, yourWinrate.toFixed(1) + '%');
+        this.updateCompBar('compWRThem', theirWinrate, 100, theirWinrate.toFixed(1) + '%');
+
+        const maxKD = Math.max(yourKD, theirKD, 3); // Min scale of 3.0
+        this.updateCompBar('compKDYou', yourKD, maxKD, yourKD.toFixed(2));
+        this.updateCompBar('compKDThem', theirKD, maxKD, theirKD.toFixed(2));
+
+        // Determine verdict
+        let score = 0;
+        if (yourMMR > theirMMR) score++;
+        if (yourWinrate > theirWinrate) score++;
+        if (yourKD > theirKD) score++;
+
+        const verdictIcon = document.getElementById('compVerdictIcon');
+        const verdictText = document.getElementById('compVerdictText');
+
+        if (score >= 2) {
+            if (verdictIcon) verdictIcon.textContent = '🏆';
+            if (verdictText) verdictText.innerHTML = `<strong style="color: #00ff88;">Você está melhor</strong> que ${theirName} na maioria das estatísticas! Continue dominando! 💪`;
+        } else if (score === 1) {
+            if (verdictIcon) verdictIcon.textContent = '⚔️';
+            if (verdictText) verdictText.innerHTML = `Vocês estão <strong style="color: #ff7a00;">empatados</strong>! Cada um tem seus pontos fortes. Quem vencerá o próximo confronto? 🔥`;
+        } else {
+            if (verdictIcon) verdictIcon.textContent = '💀';
+            if (verdictText) verdictText.innerHTML = `${theirName} está <strong style="color: #ff4500;">dominando</strong> você nas estatísticas... Hora de treinar e buscar a revanche! 💪`;
+        }
+    }
+
+    /**
+     * Update comparison bar
+     */
+    updateCompBar(barId, value, maxValue, displayValue) {
+        const bar = document.getElementById(barId);
+        if (!bar) return;
+
+        const percentage = (value / maxValue) * 100;
+        bar.style.width = `${Math.min(percentage, 100)}%`;
+        
+        // Update value in sibling span
+        const valueSpanId = barId + 'Value';
+        const valueSpan = document.getElementById(valueSpanId);
+        if (valueSpan) valueSpan.textContent = displayValue;
+    }
+
+    /**
+     * Hide comparison section
+     */
+    hideComparison() {
+        const compSection = document.getElementById('comparisonSection');
+        if (compSection) compSection.style.display = 'none';
+    }
+
+    /**
      * Load player match history
      */
     async loadPlayerMatchHistory(username) {
@@ -693,9 +839,10 @@ class FriendsSystem {
 
             if (!playerMatches || playerMatches.length === 0) {
                 historyDiv.innerHTML = `
-                    <div class="empty-matches">
-                        <div class="empty-icon">🎮</div>
-                        <p>Nenhuma partida registrada</p>
+                    <div class="empty-matches-ultimate">
+                        <div class="empty-icon-mega">🎮</div>
+                        <p>Nenhuma partida registrada ainda</p>
+                        <div class="empty-subtext">As partidas aparecerão aqui após o primeiro jogo</div>
                     </div>
                 `;
                 return;
@@ -727,9 +874,10 @@ class FriendsSystem {
             const historyDiv = document.getElementById('profileMatchHistory');
             if (historyDiv) {
                 historyDiv.innerHTML = `
-                    <div class="empty-matches">
-                        <div class="empty-icon">⚠️</div>
-                        <p>Erro ao carregar histórico</p>
+                    <div class="empty-matches-ultimate">
+                        <div class="empty-icon-mega">⚠️</div>
+                        <p>Erro ao carregar histórico de partidas</p>
+                        <div class="empty-subtext">Tente novamente mais tarde</div>
                     </div>
                 `;
             }

@@ -8341,6 +8341,684 @@ select.form-input,
    RESPONSIVE - FRIENDS PAGE
    ============================================================================ */
 
+/* ============================================================================
+   PROFILE ULTIMATE - NEW DESIGN WITH COMPARISON
+   ============================================================================ */
+
+.player-profile-ultimate {
+    background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 2px rgba(255, 122, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: slideUpFadeUltimate 0.5s ease-out;
+}
+
+@keyframes slideUpFadeUltimate {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.profile-close-ultimate {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.profile-close-ultimate:hover {
+    background: rgba(255, 50, 50, 0.9);
+    border-color: rgba(255, 50, 50, 0.6);
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* HERO SECTION */
+.profile-hero-section {
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%);
+    padding: 48px 32px 32px;
+    border-bottom: 2px solid rgba(255, 122, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 122, 0, 0.1), transparent 60%);
+    pointer-events: none;
+}
+
+.profile-hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.profile-avatar-mega {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    margin: 0 auto 24px;
+}
+
+.avatar-glow-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff7a00, #ff4500);
+    opacity: 0.5;
+    animation: ringPulseMega 2.5s infinite;
+}
+
+@keyframes ringPulseMega {
+    0%, 100% { opacity: 0.4; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.7; transform: scale(1.08) rotate(180deg); }
+}
+
+.avatar-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #0d0d0d;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.avatar-letter-mega {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ff7a00;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 20px rgba(255, 122, 0, 0.6);
+}
+
+.avatar-rank-badge {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    border: 3px solid #0d0d0d;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 122, 0, 0.3);
+    z-index: 2;
+}
+
+.profile-hero-info {
+    margin-bottom: 24px;
+}
+
+.profile-name-mega {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 30px rgba(255, 122, 0, 0.5);
+    line-height: 1.2;
+}
+
+.profile-rank-mega {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.rank-name-mega {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff7a00;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.rank-mmr-mega {
+    font-size: 1.1rem;
+    color: #ccc;
+    font-weight: 600;
+}
+
+.profile-quick-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    display: inline-flex;
+}
+
+.quick-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.qs-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ff7a00;
+}
+
+.quick-stat-item.highlight .qs-value {
+    color: #00ff88;
+}
+
+.qs-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.quick-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-actions-hero {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+/* COMPARISON SECTION */
+.profile-comparison-section {
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.05), rgba(255, 122, 0, 0.02));
+    border: 1px solid rgba(255, 122, 0, 0.25);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 24px 32px;
+}
+
+.comparison-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.comparison-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.comp-icon {
+    font-size: 1.6rem;
+    animation: pulse 2s infinite;
+}
+
+.comparison-subtitle {
+    font-size: 1rem;
+    color: #999;
+    font-weight: 500;
+}
+
+.comparison-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.comparison-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comp-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ff7a00;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.comp-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comp-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.comp-player-label {
+    width: 60px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.comp-bar-row.you .comp-player-label {
+    color: #00ff88;
+}
+
+.comp-bar-row.them .comp-player-label {
+    color: #ff7a00;
+}
+
+.comp-bar-container {
+    flex: 1;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.comp-bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.comp-bar-you {
+    background: linear-gradient(90deg, #00ff88 0%, #00cc6a 100%);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+.comp-bar-them {
+    background: linear-gradient(90deg, #ff7a00 0%, #ff4500 100%);
+    box-shadow: 0 0 20px rgba(255, 122, 0, 0.6);
+}
+
+.comp-value {
+    position: absolute;
+    right: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    z-index: 2;
+}
+
+.comparison-verdict {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.verdict-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.verdict-text {
+    font-size: 1.15rem;
+    color: #fff;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+/* DETAILED STATS */
+.profile-detailed-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 24px 32px;
+}
+
+.detailed-stat-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.detailed-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 122, 0, 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.detailed-stat-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 122, 0, 0.5);
+    box-shadow: 0 8px 24px rgba(255, 122, 0, 0.25);
+}
+
+.detailed-stat-card:hover::before {
+    opacity: 1;
+}
+
+.detailed-stat-card.win {
+    border-color: rgba(0, 255, 136, 0.25);
+}
+
+.detailed-stat-card.win:hover {
+    border-color: rgba(0, 255, 136, 0.5);
+    box-shadow: 0 8px 24px rgba(0, 255, 136, 0.2);
+}
+
+.detailed-stat-card.loss {
+    border-color: rgba(255, 50, 50, 0.25);
+}
+
+.detailed-stat-card.loss:hover {
+    border-color: rgba(255, 50, 50, 0.5);
+    box-shadow: 0 8px 24px rgba(255, 50, 50, 0.2);
+}
+
+.dstat-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.dstat-icon {
+    font-size: 1.4rem;
+}
+
+.dstat-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+}
+
+.dstat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 8px 0;
+    line-height: 1;
+}
+
+.dstat-subtext {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 8px;
+}
+
+.dstat-progress {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.dstat-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff7a00, #ff4500);
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dstat-bar.kd-bar {
+    background: linear-gradient(90deg, #00ff88, #00cc6a);
+}
+
+/* RANK PROGRESSION */
+.profile-rank-progression {
+    margin: 0 32px 24px;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+}
+
+.rank-prog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.rank-prog-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.rank-prog-percentage {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #00ff88;
+}
+
+.rank-prog-bar-container {
+    height: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.rank-prog-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00cc6a);
+    border-radius: 6px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+}
+
+.rank-prog-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.rank-prog-info {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.rank-prog-info strong {
+    color: #ff7a00;
+    font-weight: 700;
+}
+
+/* MATCH HISTORY */
+.profile-matches-section {
+    padding: 0 32px 32px;
+}
+
+.matches-section-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.matches-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 6px 0;
+}
+
+.matches-icon {
+    font-size: 1.4rem;
+}
+
+.matches-subtitle {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.matches-timeline-ultimate {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-matches-ultimate {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.empty-icon-mega {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+}
+
+.empty-matches-ultimate p {
+    font-size: 1.1rem;
+    color: #888;
+    margin: 0 0 8px 0;
+    font-weight: 600;
+}
+
+.empty-subtext {
+    font-size: 0.85rem;
+    color: #555;
+    font-style: italic;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .player-profile-ultimate {
+        max-width: 100%;
+        border-radius: 16px;
+        max-height: 95vh;
+    }
+    
+    .profile-hero-section {
+        padding: 32px 20px 24px;
+    }
+    
+    .profile-name-mega {
+        font-size: 2rem;
+    }
+    
+    .profile-avatar-mega {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .profile-comparison-section {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .profile-detailed-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 20px;
+    }
+    
+    .profile-rank-progression,
+    .profile-matches-section {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    
+    .comp-player-label {
+        width: 50px;
+        font-size: 0.7rem;
+    }
+}
+
 @media (max-width: 768px) {
     #friends .section {
         padding: var(--space-6) var(--space-4);
