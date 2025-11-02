@@ -10,8 +10,15 @@ service cloud.firestore {
     match /players/{playerId} {
       // Leitura pública para leaderboards
       allow read: if true;
-      // Escrita apenas via Admin SDK (backend)
-      allow write: if false;
+      
+      // Permite que o usuário atualize APENAS seu próprio plutoniumName
+      allow update: if request.auth != null 
+                    && request.auth.uid == playerId
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['plutoniumName', 'plutoniumNameUpdatedAt']);
+      
+      // Criação e exclusão apenas via Admin SDK
+      allow create, delete: if false;
       
       // Histórico de partidas do jogador (subcollection)
       match /matches/{matchId} {
