@@ -45,13 +45,89 @@ export default async function handler(req, res) {
     const { getFirestoreSafe, isFirebaseConfigured } = await import('./_firebaseAdmin.js');
     if (await isFirebaseConfigured()) {
       const db = await getFirestoreSafe();
-      const doc = {
-        ts: Date.now(),
-        ...body,
-      };
-      await db.collection('events').add(doc);
-      firebaseSaved = true;
-      console.log('[update_stats] ✅ Salvo no Firestore!');
+      const eventType = body.type;
+      const eventData = body.data || {};
+      const timestamp = body.timestamp || new Date().toISOString();
+      
+      // Estrutura organizada por tipo de evento
+      if (eventType === 'match_end') {
+        // Salva partida completa
+        const matchRef = await db.collection('matches').add({
+          ...eventData,
+          timestamp,
+          createdAt: Date.now()
+        });
+        console.log(`[update_stats] ✅ Match salva: ${matchRef.id}`);
+        
+        // Atualiza stats de cada jogador
+        if (eventData.players && Array.isArray(eventData.players)) {
+          for (const player of eventData.players) {
+            const playerRef = db.collection('players').doc(player.player);
+            await playerRef.set({
+              lastSeen: timestamp,
+              lastMatch: matchRef.id,
+              updatedAt: Date.now()
+            }, { merge: true });
+            
+            // Adiciona stats da partida ao histórico do jogador
+            await playerRef.collection('matches').add({
+              matchId: matchRef.id,
+              timestamp,
+              stats: player,
+              map: eventData.match_info?.map,
+              mode: eventData.match_info?.mode,
+              winner: eventData.winner_team,
+              duration: eventData.duration
+            });
+          }
+        }
+        
+        firebaseSaved = true;
+        
+      } else if (eventType === 'kill') {
+        // Salva kill individual
+        await db.collection('kills').add({
+          ...eventData,
+          timestamp,
+          createdAt: Date.now()
+        });
+        console.log('[update_stats] ✅ Kill salva');
+        firebaseSaved = true;
+        
+      } else if (eventType === 'player_join') {
+        // Atualiza dados do jogador
+        const playerRef = db.collection('players').doc(eventData.player);
+        await playerRef.set({
+          name: eventData.player,
+          guid: eventData.guid,
+          lastJoin: timestamp,
+          updatedAt: Date.now()
+        }, { merge: true });
+        console.log(`[update_stats] ✅ Player join: ${eventData.player}`);
+        firebaseSaved = true;
+        
+      } else if (eventType === 'player_quit') {
+        // Atualiza última saída do jogador
+        const playerRef = db.collection('players').doc(eventData.player);
+        await playerRef.set({
+          lastQuit: timestamp,
+          updatedAt: Date.now()
+        }, { merge: true });
+        console.log(`[update_stats] ✅ Player quit: ${eventData.player}`);
+        firebaseSaved = true;
+        
+      } else {
+        // Eventos genéricos vão para collection 'events'
+        await db.collection('events').add({
+          type: eventType,
+          data: eventData,
+          timestamp,
+          createdAt: Date.now()
+        });
+        console.log(`[update_stats] ✅ Event salvo: ${eventType}`);
+        firebaseSaved = true;
+      }
+      
     } else {
       firebaseError = 'Firebase não configurado (variáveis de ambiente ausentes)';
       console.log('[update_stats] ⚠️  Firebase não configurado');
