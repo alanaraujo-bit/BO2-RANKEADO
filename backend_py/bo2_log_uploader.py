@@ -38,8 +38,31 @@ session_stats = {
     "deaths": 0,
     "match_active": False,
     "start_time": None,
-    "last_init_game": None  # Guarda último InitGame para evitar duplicatas
+    "last_init_game": None,  # Guarda último InitGame para evitar duplicatas
+    "match_info": {},  # Info da partida atual
+    "players": {}  # Estatísticas por player
 }
+
+# Estrutura de stats por player
+def init_player_stats(player_name):
+    """Inicializa estatísticas de um player"""
+    return {
+        "name": player_name,
+        "kills": 0,
+        "deaths": 0,
+        "headshots": 0,
+        "suicides": 0,
+        "current_streak": 0,
+        "best_streak": 0,
+        "death_streak": 0,
+        "weapons_used": {},  # {weapon: {kills, headshots}}
+        "victims": {},  # {victim_name: kill_count}
+        "killed_by": {},  # {killer_name: death_count}
+        "first_blood": False,
+        "join_time": None,
+        "quit_time": None,
+        "playtime": 0
+    }
 
 # ===============================
 # FUNÇÕES DE LOG
@@ -135,20 +158,38 @@ def parse_plutonium_kill(linha: str):
         if len(data) < 13:
             return None
         
+        killer_guid = data[1]
+        killer_team = data[3]
         killer_name = data[4]
+        victim_guid = data[5]
+        victim_team = data[7]
         victim_name = data[8]
         weapon = data[9]
+        damage = data[10]
+        means_of_death = data[11]  # MOD_RIFLE, MOD_PISTOL, MOD_EXPLOSIVE, etc
         hitloc = data[12] if len(data) > 12 else "none"
         
         # Se killer e victim são iguais, é suicídio
-        if killer_name == victim_name:
-            return None
+        is_suicide = killer_name == victim_name
+        
+        # Se killer_guid é -1, é kill do mundo (queda, etc)
+        is_world_kill = killer_guid == "-1"
         
         return {
             "killer": killer_name,
+            "killer_guid": killer_guid,
+            "killer_team": killer_team,
             "victim": victim_name,
+            "victim_guid": victim_guid,
+            "victim_team": victim_team,
             "weapon": weapon,
-            "headshot": hitloc.lower() == "head"
+            "damage": damage,
+            "means_of_death": means_of_death,
+            "hitloc": hitloc,
+            "headshot": hitloc.lower() == "head",
+            "is_suicide": is_suicide,
+            "is_world_kill": is_world_kill,
+            "is_teamkill": killer_team == victim_team and not is_suicide
         }
     except Exception:
         return None
@@ -322,6 +363,126 @@ def parse_match_end(linha: str):
     }
 
 # ===============================
+# PROCESSAMENTO DE ESTATÍSTICAS
+# ===============================
+def process_kill_stats(kill_data):
+    """Processa estatísticas de uma kill"""
+    killer = kill_data["killer"]
+    victim = kill_data["victim"]
+    weapon = kill_data["weapon"]
+    headshot = kill_data["headshot"]
+    is_suicide = kill_data.get("is_suicide", False)
+    is_world_kill = kill_data.get("is_world_kill", False)
+    
+    # Inicializa players se não existirem
+    if killer not in session_stats["players"]:
+        session_stats["players"][killer] = init_player_stats(killer)
+    if victim not in session_stats["players"]:
+        session_stats["players"][victim] = init_player_stats(victim)
+    
+    killer_stats = session_stats["players"][killer]
+    victim_stats = session_stats["players"][victim]
+    
+    # Atualiza kills (se não for world kill ou suicide)
+    if not is_world_kill and not is_suicide:
+        killer_stats["kills"] += 1
+        
+        # Headshot
+        if headshot:
+            killer_stats["headshots"] += 1
+        
+        # Streak
+        killer_stats["current_streak"] += 1
+        killer_stats["death_streak"] = 0
+        if killer_stats["current_streak"] > killer_stats["best_streak"]:
+            killer_stats["best_streak"] = killer_stats["current_streak"]
+        
+        # First blood
+        if session_stats["kills"] == 0:
+            killer_stats["first_blood"] = True
+        
+        # Armas usadas
+        if weapon not in killer_stats["weapons_used"]:
+            killer_stats["weapons_used"][weapon] = {"kills": 0, "headshots": 0}
+        killer_stats["weapons_used"][weapon]["kills"] += 1
+        if headshot:
+            killer_stats["weapons_used"][weapon]["headshots"] += 1
+        
+        # Vítimas
+        if victim not in killer_stats["victims"]:
+            killer_stats["victims"][victim] = 0
+        killer_stats["victims"][victim] += 1
+    
+    # Atualiza deaths
+    victim_stats["deaths"] += 1
+    victim_stats["current_streak"] = 0
+    victim_stats["death_streak"] += 1
+    
+    # Killed by
+    if not is_world_kill and not is_suicide:
+        if killer not in victim_stats["killed_by"]:
+            victim_stats["killed_by"][killer] = 0
+        victim_stats["killed_by"][killer] += 1
+    
+    # Suicides
+    if is_suicide:
+        victim_stats["suicides"] += 1
+
+def get_match_summary():
+    """Gera resumo da partida com estatísticas detalhadas"""
+    players_summary = []
+    
+    for player_name, stats in session_stats["players"].items():
+        kd_ratio = stats["kills"] / stats["deaths"] if stats["deaths"] > 0 else stats["kills"]
+        headshot_ratio = (stats["headshots"] / stats["kills"] * 100) if stats["kills"] > 0 else 0
+        
+        # Arma mais usada
+        favorite_weapon = "N/A"
+        if stats["weapons_used"]:
+            favorite_weapon = max(stats["weapons_used"].items(), key=lambda x: x[1]["kills"])[0]
+        
+        # Rival (quem mais matou)
+        favorite_victim = "N/A"
+        if stats["victims"]:
+            favorite_victim = max(stats["victims"].items(), key=lambda x: x[1])[0]
+        
+        # Nemesis (quem mais te matou)
+        nemesis = "N/A"
+        if stats["killed_by"]:
+            nemesis = max(stats["killed_by"].items(), key=lambda x: x[1])[0]
+        
+        players_summary.append({
+            "player": player_name,
+            "kills": stats["kills"],
+            "deaths": stats["deaths"],
+            "kd_ratio": round(kd_ratio, 2),
+            "headshots": stats["headshots"],
+            "headshot_ratio": round(headshot_ratio, 1),
+            "best_streak": stats["best_streak"],
+            "suicides": stats["suicides"],
+            "first_blood": stats["first_blood"],
+            "favorite_weapon": favorite_weapon,
+            "favorite_victim": favorite_victim,
+            "nemesis": nemesis,
+            "weapons_stats": stats["weapons_used"]
+        })
+    
+    # Ordena por kills
+    players_summary.sort(key=lambda x: x["kills"], reverse=True)
+    
+    # Define MVP (mais kills)
+    if players_summary:
+        players_summary[0]["is_mvp"] = True
+    
+    return {
+        "match_info": session_stats["match_info"],
+        "total_kills": session_stats["kills"],
+        "total_deaths": sum(p["deaths"] for p in players_summary),
+        "players": players_summary,
+        "duration": (datetime.now() - session_stats["start_time"]).total_seconds() if session_stats["start_time"] else 0
+    }
+
+# ===============================
 # MONITOR PRINCIPAL
 # ===============================
 def monitorar_log():
@@ -375,22 +536,39 @@ def monitorar_log():
                     # PLUTONIUM KILL events (formato real do jogo)
                     if " K;" in linha:
                         dados = parse_plutonium_kill(linha)
-                        if dados:
+                        if dados and not dados.get("is_suicide") and not dados.get("is_world_kill"):
                             session_stats["kills"] += 1
+                            process_kill_stats(dados)
                             enviar_dados("kill", dados)
                     
                     # PLUTONIUM PLAYER JOIN
                     elif " J;" in linha:
                         dados = parse_plutonium_join(linha)
                         if dados:
-                            log_info(f"Player joined: {dados['player']}")
+                            player_name = dados['player']
+                            log_info(f"Player joined: {player_name}")
+                            
+                            # Inicializa stats do player
+                            if player_name not in session_stats["players"]:
+                                session_stats["players"][player_name] = init_player_stats(player_name)
+                            session_stats["players"][player_name]["join_time"] = datetime.now()
+                            
                             enviar_dados("player_join", dados)
                     
                     # PLUTONIUM PLAYER QUIT
                     elif " Q;" in linha:
                         dados = parse_plutonium_quit(linha)
                         if dados:
-                            log_info(f"Player left: {dados['player']}")
+                            player_name = dados['player']
+                            log_info(f"Player left: {player_name}")
+                            
+                            # Calcula tempo de jogo
+                            if player_name in session_stats["players"]:
+                                player_stats = session_stats["players"][player_name]
+                                if player_stats["join_time"]:
+                                    player_stats["quit_time"] = datetime.now()
+                                    player_stats["playtime"] = (player_stats["quit_time"] - player_stats["join_time"]).total_seconds()
+                            
                             enviar_dados("player_quit", dados)
                     
                     # PLUTONIUM INIT GAME (início de partida)
@@ -405,22 +583,32 @@ def monitorar_log():
                                 session_stats["start_time"] = datetime.now()
                                 session_stats["kills"] = 0
                                 session_stats["deaths"] = 0
+                                session_stats["match_info"] = dados
+                                session_stats["players"] = {}  # Reset players
                                 enviar_dados("match_start", dados)
                     
                     # PLUTONIUM SHUTDOWN GAME (fim de partida)
                     elif "ShutdownGame:" in linha:
                         if session_stats["match_active"]:
                             session_stats["match_active"] = False
-                            dados = {
-                                "kills": session_stats["kills"],
-                                "deaths": session_stats["deaths"]
-                            }
-                            enviar_dados("match_end", dados)
+                            
+                            # Gera resumo completo da partida
+                            match_summary = get_match_summary()
+                            enviar_dados("match_end", match_summary)
                             
                             # Log session summary
-                            log_info("-" * 60)
-                            log_info(f"Session Summary - Kills: {session_stats['kills']}, Deaths: {session_stats['deaths']}")
-                            log_info("-" * 60)
+                            log_info("=" * 60)
+                            log_info(f"MATCH ENDED - {match_summary['match_info'].get('map', 'Unknown')}")
+                            log_info("=" * 60)
+                            log_info(f"Duration: {int(match_summary['duration'])}s")
+                            log_info(f"Total Kills: {match_summary['total_kills']}")
+                            log_info("")
+                            log_info("TOP PLAYERS:")
+                            for i, p in enumerate(match_summary["players"][:5], 1):
+                                mvp = " 👑 MVP" if p.get("is_mvp") else ""
+                                fb = " 🩸 First Blood" if p.get("first_blood") else ""
+                                log_info(f"  {i}. {p['player']}: {p['kills']}K / {p['deaths']}D (K/D: {p['kd_ratio']}) - HS: {p['headshot_ratio']}%{mvp}{fb}")
+                            log_info("=" * 60)
                     
                     # CUSTOM TEST FORMAT - KILL events
                     elif "KILL:" in linha:
