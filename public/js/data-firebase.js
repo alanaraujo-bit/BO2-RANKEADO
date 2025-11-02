@@ -347,15 +347,20 @@ const RankedData = {
         if (!this.currentUserId) return;
         
         try {
+            console.log('🔍 Loading user data for userId:', this.currentUserId);
             const doc = await db.collection('players').doc(this.currentUserId).get();
             
             if (doc.exists) {
                 const data = doc.data();
+                console.log('✅ User data loaded:', data);
                 this.currentUser = data.username;
                 this.players[data.username] = data;
+                console.log('✅ currentUser set to:', this.currentUser);
+            } else {
+                console.warn('⚠️ No player document found for userId:', this.currentUserId);
             }
         } catch (error) {
-            console.error('Error loading user data:', error);
+            console.error('❌ Error loading user data:', error);
         }
     },
     
