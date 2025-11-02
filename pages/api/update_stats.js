@@ -84,12 +84,28 @@ export default async function handler(req, res) {
           // Atualiza stats de cada player cadastrado
           for (const regPlayer of registeredPlayers) {
             const playerRef = db.collection('players').doc(regPlayer.docId);
+            const playerData = (await playerRef.get()).data();
             
-            await playerRef.set({
+            // Determina se venceu ou perdeu
+            const playerTeam = regPlayer.data.team;
+            const winnerTeam = eventData.winner_team;
+            const isWin = playerTeam === winnerTeam;
+            
+            // Calcula delta de MMR
+            const currentMMR = playerData.mmr || 1000;
+            const kFactor = 32; // Fator K do sistema Elo
+            const mmrChange = isWin ? kFactor : -kFactor;
+            const newMMR = Math.max(0, currentMMR + mmrChange);
+            
+            // Atualiza stats do player
+            await playerRef.update({
+              wins: (playerData.wins || 0) + (isWin ? 1 : 0),
+              losses: (playerData.losses || 0) + (isWin ? 0 : 1),
+              mmr: newMMR,
               lastSeen: timestamp,
               lastMatch: matchRef.id,
               updatedAt: Date.now()
-            }, { merge: true });
+            });
             
             // Adiciona stats da partida ao histórico do jogador
             await playerRef.collection('matches').add({
@@ -98,11 +114,16 @@ export default async function handler(req, res) {
               stats: regPlayer.data,
               map: eventData.match_info?.map,
               mode: eventData.match_info?.mode,
-              winner: eventData.winner_team,
+              winner: winnerTeam,
+              playerTeam: playerTeam,
+              result: isWin ? 'win' : 'loss',
+              mmrChange: mmrChange,
+              mmrBefore: currentMMR,
+              mmrAfter: newMMR,
               duration: eventData.duration
             });
             
-            console.log(`[update_stats] ✅ Stats atualizadas: ${regPlayer.data.player}`);
+            console.log(`[update_stats] ✅ Match processada: ${regPlayer.data.player} - ${isWin ? 'VITÓRIA' : 'DERROTA'} (${mmrChange >= 0 ? '+' : ''}${mmrChange} MMR → ${newMMR})`);
           }
         }
         
