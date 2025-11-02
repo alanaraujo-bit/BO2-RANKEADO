@@ -302,7 +302,18 @@ function updateUserDisplay() {
             // Show admin menu item only for Alan Araújo
             const adminMenuItem = document.getElementById('adminMenuItem');
             if (adminMenuItem) {
-                if (player.displayName === 'Alan Araújo' || player.email === 'alan@example.com') {
+                const isAdmin = player.displayName === 'Alan Araújo' || 
+                               player.username === 'Alan Araújo' ||
+                               RankedData.currentUser === 'Alan Araújo';
+                
+                console.log('Admin Check:', {
+                    displayName: player.displayName,
+                    username: player.username,
+                    currentUser: RankedData.currentUser,
+                    isAdmin: isAdmin
+                });
+                
+                if (isAdmin) {
                     adminMenuItem.style.display = 'block';
                 } else {
                     adminMenuItem.style.display = 'none';
