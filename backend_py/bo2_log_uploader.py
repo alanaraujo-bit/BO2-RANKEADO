@@ -41,7 +41,8 @@ session_stats = {
     "last_init_game": None,  # Guarda último InitGame para evitar duplicatas
     "match_info": {},  # Info da partida atual
     "players": {},  # Estatísticas por player
-    "team_scores": {"allies": 0, "axis": 0}  # Score por equipe
+    "team_scores": {"allies": 0, "axis": 0},  # Score por equipe
+    "registered_players_cache": {}  # Cache de players cadastrados {nome: bool}
 }
 
 # Estrutura de stats por player
@@ -100,6 +101,55 @@ def log_event(icon, title, details):
     print(f"  └{'─' * 50}")
 
 # ===============================
+# VERIFICAÇÃO DE REGISTRO
+# ===============================
+def verificar_player_registrado(player_name: str) -> bool:
+    """
+    Verifica se um player está cadastrado na plataforma
+    Usa cache para evitar múltiplas requisições
+    
+    Args:
+        player_name: Nome do player no Plutonium
+    
+    Returns:
+        bool: True se está cadastrado
+    """
+    # Verifica cache primeiro
+    if player_name in session_stats["registered_players_cache"]:
+        return session_stats["registered_players_cache"][player_name]
+    
+    # Consulta API para verificar registro
+    try:
+        # Usa endpoint de health para verificar se player existe
+        # (em produção, você pode criar um endpoint específico)
+        payload = {
+            "type": "check_registration",
+            "data": {"player": player_name}
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {SECRET_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            # Verifica se o Firebase retornou informação sobre registro
+            firebase_info = data.get("firebase", {})
+            is_registered = firebase_info.get("saved", False)
+            
+            # Atualiza cache
+            session_stats["registered_players_cache"][player_name] = is_registered
+            return is_registered
+    except Exception as e:
+        # Em caso de erro, assume não registrado mas não cacheia
+        pass
+    
+    return False
+
+# ===============================
 # ENVIO DE DADOS
 # ===============================
 def enviar_dados(evento_tipo: str, dados: dict, retry=0) -> bool:
@@ -133,6 +183,34 @@ def enviar_dados(evento_tipo: str, dados: dict, retry=0) -> bool:
             try:
                 response_data = response.json()
                 firebase_info = response_data.get("firebase", {})
+                
+                # Atualiza cache de players registrados baseado na resposta
+                if evento_tipo in ["kill", "player_join", "player_quit"]:
+                    player_name = None
+                    
+                    if evento_tipo == "kill":
+                        killer = dados.get("killer")
+                        victim = dados.get("victim")
+                        
+                        # Se Firebase salvou, ambos estão registrados
+                        if firebase_info.get("saved"):
+                            if killer:
+                                session_stats["registered_players_cache"][killer] = True
+                            if victim:
+                                session_stats["registered_players_cache"][victim] = True
+                        else:
+                            # Se não salvou, pelo menos um não está registrado
+                            # Marca como não registrado (será verificado individualmente depois)
+                            if killer and killer not in session_stats["registered_players_cache"]:
+                                session_stats["registered_players_cache"][killer] = False
+                            if victim and victim not in session_stats["registered_players_cache"]:
+                                session_stats["registered_players_cache"][victim] = False
+                    
+                    elif evento_tipo in ["player_join", "player_quit"]:
+                        player_name = dados.get("player")
+                        if player_name:
+                            # Se Firebase salvou, player está registrado
+                            session_stats["registered_players_cache"][player_name] = firebase_info.get("saved", False)
                 
                 # Log apenas para eventos importantes (não para dano ou weapon change)
                 if evento_tipo in ["kill", "match_start", "match_end", "player_join", "player_quit"]:
@@ -781,19 +859,33 @@ def monitorar_log():
                                         "Time": dados.get("killer_team", "N/A").upper()
                                     })
                                 elif dados.get("headshot"):
+                                    # Verifica registro dos players
+                                    killer_reg = killer in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][killer]
+                                    victim_reg = victim in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][victim]
+                                    
+                                    status_icon = "💾" if (killer_reg and victim_reg) else "⚠️"
+                                    
                                     log_event("🎯", "HEADSHOT", {
-                                        "Matador": killer,
-                                        "Vítima": victim,
+                                        "Matador": f"{killer} {'✅' if killer_reg else '❌'}",
+                                        "Vítima": f"{victim} {'✅' if victim_reg else '❌'}",
                                         "Arma": weapon,
-                                        "Streak": session_stats["players"][killer]["current_streak"]
+                                        "Streak": session_stats["players"][killer]["current_streak"],
+                                        "Salvo": f"{status_icon} {'SIM' if (killer_reg and victim_reg) else 'NÃO (players não cadastrados)'}"
                                     })
                                 else:
+                                    # Verifica registro dos players
+                                    killer_reg = killer in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][killer]
+                                    victim_reg = victim in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][victim]
+                                    
+                                    status_icon = "💾" if (killer_reg and victim_reg) else "⚠️"
+                                    
                                     log_event("💥", "KILL", {
-                                        "Matador": killer,
-                                        "Vítima": victim,
+                                        "Matador": f"{killer} {'✅' if killer_reg else '❌'}",
+                                        "Vítima": f"{victim} {'✅' if victim_reg else '❌'}",
                                         "Arma": weapon,
                                         "Local do Hit": dados.get("hitloc", "N/A"),
-                                        "Streak": session_stats["players"][killer]["current_streak"]
+                                        "Streak": session_stats["players"][killer]["current_streak"],
+                                        "Salvo": f"{status_icon} {'SIM' if (killer_reg and victim_reg) else 'NÃO (players não cadastrados)'}"
                                     })
                     
                     # PLUTONIUM PLAYER JOIN
@@ -807,13 +899,21 @@ def monitorar_log():
                                 session_stats["players"][player_name] = init_player_stats(player_name)
                             session_stats["players"][player_name]["join_time"] = datetime.now()
                             
+                            # Envia dados primeiro para verificar registro
+                            enviar_dados("player_join", dados)
+                            
+                            # Verifica se está registrado (verifica resposta do servidor)
+                            is_registered = player_name in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][player_name]
+                            
+                            status_icon = "✅" if is_registered else "⚠️"
+                            status_text = "CADASTRADO" if is_registered else "NÃO CADASTRADO"
+                            
                             log_event("🟢", "JOGADOR ENTROU", {
                                 "Nome": player_name,
                                 "GUID": dados['guid'],
+                                "Status": f"{status_icon} {status_text}",
                                 "Jogadores Online": len(session_stats["players"])
                             })
-                            
-                            enviar_dados("player_join", dados)
                     
                     # PLUTONIUM PLAYER QUIT
                     elif " Q;" in linha:
