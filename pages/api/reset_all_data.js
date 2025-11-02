@@ -22,9 +22,11 @@ export default async function handler(req, res) {
   
   // Permite acesso sem autenticação apenas se vier da própria aplicação
   const referer = req.headers.referer || req.headers.referrer || '';
-  const isFromWebApp = referer.includes('/admin.html');
+  const origin = req.headers.origin || '';
+  const isFromWebApp = referer.includes('rankops.vercel.app') || origin.includes('rankops.vercel.app') || referer.includes('localhost');
   
   if (!isAuthMatch && !isFromWebApp) {
+    console.log('[reset_all_data] Acesso negado. Referer:', referer, 'Origin:', origin);
     return res.status(403).json({ error: 'Não autorizado' });
   }
 
