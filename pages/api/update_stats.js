@@ -125,7 +125,45 @@ export default async function handler(req, res) {
             timestamp,
             createdAt: Date.now()
           });
-          console.log(`[update_stats] ✅ Kill salva: ${eventData.killer} → ${eventData.victim}`);
+          
+          // ATUALIZA ESTATÍSTICAS DO KILLER
+          const killerDoc = killerQuery.docs[0];
+          const killerRef = db.collection('players').doc(killerDoc.id);
+          const killerData = killerDoc.data();
+          
+          const weapon = eventData.weapon || 'unknown';
+          const headshot = eventData.headshot || false;
+          const hitloc = eventData.hitloc || 'none';
+          
+          // Atualiza kills, headshots, victims, weaponsUsed, hitLocations
+          const killerUpdates = {
+            kills: (killerData.kills || 0) + 1,
+            headshots: (killerData.headshots || 0) + (headshot ? 1 : 0),
+            [`victims.${eventData.victim}`]: (killerData.victims?.[eventData.victim] || 0) + 1,
+            [`weaponsUsed.${weapon}.kills`]: ((killerData.weaponsUsed?.[weapon]?.kills) || 0) + 1,
+            [`weaponsUsed.${weapon}.headshots`]: ((killerData.weaponsUsed?.[weapon]?.headshots) || 0) + (headshot ? 1 : 0),
+            [`hitLocations.${hitloc}`]: (killerData.hitLocations?.[hitloc] || 0) + 1,
+            lastKill: timestamp,
+            updatedAt: Date.now()
+          };
+          
+          await killerRef.update(killerUpdates);
+          
+          // ATUALIZA ESTATÍSTICAS DO VICTIM
+          const victimDoc = victimQuery.docs[0];
+          const victimRef = db.collection('players').doc(victimDoc.id);
+          const victimData = victimDoc.data();
+          
+          const victimUpdates = {
+            deaths: (victimData.deaths || 0) + 1,
+            [`killedBy.${eventData.killer}`]: (victimData.killedBy?.[eventData.killer] || 0) + 1,
+            lastDeath: timestamp,
+            updatedAt: Date.now()
+          };
+          
+          await victimRef.update(victimUpdates);
+          
+          console.log(`[update_stats] ✅ Kill processada: ${eventData.killer} → ${eventData.victim} [${weapon}${headshot ? ' HEADSHOT' : ''}]`);
           firebaseSaved = true;
         } else {
           console.log(`[update_stats] ⚠️  Kill ignorada (players não cadastrados): ${eventData.killer} [${killerRegistered ? 'OK' : 'NOT_REG'}] → ${eventData.victim} [${victimRegistered ? 'OK' : 'NOT_REG'}]`);
