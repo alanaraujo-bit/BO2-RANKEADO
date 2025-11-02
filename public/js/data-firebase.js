@@ -239,34 +239,42 @@ const RankedData = {
             }
             this._lastMMR[username] = data.mmr;
 
-            // Update UI in real-time with debounce
+            // Update UI in real-time
             if (window.UI && typeof UI.updateAllViews === 'function') {
                 UI.updateAllViews();
             }
             
-            // Update profile page if currently viewing it - BUT only if data actually changed
-            // Use debounce to prevent flickering
-            if (window.ProfileManager && typeof ProfileManager.renderProfile === 'function') {
-                const profileSection = document.getElementById('profile');
-                if (profileSection && profileSection.classList.contains('page-active')) {
-                    // Check if important fields changed
-                    const hasSignificantChange = !prev || 
-                        prev.kills !== data.kills || 
-                        prev.deaths !== data.deaths || 
-                        prev.wins !== data.wins || 
-                        prev.losses !== data.losses ||
-                        prev.mmr !== data.mmr;
+            // Update ONLY specific stats on profile page without full re-render
+            const profileSection = document.getElementById('profile');
+            if (profileSection && profileSection.classList.contains('page-active')) {
+                // Check if important fields changed
+                const hasSignificantChange = !prev || 
+                    prev.kills !== data.kills || 
+                    prev.deaths !== data.deaths || 
+                    prev.wins !== data.wins || 
+                    prev.losses !== data.losses ||
+                    prev.mmr !== data.mmr;
+                
+                if (hasSignificantChange) {
+                    console.log('🔄 Updating stats in real-time (without full re-render)');
                     
-                    if (hasSignificantChange) {
-                        // Clear previous timeout to debounce
-                        if (updateTimeout) clearTimeout(updateTimeout);
-                        
-                        // Wait 500ms before updating to avoid flickering
-                        updateTimeout = setTimeout(() => {
-                            console.log('🔄 Updating profile page in real-time (debounced)');
-                            ProfileManager.renderProfile();
-                        }, 500);
-                    }
+                    // Update only the text elements that changed, without re-rendering charts
+                    const setText = (id, value) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = value;
+                    };
+                    
+                    // Update basic stats
+                    setText('profileMMR', data.mmr || 0);
+                    setText('statVictories', data.wins || 0);
+                    setText('statDefeats', data.losses || 0);
+                    setText('statTotalKills', data.totalKills || data.kills || 0);
+                    setText('statTotalDeaths', data.totalDeaths || data.deaths || 0);
+                    
+                    const kd = (data.totalDeaths || data.deaths) > 0 
+                        ? ((data.totalKills || data.kills) / (data.totalDeaths || data.deaths)).toFixed(2) 
+                        : (data.totalKills || data.kills || 0).toFixed(2);
+                    setText('statKD', kd);
                 }
             }
         });
