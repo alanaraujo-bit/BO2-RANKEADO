@@ -254,7 +254,7 @@ def parse_plutonium_quit(linha: str):
         return None
 
 def parse_plutonium_init_game(linha: str):
-    """
+    r"""
     Parse de InitGame do Plutonium para detectar início de partida
     Formato: timestamp InitGame: \key\value\key\value...
     """
