@@ -220,6 +220,13 @@ const RankedData = {
             const prev = this.players[username];
             this.players[username] = data;
 
+            console.log('🔄 Player data updated in realtime:', username, {
+                kills: data.kills,
+                deaths: data.deaths,
+                headshots: data.headshots,
+                mmr: data.mmr
+            });
+
             // Detect MMR changes for in-app notification
             const last = this._lastMMR[username];
             if (typeof data.mmr === 'number' && last !== undefined && data.mmr !== last) {
@@ -230,8 +237,18 @@ const RankedData = {
             }
             this._lastMMR[username] = data.mmr;
 
+            // Update UI in real-time
             if (window.UI && typeof UI.updateAllViews === 'function') {
                 UI.updateAllViews();
+            }
+            
+            // Update profile page if currently viewing it
+            if (window.ProfileManager && typeof ProfileManager.renderProfile === 'function') {
+                const profileSection = document.getElementById('profile');
+                if (profileSection && profileSection.classList.contains('page-active')) {
+                    console.log('🔄 Updating profile page in real-time');
+                    ProfileManager.renderProfile();
+                }
             }
         });
         return unsub;
@@ -356,6 +373,10 @@ const RankedData = {
                 this.currentUser = data.username;
                 this.players[data.username] = data;
                 console.log('✅ currentUser set to:', this.currentUser);
+                
+                // Subscribe to real-time updates
+                console.log('🔔 Subscribing to real-time updates for:', this.currentUser);
+                this.subscribeAllRealtime();
             } else {
                 console.warn('⚠️ No player document found for userId:', this.currentUserId);
             }
