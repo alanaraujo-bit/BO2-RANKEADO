@@ -28,6 +28,22 @@ const ProfileManager = {
 
     // Force refresh to avoid stale cached data in Firebase mode (extra arg is ignored in LocalStorage mode)
     const player = await RankedData.getPlayer(RankedData.currentUser, true);
+        
+        // Load match history from subcollection
+        if (typeof RankedData.getPlayerMatchHistory === 'function') {
+            const matchHistory = await RankedData.getPlayerMatchHistory(RankedData.currentUser);
+            // Convert to format expected by the UI
+            player.matchHistory = matchHistory.map(m => ({
+                result: m.result,
+                opponent: m.opponent || 'Unknown',
+                map: m.map || 'Unknown Map',
+                gameMode: m.mode || 'TDM',
+                kills: m.stats?.kills || 0,
+                deaths: m.stats?.deaths || 0,
+                mmrChange: m.mmrChange || 0,
+                date: m.timestamp || new Date().toISOString()
+            }));
+        }
         if (!player) return;
 
         // 1️⃣ Update Basic Info

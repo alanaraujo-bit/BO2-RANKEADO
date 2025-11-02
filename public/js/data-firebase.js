@@ -484,6 +484,41 @@ const RankedData = {
         return null;
     },
     
+    // Get player match history from subcollection
+    async getPlayerMatchHistory(username) {
+        try {
+            // First get the player to get their userId
+            const player = await this.getPlayer(username);
+            if (!player || !player.userId) {
+                console.warn('⚠️ Cannot get match history - player not found:', username);
+                return [];
+            }
+            
+            // Query the matches subcollection
+            const matchesSnapshot = await db.collection('players')
+                .doc(player.userId)
+                .collection('matches')
+                .orderBy('timestamp', 'desc')
+                .limit(50)
+                .get();
+            
+            const matches = [];
+            matchesSnapshot.forEach((doc) => {
+                matches.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            console.log(`📜 Loaded ${matches.length} matches for ${username}`);
+            return matches;
+            
+        } catch (error) {
+            console.error('❌ Error getting match history:', error);
+            return [];
+        }
+    },
+    
     // Update player
     async updatePlayer(username, playerData) {
         if (!playerData) {
