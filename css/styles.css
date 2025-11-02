@@ -1,3 +1,6 @@
+/* ===== FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
 /* ============================================================================
    BO2 RANKED - DESIGN SYSTEM V3.0
    Clean, Professional & Modern
@@ -13,9 +16,6 @@
     display: none !important;
     visibility: hidden !important;
 }
-
-/* ===== FONTS ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 /* ===== DESIGN TOKENS ===== */
 :root {
