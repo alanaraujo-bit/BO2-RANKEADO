@@ -510,6 +510,10 @@
         async function cleanupInvalidPlayers() {
             const btn = event.target.closest('.admin-btn');
             const resultDiv = document.getElementById('cleanupResult');
+            const progressDiv = document.getElementById('cleanupProgress');
+            const statusDiv = document.getElementById('cleanupStatus');
+            const barDiv = document.getElementById('cleanupBar');
+            const logsDiv = document.getElementById('cleanupLogs');
             
             if (!confirm('Tem certeza que deseja remover players sem nome do Plutonium?')) {
                 return;
@@ -519,8 +523,32 @@
             btn.innerHTML = '<span class="loading-spinner"></span><span>Limpando...</span>';
             resultDiv.className = 'admin-result';
             resultDiv.style.display = 'none';
+            progressDiv.className = 'progress-container active';
+            logsDiv.innerHTML = '';
+
+            // Simula progresso
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    barDiv.style.width = progress + '%';
+                    barDiv.textContent = Math.round(progress) + '%';
+                }
+            }, 500);
+
+            function addLog(message, type = '') {
+                const logItem = document.createElement('div');
+                logItem.className = 'progress-log-item ' + type;
+                logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                logsDiv.appendChild(logItem);
+                logsDiv.scrollTop = logsDiv.scrollHeight;
+            }
+
+            addLog('🧹 Iniciando limpeza de players inválidos...');
 
             try {
+                addLog('🔍 Buscando players sem plutoniumName...');
                 const response = await fetch('/api/cleanup_invalid_players', {
                     method: 'POST',
                     headers: {
@@ -528,9 +556,18 @@
                     }
                 });
 
+                addLog('📦 Processando resposta...');
                 const data = await response.json();
 
+                clearInterval(progressInterval);
+                barDiv.style.width = '100%';
+                barDiv.textContent = '100%';
+
                 if (data.ok || data.deleted !== undefined) {
+                    addLog(`🗑️  ${data.deleted || 0} players inválidos deletados`, 'success');
+                    addLog(`✅ ${data.kept || 0} players válidos mantidos`, 'success');
+                    addLog('Limpeza concluída!', 'success');
+                    
                     resultDiv.className = 'admin-result success';
                     resultDiv.innerHTML = `
                         <h3>✅ Limpeza Concluída!</h3>
@@ -549,11 +586,16 @@
                     throw new Error(data.error || 'Erro desconhecido');
                 }
             } catch (error) {
+                clearInterval(progressInterval);
+                addLog('❌ Erro: ' + error.message, 'error');
                 resultDiv.className = 'admin-result error';
                 resultDiv.innerHTML = `<h3>❌ Erro</h3><p>${error.message}</p>`;
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<span>🧹</span><span>Limpar Invalidos</span>';
+                setTimeout(() => {
+                    progressDiv.className = 'progress-container';
+                }, 5000);
             }
         }
 
