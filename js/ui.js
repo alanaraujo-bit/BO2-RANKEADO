@@ -170,7 +170,72 @@ const UI = {
     },
 
     async updateRecentMatches() { try {} catch(e) { console.error(e); } },
-    async updatePodium() { try {} catch(e) { console.error(e); } },
+    
+    async updatePodium() {
+        try {
+            if (!RankedData || typeof RankedData.getLeaderboard !== 'function') return;
+            const leaderboard = await RankedData.getLeaderboard('global') || [];
+            const container = document.getElementById('podiumDisplay');
+            if (!container) return;
+            
+            if (leaderboard.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:2rem;">Nenhum jogador no pódio ainda.</p>';
+                return;
+            }
+
+            const top3 = leaderboard.slice(0, 3);
+            
+            // Garantir que temos 3 posições (preencher com placeholders se necessário)
+            while (top3.length < 3) {
+                top3.push({ username: '—', mmr: 0, wins: 0, losses: 0, gamesPlayed: 0 });
+            }
+
+            const createPodiumCard = (player, position) => {
+                const rank = (typeof RankSystem !== 'undefined' && RankSystem.getRank) 
+                    ? RankSystem.getRank(player.mmr) 
+                    : { icon: '🎖️', name: 'Unranked' };
+                
+                const winRate = player.gamesPlayed 
+                    ? ((player.wins / player.gamesPlayed) * 100).toFixed(0) 
+                    : '0';
+                
+                const medal = position === 1 ? '🏆' : position === 2 ? '🥈' : '🥉';
+                const heightClass = position === 1 ? 'first' : position === 2 ? 'second' : 'third';
+                
+                // Se não houver jogador válido, não mostrar o card
+                if (!player.username || player.username === '—') {
+                    return '';
+                }
+                
+                return `
+                    <div class="podium-place ${heightClass}">
+                        <div class="podium-position">#${position}</div>
+                        <div class="podium-medal">${medal}</div>
+                        <div class="podium-player-info">
+                            <div class="podium-rank-icon">${rank.icon || '🎖️'}</div>
+                            <div class="podium-player-name">${player.username || player.name}</div>
+                            <div class="podium-mmr">${player.mmr || 0}<span style="font-size: 0.5em; opacity: 0.7;"> MMR</span></div>
+                            <div class="podium-stats">
+                                <span>${player.wins || 0}W / ${player.losses || 0}L</span>
+                                <span>${winRate}% WR</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // Montar o pódio na ordem visual: 2º, 1º, 3º
+            container.innerHTML = `
+                <div class="podium-wrapper">
+                    ${createPodiumCard(top3[1], 2)}
+                    ${createPodiumCard(top3[0], 1)}
+                    ${createPodiumCard(top3[2], 3)}
+                </div>
+            `;
+        } catch (e) {
+            console.error('UI.updatePodium error:', e);
+        }
+    },
 
     async renderProfile() {
         try {

@@ -8,6 +8,7 @@ app.use(express.json());
 
 // Serve static files
 app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // API route to receive updates from BO2 server
 const SECRET_KEY = process.env.BO2_SECRET || 'fallback_secreto';

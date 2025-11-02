@@ -5,8 +5,18 @@ let firebaseReady = false;
 
 // Wait for Firebase to be fully loaded
 function waitForFirebase() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 100; // 10 seconds max
+        
         const checkFirebase = setInterval(() => {
+            attempts++;
+            console.log(`🔍 Waiting for Firebase... attempt ${attempts}/${maxAttempts}`, {
+                firebaseAuth: typeof window.firebaseAuth,
+                firebaseDB: typeof window.firebaseDB,
+                firebase: typeof firebase
+            });
+            
             if (window.firebaseAuth && window.firebaseDB) {
                 clearInterval(checkFirebase);
                 auth = window.firebaseAuth;
@@ -14,6 +24,10 @@ function waitForFirebase() {
                 firebaseReady = true;
                 console.log('✅ Data layer connected to Firebase');
                 resolve(true);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkFirebase);
+                console.error('❌ Firebase initialization timeout');
+                reject(new Error('Firebase initialization timeout'));
             }
         }, 100);
     });
