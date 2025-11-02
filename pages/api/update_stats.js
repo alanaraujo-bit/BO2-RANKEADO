@@ -51,31 +51,39 @@ export default async function handler(req, res) {
       
       // Estrutura organizada por tipo de evento
       if (eventType === 'match_end') {
-        // Salva partida completa
-        const matchRef = await db.collection('matches').add({
-          ...eventData,
-          timestamp,
-          createdAt: Date.now()
-        });
-        console.log(`[update_stats] ✅ Match salva: ${matchRef.id}`);
-        
-        // Atualiza stats de cada jogador (apenas players cadastrados)
+        // Primeiro verifica se há players cadastrados na partida
+        const registeredPlayers = [];
         if (eventData.players && Array.isArray(eventData.players)) {
           for (const player of eventData.players) {
-            // Busca player pelo plutoniumName
             const playersQuery = await db.collection('players')
               .where('plutoniumName', '==', player.player)
               .limit(1)
               .get();
             
-            if (playersQuery.empty) {
-              console.log(`[update_stats] ⚠️  Player não cadastrado: ${player.player}`);
-              continue; // Pula para o próximo player
+            if (!playersQuery.empty) {
+              registeredPlayers.push({
+                data: player,
+                docId: playersQuery.docs[0].id
+              });
             }
-            
-            // Player cadastrado - atualiza stats
-            const playerDoc = playersQuery.docs[0];
-            const playerRef = db.collection('players').doc(playerDoc.id);
+          }
+        }
+        
+        // Só salva match se houver pelo menos 1 player cadastrado
+        if (registeredPlayers.length === 0) {
+          console.log(`[update_stats] ⚠️  Match ignorada (nenhum player cadastrado)`);
+        } else {
+          // Salva partida completa
+          const matchRef = await db.collection('matches').add({
+            ...eventData,
+            timestamp,
+            createdAt: Date.now()
+          });
+          console.log(`[update_stats] ✅ Match salva: ${matchRef.id} (${registeredPlayers.length} players cadastrados)`);
+          
+          // Atualiza stats de cada player cadastrado
+          for (const regPlayer of registeredPlayers) {
+            const playerRef = db.collection('players').doc(regPlayer.docId);
             
             await playerRef.set({
               lastSeen: timestamp,
@@ -87,14 +95,14 @@ export default async function handler(req, res) {
             await playerRef.collection('matches').add({
               matchId: matchRef.id,
               timestamp,
-              stats: player,
+              stats: regPlayer.data,
               map: eventData.match_info?.map,
               mode: eventData.match_info?.mode,
               winner: eventData.winner_team,
               duration: eventData.duration
             });
             
-            console.log(`[update_stats] ✅ Stats atualizadas: ${player.player}`);
+            console.log(`[update_stats] ✅ Stats atualizadas: ${regPlayer.data.player}`);
           }
         }
         
@@ -110,19 +118,17 @@ export default async function handler(req, res) {
         const killerRegistered = !killerQuery.empty;
         const victimRegistered = !victimQuery.empty;
         
-        // Salva kill apenas se pelo menos um dos dois estiver cadastrado
-        if (killerRegistered || victimRegistered) {
+        // Salva kill APENAS se AMBOS estiverem cadastrados (economiza espaço)
+        if (killerRegistered && victimRegistered) {
           await db.collection('kills').add({
             ...eventData,
-            killerRegistered,
-            victimRegistered,
             timestamp,
             createdAt: Date.now()
           });
           console.log(`[update_stats] ✅ Kill salva: ${eventData.killer} → ${eventData.victim}`);
           firebaseSaved = true;
         } else {
-          console.log(`[update_stats] ⚠️  Kill ignorada (nenhum player cadastrado): ${eventData.killer} → ${eventData.victim}`);
+          console.log(`[update_stats] ⚠️  Kill ignorada (players não cadastrados): ${eventData.killer} [${killerRegistered ? 'OK' : 'NOT_REG'}] → ${eventData.victim} [${victimRegistered ? 'OK' : 'NOT_REG'}]`);
         }
         
       } else if (eventType === 'player_join') {
