@@ -67,12 +67,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // Setup all event listeners
 function setupEventListeners() {
-    // Login form
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
-    
     // Match report form
     const matchForm = document.getElementById('matchReportForm');
     if (matchForm) {
@@ -222,122 +216,6 @@ async function loginWithGoogle() {
                 if (previousHtml !== null) googleBtn.innerHTML = previousHtml;
             }
         } catch (e) {}
-    }
-}
-
-// Handle login/register
-async function handleLogin(event) {
-    event.preventDefault();
-    
-    const username = document.getElementById('usernameInput').value.trim();
-    const email = document.getElementById('emailInput').value.trim();
-    const password = document.getElementById('passwordInput').value;
-    
-    console.log('Tentando login/registro...');
-    
-    if (!username || !email || !password) {
-        UI.showNotification('Preencha todos os campos!', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        UI.showNotification('Senha deve ter no minimo 6 caracteres!', 'error');
-        return;
-    }
-    
-    try {
-        console.log('🔐 Iniciando processo de login/registro...');
-        console.log('Username:', username);
-        console.log('Email:', email);
-        
-        // Check if we should login or register based on error
-        let success = false;
-        let isNewUser = false;
-        
-        try {
-            // Always try login first
-            console.log('📥 Tentando fazer login com credenciais existentes...');
-            await RankedData.login(email, password);
-            console.log('✅ Login realizado com sucesso!');
-            UI.showNotification('Bem-vindo de volta, ' + RankedData.currentUser + '!', 'success');
-            success = true;
-        } catch (loginError) {
-            console.log('❌ Login falhou:', loginError);
-            console.log('Código do erro:', loginError.code);
-            console.log('Mensagem do erro:', loginError.message);
-            
-            // Extract error code from message if it's in the message string
-            const errorCode = loginError.code || '';
-            const errorMessage = loginError.message || '';
-            const isUserNotFound = errorCode.includes('user-not-found') || 
-                                   errorCode.includes('invalid-credential') ||
-                                   errorCode.includes('invalid-login-credentials') ||
-                                   errorMessage.includes('INVALID_LOGIN_CREDENTIALS') ||
-                                   errorMessage.includes('user-not-found');
-            
-            // Only try to register if user doesn't exist
-            if (isUserNotFound) {
-                console.log('👤 Usuário não encontrado, criando nova conta...');
-                try {
-                    isNewUser = true;
-                    await RankedData.createPlayer(username, email, password);
-                    console.log('✅ Conta criada com sucesso!');
-                    UI.showNotification('Bem-vindo, ' + username + '! Conta criada!', 'success');
-                    success = true;
-                } catch (registerError) {
-                    console.log('❌ Erro ao criar conta:', registerError);
-                    throw registerError;
-                }
-            } else if (errorCode.includes('wrong-password') || errorMessage.includes('wrong-password')) {
-                throw new Error('Senha incorreta! Tente novamente.');
-            } else if (errorCode.includes('email-already-in-use')) {
-                throw new Error('Email já cadastrado! Use a senha correta para fazer login.');
-            } else {
-                throw loginError;
-            }
-        }
-        
-        if (!success) {
-            throw new Error('Falha no login/registro');
-        }
-        
-        // Update UI
-        console.log('Atualizando interface...');
-        updateUserDisplay();
-        closeLoginModal();
-        await UI.updateAllViews();
-        
-        // Initialize friends system
-        if (typeof friendsSystem !== 'undefined') {
-            await friendsSystem.init();
-        }
-        
-        // Show profile
-        console.log('Mostrando pagina de perfil...');
-        showPage('profile');
-        
-    } catch (error) {
-        console.error('💥 Erro final no login/registro:', error);
-        console.error('Codigo do erro:', error.code);
-        console.error('Mensagem:', error.message);
-        
-        let message = 'Erro ao fazer login/registro!';
-        
-        if (error.code === 'auth/email-already-in-use') {
-            message = 'Email ja esta em uso! Tente fazer login com a senha correta.';
-        } else if (error.code === 'auth/invalid-email') {
-            message = 'Email invalido!';
-        } else if (error.code === 'auth/weak-password') {
-            message = 'Senha muito fraca! Use no minimo 6 caracteres.';
-        } else if (error.code === 'auth/wrong-password') {
-            message = 'Senha incorreta!';
-        } else if (error.code === 'auth/user-not-found') {
-            message = 'Usuario nao encontrado!';
-        } else {
-            message = 'Erro: ' + (error.message || error.code || 'Desconhecido');
-        }
-        
-        UI.showNotification(message, 'error');
     }
 }
 
