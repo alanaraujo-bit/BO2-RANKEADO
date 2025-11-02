@@ -160,16 +160,36 @@ const RankedData = {
     // Partial update for player (avoids full overwrite)
     async updatePlayerPartial(username, patch) {
         try {
+            // Use currentUserId if available (faster and more reliable)
+            if (this.currentUserId && this.currentUser === username) {
+                console.log(`📝 Updating player ${username} (userId: ${this.currentUserId}) with:`, patch);
+                await db.collection('players').doc(this.currentUserId).update(patch);
+                
+                // Update local cache
+                if (this.players[username]) {
+                    this.players[username] = { ...this.players[username], ...patch };
+                }
+                
+                console.log('✅ Player updated successfully');
+                return true;
+            }
+            
+            // Fallback: query by username
             const current = await this.getPlayer(username, true);
             if (!current || !current.userId) {
                 console.error('❌ Cannot patch player (missing userId):', username);
                 return false;
             }
+            
+            console.log(`📝 Updating player ${username} (userId: ${current.userId}) with:`, patch);
             await db.collection('players').doc(current.userId).update(patch);
             this.players[username] = { ...current, ...patch };
+            
+            console.log('✅ Player updated successfully');
             return true;
         } catch (err) {
             console.error('❌ Error in updatePlayerPartial:', err);
+            console.error('Error details:', err.message);
             return false;
         }
     },

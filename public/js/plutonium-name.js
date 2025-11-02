@@ -32,6 +32,10 @@ async function savePlutoniumName(event) {
     const input = document.getElementById('plutoniumNameInput');
     const plutoniumName = input.value.trim();
     
+    console.log('🎮 Salvando nome do Plutonium:', plutoniumName);
+    console.log('👤 Usuário atual:', RankedData.currentUser);
+    console.log('🆔 User ID:', RankedData.currentUserId);
+    
     if (!plutoniumName || plutoniumName.length < 2) {
         alert('❌ Por favor, digite um nome válido (mínimo 2 caracteres)');
         return;
@@ -44,12 +48,20 @@ async function savePlutoniumName(event) {
     
     try {
         // Update player data with Plutonium name
-        await RankedData.updatePlayerPartial(RankedData.currentUser, {
+        console.log('📝 Chamando updatePlayerPartial...');
+        const success = await RankedData.updatePlayerPartial(RankedData.currentUser, {
             plutoniumName: plutoniumName,
             plutoniumNameUpdatedAt: Date.now()
         });
         
-        console.log(`✅ Plutonium name saved: ${plutoniumName}`);
+        if (!success) {
+            throw new Error('updatePlayerPartial retornou false');
+        }
+        
+        console.log(`✅ Plutonium name saved successfully: ${plutoniumName}`);
+        
+        // Força refresh dos dados do player
+        await RankedData.getPlayer(RankedData.currentUser, true);
         
         // Close modal
         document.getElementById('plutoniumNameModal').style.display = 'none';
@@ -61,9 +73,15 @@ async function savePlutoniumName(event) {
         if (UI && typeof UI.updateProfileView === 'function') {
             await UI.updateProfileView();
         }
+        
+        // Update plutonium section if visible
+        if (typeof updateProfilePlutoniumSection === 'function') {
+            updateProfilePlutoniumSection();
+        }
     } catch (error) {
-        console.error('Error saving Plutonium name:', error);
-        alert('❌ Erro ao salvar nome do Plutonium. Tente novamente.');
+        console.error('❌ Error saving Plutonium name:', error);
+        console.error('Error details:', error.message);
+        alert('❌ Erro ao salvar nome do Plutonium: ' + error.message);
     }
 }
 
@@ -132,6 +150,10 @@ async function updatePlutoniumName(event) {
     const input = document.getElementById('editPlutoniumNameInput');
     const plutoniumName = input.value.trim();
     
+    console.log('🎮 Atualizando nome do Plutonium:', plutoniumName);
+    console.log('👤 Usuário atual:', RankedData.currentUser);
+    console.log('🆔 User ID:', RankedData.currentUserId);
+    
     if (!plutoniumName || plutoniumName.length < 2) {
         alert('❌ Por favor, digite um nome válido (mínimo 2 caracteres)');
         return;
@@ -144,12 +166,20 @@ async function updatePlutoniumName(event) {
     
     try {
         // Update player data with Plutonium name
-        await RankedData.updatePlayerPartial(RankedData.currentUser, {
+        console.log('📝 Chamando updatePlayerPartial...');
+        const success = await RankedData.updatePlayerPartial(RankedData.currentUser, {
             plutoniumName: plutoniumName,
             plutoniumNameUpdatedAt: Date.now()
         });
         
-        console.log(`✅ Plutonium name updated: ${plutoniumName}`);
+        if (!success) {
+            throw new Error('updatePlayerPartial retornou false');
+        }
+        
+        console.log(`✅ Plutonium name updated successfully: ${plutoniumName}`);
+        
+        // Força refresh dos dados do player
+        await RankedData.getPlayer(RankedData.currentUser, true);
         
         // Show success message
         alert(`✅ Nome do Plutonium atualizado: ${plutoniumName}`);
