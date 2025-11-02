@@ -1464,101 +1464,112 @@
     </div>
 
     <!-- Player Profile Modal -->
+    <!-- PLAYER PROFILE MODAL - REDESIGNED -->
     <div class="modal-overlay" id="playerProfileModal">
-        <div class="modal-content modal-large">
-            <div class="modal-header">
-                <h2 class="modal-title" id="profileModalTitle">PERFIL DO JOGADOR</h2>
-                <button class="modal-close" onclick="closePlayerProfile()">×</button>
+        <div class="player-profile-card">
+            <!-- Close Button -->
+            <button class="profile-close-btn" onclick="closePlayerProfile()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <!-- Profile Banner -->
+            <div class="profile-banner">
+                <div class="profile-banner-bg"></div>
+                <div class="profile-rank-badge" id="profileRankIcon">🎖️</div>
             </div>
-            <div class="modal-body">
-                <!-- Profile Header -->
-                <div class="profile-header-card redesigned v2">
-                    <div class="profile-header-left">
-                        <div class="profile-avatar-large glow">
-                            <div class="rank-icon-profile" id="profileRankIcon">🎖️</div>
-                        </div>
-                        <div class="profile-info-main">
-                            <h1 id="profileUsername" class="profile-username-display">USERNAME</h1>
-                            <div class="profile-public-id">ID <span id="profileUserId" class="tag-id">#00</span></div>
-                            <div class="profile-action-buttons" id="profileActionButtons"></div>
-                        </div>
-                    </div>
-                    <div class="profile-header-stats chips">
-                        <div class="stat-chip rank">
-                            <span class="chip-icon">🏅</span>
-                            <div class="chip-info">
-                                <div class="chip-label">Rank</div>
-                                <div class="chip-value" id="modalRankName">BRONZE I</div>
-                            </div>
-                        </div>
-                        <div class="stat-chip mmr">
-                            <span class="chip-icon">🏆</span>
-                            <div class="chip-info">
-                                <div class="chip-label">MMR</div>
-                                <div class="chip-value" id="modalMMR">1000</div>
-                            </div>
-                        </div>
-                        <div class="stat-chip kd">
-                            <span class="chip-icon">🎯</span>
-                            <div class="chip-info">
-                                <div class="chip-label">K/D</div>
-                                <div class="chip-value" id="modalKD">0.00</div>
-                            </div>
-                        </div>
-                        <div class="stat-chip wr">
-                            <span class="chip-icon">📈</span>
-                            <div class="chip-info">
-                                <div class="chip-label">WIN%</div>
-                                <div class="chip-value" id="modalWR">0%</div>
-                            </div>
-                        </div>
-                        <div class="stat-chip matches">
-                            <span class="chip-icon">🎮</span>
-                            <div class="chip-info">
-                                <div class="chip-label">PARTIDAS</div>
-                                <div class="chip-value" id="modalMatches">0</div>
-                            </div>
-                        </div>
-                        <div class="rank-progress">
-                            <div class="rank-progress-top">
-                                <span id="modalRankProgressText">Progresso para o próximo rank</span>
-                                <span class="rank-progress-value" id="modalRankProgressValue">0%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="modalRankProgressBar" style="width:0%"></div>
-                            </div>
-                        </div>
+
+            <!-- Profile Header -->
+            <div class="profile-header-new">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar-ring"></div>
+                    <div class="profile-avatar-img" id="profileAvatarImg">
+                        <span class="avatar-letter" id="profileAvatarLetter">U</span>
                     </div>
                 </div>
+                <div class="profile-identity">
+                    <h1 class="profile-name" id="profileUsername">USERNAME</h1>
+                    <div class="profile-rank-display">
+                        <span class="rank-tier" id="modalRankName">BRONZE I</span>
+                        <span class="rank-divider">•</span>
+                        <span class="rank-mmr"><span id="modalMMR">1000</span> MMR</span>
+                    </div>
+                </div>
+                <div class="profile-actions" id="profileActionButtons">
+                    <!-- Buttons will be injected here -->
+                </div>
+            </div>
 
-                <!-- Stats Grid -->
-                <div class="profile-stats-container">
-                    <div class="profile-stat-card">
-                        <div class="stat-icon">🎮</div>
+            <!-- Stats Overview -->
+            <div class="profile-stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon-wrap">�</div>
+                    <div class="stat-content">
                         <div class="stat-value" id="profileTotalMatches">0</div>
-                        <div class="stat-label">PARTIDAS</div>
-                    </div>
-                    <div class="profile-stat-card">
-                        <div class="stat-icon">🏆</div>
-                        <div class="stat-value" id="profileWins">0</div>
-                        <div class="stat-label">VITÓRIAS</div>
-                    </div>
-                    <div class="profile-stat-card">
-                        <div class="stat-icon">💔</div>
-                        <div class="stat-value" id="profileLosses">0</div>
-                        <div class="stat-label">DERROTAS</div>
-                    </div>
-                    <div class="profile-stat-card">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-value" id="profileWinrate">0%</div>
-                        <div class="stat-label">WINRATE</div>
+                        <div class="stat-label">Partidas</div>
                     </div>
                 </div>
+                <div class="stat-box highlight-green">
+                    <div class="stat-icon-wrap">�</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileWins">0</div>
+                        <div class="stat-label">Vitórias</div>
+                    </div>
+                </div>
+                <div class="stat-box highlight-red">
+                    <div class="stat-icon-wrap">�</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileLosses">0</div>
+                        <div class="stat-label">Derrotas</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon-wrap">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileWinrate">0%</div>
+                        <div class="stat-label">Winrate</div>
+                    </div>
+                </div>
+            </div>
 
-                <!-- Match History -->
-                <div class="profile-history-section">
-                    <h3 class="profile-section-title">📜 HISTÓRICO RECENTE (Últimas 10 partidas)</h3>
-                    <div id="profileMatchHistory" class="profile-matches-list empty-state-centered">Nenhuma partida registrada</div>
+            <!-- Performance Metrics -->
+            <div class="profile-metrics">
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-label">K/D RATIO</span>
+                        <span class="metric-value" id="modalKD">0.00</span>
+                    </div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" id="kdBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-label">PROGRESSO DE RANK</span>
+                        <span class="metric-value" id="modalRankProgressValue">0%</span>
+                    </div>
+                    <div class="metric-bar">
+                        <div class="metric-fill rank-progress" id="modalRankProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match History -->
+            <div class="profile-section">
+                <div class="section-header-new">
+                    <h3 class="section-title-new">
+                        <span class="section-icon">📜</span>
+                        HISTÓRICO RECENTE
+                    </h3>
+                    <span class="section-subtitle">Últimas 10 partidas</span>
+                </div>
+                <div class="matches-timeline" id="profileMatchHistory">
+                    <div class="empty-matches">
+                        <div class="empty-icon">🎮</div>
+                        <p>Nenhuma partida registrada</p>
+                    </div>
                 </div>
             </div>
         </div>
