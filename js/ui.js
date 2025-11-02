@@ -81,7 +81,7 @@ const UI = {
                 const kd = (player.totalDeaths && player.totalDeaths > 0) ? (player.totalKills / player.totalDeaths).toFixed(2) : ((player.totalKills||0).toFixed(2));
 
                 return `
-                    <div class="top-player-item">
+                    <div class="top-player-item" onclick="openPlayerProfile('${player.username || player.name}')" style="cursor: pointer;">
                         <div class="pos">${medal}</div>
                         <div class="info">
                             <div class="name">${rank.icon || ''} ${player.username || player.name || '—'}</div>
@@ -208,7 +208,7 @@ const UI = {
                 }
                 
                 return `
-                    <div class="podium-place ${heightClass}">
+                    <div class="podium-place ${heightClass}" onclick="openPlayerProfile('${player.username || player.name}')" style="cursor: pointer;">
                         <div class="podium-position">#${position}</div>
                         <div class="podium-medal">${medal}</div>
                         <div class="podium-player-info">
