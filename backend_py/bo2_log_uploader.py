@@ -37,7 +37,8 @@ session_stats = {
     "kills": 0,
     "deaths": 0,
     "match_active": False,
-    "start_time": None
+    "start_time": None,
+    "last_init_game": None  # Guarda último InitGame para evitar duplicatas
 }
 
 # ===============================
@@ -346,8 +347,17 @@ def monitorar_log():
         log_path.parent.mkdir(parents=True, exist_ok=True)
         log_path.touch()
     
+    # IMPORTANTE: Começa do FINAL do arquivo (ignora histórico)
     ultima_posicao = 0
-    log_info("Monitoring started. Waiting for log entries...")
+    try:
+        with open(LOG_FILE, "r", encoding="utf-8", errors="ignore") as file:
+            file.seek(0, 2)  # Vai para o final do arquivo
+            ultima_posicao = file.tell()
+            log_info(f"Starting from end of file (position: {ultima_posicao})")
+    except Exception:
+        pass
+    
+    log_info("Monitoring started. Waiting for NEW log entries...")
     log_info("-" * 60)
     
     while True:
@@ -387,11 +397,15 @@ def monitorar_log():
                     elif "InitGame:" in linha:
                         dados = parse_plutonium_init_game(linha)
                         if dados:
-                            session_stats["match_active"] = True
-                            session_stats["start_time"] = datetime.now()
-                            session_stats["kills"] = 0
-                            session_stats["deaths"] = 0
-                            enviar_dados("match_start", dados)
+                            # Evita enviar duplicatas (Plutonium grava InitGame 2x)
+                            dados_str = json.dumps(dados, sort_keys=True)
+                            if session_stats["last_init_game"] != dados_str:
+                                session_stats["last_init_game"] = dados_str
+                                session_stats["match_active"] = True
+                                session_stats["start_time"] = datetime.now()
+                                session_stats["kills"] = 0
+                                session_stats["deaths"] = 0
+                                enviar_dados("match_start", dados)
                     
                     # PLUTONIUM SHUTDOWN GAME (fim de partida)
                     elif "ShutdownGame:" in linha:
