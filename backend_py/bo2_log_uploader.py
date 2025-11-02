@@ -846,17 +846,28 @@ def monitorar_log():
                                 weapon = dados["weapon"]
                                 
                                 if dados.get("is_suicide"):
+                                    # Verifica registro do player
+                                    player_reg = killer in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][killer]
+                                    
                                     log_event("💀", "SUICÍDIO", {
-                                        "Jogador": killer,
+                                        "Jogador": f"{killer} {'✅' if player_reg else '❌'}",
                                         "Arma": weapon,
-                                        "Time": dados.get("killer_team", "N/A").upper()
+                                        "Time": dados.get("killer_team", "N/A").upper(),
+                                        "Status": f"{'CADASTRADO' if player_reg else 'NÃO CADASTRADO'}"
                                     })
                                 elif dados.get("is_teamkill"):
+                                    # Verifica registro dos players
+                                    killer_reg = killer in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][killer]
+                                    victim_reg = victim in session_stats["registered_players_cache"] and session_stats["registered_players_cache"][victim]
+                                    
+                                    status_icon = "💾" if (killer_reg and victim_reg) else "⚠️"
+                                    
                                     log_event("🔫", "TEAMKILL", {
-                                        "Matador": killer,
-                                        "Vítima": victim,
+                                        "Matador": f"{killer} {'✅' if killer_reg else '❌'}",
+                                        "Vítima": f"{victim} {'✅' if victim_reg else '❌'}",
                                         "Arma": weapon,
-                                        "Time": dados.get("killer_team", "N/A").upper()
+                                        "Time": dados.get("killer_team", "N/A").upper(),
+                                        "Salvo": f"{status_icon} {'SIM' if (killer_reg and victim_reg) else 'NÃO (players não cadastrados)'}"
                                     })
                                 elif dados.get("headshot"):
                                     # Verifica registro dos players
