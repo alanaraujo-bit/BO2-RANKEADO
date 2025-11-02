@@ -24,7 +24,7 @@ from pathlib import Path
 # ===============================
 # CONFIGURAÇÕES
 # ===============================
-API_URL = os.getenv("BO2_API_URL", "https://rankops.vercel.app/api/update_stats")
+API_URL = os.getenv("BO2_API_URL", "https://bo2-ranked.vercel.app/api/update_stats")
 SECRET_KEY = os.getenv("BO2_SECRET", "")
 DEFAULT_LOG = r"C:\Program Files (x86)\Steam\steamapps\common\Call of Duty Black Ops II\player_stats.txt"
 LOG_FILE = os.getenv("BO2_LOG_FILE", DEFAULT_LOG)
