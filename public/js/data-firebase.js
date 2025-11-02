@@ -242,12 +242,22 @@ const RankedData = {
                 UI.updateAllViews();
             }
             
-            // Update profile page if currently viewing it
+            // Update profile page if currently viewing it - BUT only if data actually changed
             if (window.ProfileManager && typeof ProfileManager.renderProfile === 'function') {
                 const profileSection = document.getElementById('profile');
                 if (profileSection && profileSection.classList.contains('page-active')) {
-                    console.log('🔄 Updating profile page in real-time');
-                    ProfileManager.renderProfile();
+                    // Check if important fields changed
+                    const hasSignificantChange = !prev || 
+                        prev.kills !== data.kills || 
+                        prev.deaths !== data.deaths || 
+                        prev.wins !== data.wins || 
+                        prev.losses !== data.losses ||
+                        prev.mmr !== data.mmr;
+                    
+                    if (hasSignificantChange) {
+                        console.log('🔄 Updating profile page in real-time');
+                        ProfileManager.renderProfile();
+                    }
                 }
             }
         });
