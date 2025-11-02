@@ -245,7 +245,134 @@ const UI = {
         } catch (e) { console.error('UI.renderProfile error:', e); }
     },
 
-    async renderLeaderboard() { try { /* keep for compatibility */ } catch(e) { console.error(e); } },
+    async renderLeaderboard(type = 'global') { 
+        try {
+            if (!RankedData || typeof RankedData.getLeaderboard !== 'function') return;
+            
+            const leaderboard = await RankedData.getLeaderboard(type) || [];
+            const container = document.getElementById('leaderboardTable');
+            
+            if (!container) {
+                console.error('leaderboardTable container not found');
+                return;
+            }
+            
+            if (leaderboard.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:2rem;">Nenhum jogador ranqueado ainda.</p>';
+                return;
+            }
+            
+            const currentUsername = RankedData.currentUser;
+            const totalPlayers = leaderboard.length;
+            
+            container.innerHTML = `
+                <div class="lb-header">
+                    <div class="lb-search-wrapper">
+                        <input type="text" id="leaderboardSearch" placeholder="Buscar jogador..." class="lb-search">
+                    </div>
+                    <div class="lb-info">
+                        <span>${totalPlayers} jogadores</span>
+                    </div>
+                </div>
+                
+                <div class="lb-container">
+                    ${leaderboard.map((player, index) => {
+                        const rank = (typeof RankSystem !== 'undefined' && RankSystem.getRank) 
+                            ? RankSystem.getRank(player.mmr) 
+                            : { icon: '🎖️', name: 'Unranked' };
+                        
+                        const winRate = player.gamesPlayed 
+                            ? ((player.wins / player.gamesPlayed) * 100).toFixed(0) 
+                            : '0';
+                        
+                        const kd = (player.totalDeaths && player.totalDeaths > 0) 
+                            ? (player.totalKills / player.totalDeaths).toFixed(2) 
+                            : (player.totalKills || 0).toFixed(2);
+                        
+                        const position = index + 1;
+                        const isCurrentUser = currentUsername && (player.username === currentUsername || player.name === currentUsername);
+                        const topClass = position <= 3 ? `top-${position}` : '';
+                        const currentClass = isCurrentUser ? 'is-current' : '';
+                        
+                        return `
+                            <div class="lb-card ${topClass} ${currentClass}" data-player="${player.username || player.name}">
+                                <div class="lb-rank">
+                                    <span class="lb-pos">#${position}</span>
+                                    ${position === 1 ? '<span class="lb-medal">🥇</span>' : ''}
+                                    ${position === 2 ? '<span class="lb-medal">🥈</span>' : ''}
+                                    ${position === 3 ? '<span class="lb-medal">🥉</span>' : ''}
+                                </div>
+                                
+                                <div class="lb-player">
+                                    <div class="lb-avatar">${(player.username || player.name || '?')[0].toUpperCase()}</div>
+                                    <div class="lb-name">
+                                        ${player.username || player.name || '—'}
+                                        ${isCurrentUser ? '<span class="lb-you">VOCÊ</span>' : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="lb-tier">
+                                    <span class="lb-tier-icon">${rank.icon || '🎖️'}</span>
+                                    <span class="lb-tier-name">${rank.name || 'Unranked'}</span>
+                                </div>
+                                
+                                <div class="lb-mmr">
+                                    <div class="lb-mmr-value">${player.mmr || 0}</div>
+                                    <div class="lb-mmr-label">MMR</div>
+                                </div>
+                                
+                                <div class="lb-stats">
+                                    <div class="lb-stat">
+                                        <span class="lb-stat-label">V/D</span>
+                                        <span class="lb-stat-value">${player.wins || 0}/${player.losses || 0}</span>
+                                    </div>
+                                    <div class="lb-stat">
+                                        <span class="lb-stat-label">K/D</span>
+                                        <span class="lb-stat-value ${parseFloat(kd) >= 1.5 ? 'good' : parseFloat(kd) >= 1.0 ? 'ok' : 'bad'}">${kd}</span>
+                                    </div>
+                                    <div class="lb-stat">
+                                        <span class="lb-stat-label">WR</span>
+                                        <span class="lb-stat-value">${winRate}%</span>
+                                    </div>
+                                    <div class="lb-stat">
+                                        <span class="lb-stat-label">Partidas</span>
+                                        <span class="lb-stat-value">${player.gamesPlayed || 0}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            // Funcionalidade de busca
+            const searchInput = document.getElementById('leaderboardSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const cards = document.querySelectorAll('.lb-card');
+                    
+                    cards.forEach(card => {
+                        const playerName = card.dataset.player?.toLowerCase() || '';
+                        card.style.display = playerName.includes(searchTerm) ? '' : 'none';
+                    });
+                });
+            }
+            
+            // Scroll para usuário atual
+            if (currentUsername) {
+                setTimeout(() => {
+                    const currentCard = document.querySelector('.lb-card.is-current');
+                    if (currentCard) {
+                        currentCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 300);
+            }
+            
+        } catch(e) { 
+            console.error('UI.renderLeaderboard error:', e); 
+        } 
+    },
     async renderHistory() { try { /* keep for compatibility */ } catch(e) { console.error(e); } },
     async renderRanks() { try { /* keep for compatibility */ } catch(e) { console.error(e); } },
 

@@ -1,5 +1,5 @@
 /* ===== FONTS ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
 /* ============================================================================
    BO2 RANKED - DESIGN SYSTEM V3.0
@@ -67,6 +67,7 @@
     /* === TYPOGRAPHY === */
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-display: 'Orbitron', 'Inter', sans-serif;
+    --font-body: 'Rajdhani', 'Inter', sans-serif;
     
     --text-xs: 0.75rem;      /* 12px */
     --text-sm: 0.875rem;     /* 14px */
@@ -447,23 +448,22 @@ a:hover {
 }
 
 .hero-title {
-    font-size: var(--text-6xl);
+    font-family: var(--font-display);
+    font-size: var(--text-5xl);
     font-weight: var(--font-black);
-    letter-spacing: -0.03em;
+    color: var(--neutral-100);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: var(--leading-tight);
     margin-bottom: var(--space-4);
-    background: linear-gradient(135deg, var(--primary-500), var(--primary-300));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 60px rgba(255, 122, 0, 0.3);
 }
 
 .hero-subtitle {
-    font-size: var(--text-2xl);
+    font-family: var(--font-sans);
+    font-size: var(--text-xl);
     font-weight: var(--font-normal);
     color: var(--neutral-400);
     margin-bottom: var(--space-12);
-    font-family: var(--font-sans);
 }
 
 .hero-stats {
@@ -2058,33 +2058,33 @@ select.form-input,
 .title-highlight {
     display: block;
     font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    font-weight: var(--font-bold);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
     color: var(--primary-500);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-2);
 }
 
 .title-main {
     display: block;
     font-family: var(--font-display);
-    font-size: var(--text-6xl);
+    font-size: var(--text-5xl);
     font-weight: var(--font-black);
     color: var(--neutral-100);
     text-transform: uppercase;
-    line-height: 1.1;
-    background: linear-gradient(135deg, var(--neutral-100) 0%, var(--neutral-300) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    line-height: var(--leading-tight);
+    letter-spacing: 0.02em;
 }
 
 .hero-description {
+    font-family: var(--font-sans);
     font-size: var(--text-lg);
-    color: var(--neutral-300);
+    font-weight: var(--font-normal);
+    color: var(--neutral-400);
     line-height: var(--leading-relaxed);
     margin-bottom: var(--space-8);
-    max-width: 500px;
+    max-width: 600px;
 }
 
 /* Card do jogador removido do HTML - mantido aqui caso precise reativar */
@@ -4808,22 +4808,20 @@ select.form-input,
 
 .title-highlight {
     font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #FF6600;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--primary-500);
     text-transform: uppercase;
-    text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+    letter-spacing: 0.1em;
 }
 
 .title-main {
     font-family: var(--font-display);
-    font-size: 2.5rem;
-    font-weight: 900;
-    letter-spacing: 4px;
-    color: #FFFFFF;
+    font-size: var(--text-5xl);
+    font-weight: var(--font-black);
+    color: var(--neutral-100);
     text-transform: uppercase;
-    text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.02em;
 }
 
 .match-hero-description {
@@ -7975,5 +7973,370 @@ select.form-input,
         padding: var(--space-2) var(--space-3);
     }
 }
+
+/* ==========================================
+   LEADERBOARD - CLEAN & RESPONSIVE 🎯
+   ========================================== */
+
+/* Header */
+.lb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.lb-search-wrapper {
+    flex: 1;
+    min-width: 250px;
+}
+
+.lb-search {
+    width: 100%;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 102, 0, 0.3);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.lb-search:focus {
+    outline: none;
+    border-color: #FF6600;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.lb-search::placeholder {
+    color: var(--text-secondary);
+}
+
+.lb-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* Cards Container */
+.lb-container {
+    display: grid;
+    gap: var(--space-3);
+}
+
+/* Card */
+.lb-card {
+    display: grid;
+    grid-template-columns: 60px 1fr auto auto;
+    gap: var(--space-4);
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 102, 0, 0.15);
+    border-radius: 10px;
+    padding: var(--space-4);
+    transition: all 0.2s ease;
+}
+
+.lb-card:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 102, 0, 0.4);
+    transform: translateX(4px);
+}
+
+/* Rank */
+.lb-rank {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.lb-pos {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #FF6600;
+}
+
+.lb-medal {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+/* Player */
+.lb-player {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+}
+
+.lb-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #FF6600, #FF9933);
+    border-radius: 50%;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    color: #FFF;
+    flex-shrink: 0;
+}
+
+.lb-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.lb-you {
+    display: inline-block;
+    padding: 2px 6px;
+    background: #00FF88;
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+/* Tier */
+.lb-tier {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.lb-tier-icon {
+    font-size: 1.3rem;
+}
+
+.lb-tier-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* MMR */
+.lb-mmr {
+    text-align: center;
+    padding: 0 var(--space-3);
+    border-left: 1px solid rgba(255, 102, 0, 0.2);
+    border-right: 1px solid rgba(255, 102, 0, 0.2);
+}
+
+.lb-mmr-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #FF6600;
+    line-height: 1;
+}
+
+.lb-mmr-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Stats */
+.lb-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+}
+
+.lb-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.lb-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lb-stat-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+.lb-stat-value.good {
+    color: #00FF88;
+}
+
+.lb-stat-value.ok {
+    color: #FFB800;
+}
+
+.lb-stat-value.bad {
+    color: #FF4466;
+}
+
+/* Top 3 Highlights */
+.lb-card.top-1 {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.lb-card.top-1 .lb-pos {
+    color: #FFD700;
+    font-size: 1.3rem;
+}
+
+.lb-card.top-2 {
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border-color: rgba(192, 192, 192, 0.4);
+}
+
+.lb-card.top-2 .lb-pos {
+    color: #C0C0C0;
+    font-size: 1.2rem;
+}
+
+.lb-card.top-3 {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border-color: rgba(205, 127, 50, 0.4);
+}
+
+.lb-card.top-3 .lb-pos {
+    color: #CD7F32;
+    font-size: 1.15rem;
+}
+
+/* Current User */
+.lb-card.is-current {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border: 2px solid rgba(0, 255, 136, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .lb-card {
+        grid-template-columns: 50px 1fr auto;
+        gap: var(--space-3);
+    }
+    
+    .lb-stats {
+        grid-column: 1 / -1;
+        margin-top: var(--space-2);
+        padding-top: var(--space-3);
+        border-top: 1px solid rgba(255, 102, 0, 0.2);
+    }
+    
+    .lb-tier {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .lb-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .lb-search-wrapper {
+        min-width: 100%;
+    }
+    
+    .lb-info {
+        text-align: center;
+    }
+    
+    .lb-card {
+        padding: var(--space-3);
+        gap: var(--space-2);
+    }
+    
+    .lb-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .lb-name {
+        font-size: 0.9rem;
+    }
+    
+    .lb-mmr {
+        padding: 0 var(--space-2);
+    }
+    
+    .lb-mmr-value {
+        font-size: 1.1rem;
+    }
+    
+    .lb-stats {
+        gap: var(--space-3);
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .lb-stat {
+        padding: var(--space-2);
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lb-card {
+        grid-template-columns: 40px 1fr;
+    }
+    
+    .lb-rank {
+        gap: 0;
+    }
+    
+    .lb-pos {
+        font-size: 0.9rem;
+    }
+    
+    .lb-medal {
+        font-size: 1.2rem;
+    }
+    
+    .lb-mmr {
+        grid-column: 1 / -1;
+        border: none;
+        border-top: 1px solid rgba(255, 102, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 102, 0, 0.2);
+        padding: var(--space-2) 0;
+        margin: var(--space-2) 0;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        gap: var(--space-2);
+    }
+    
+    .lb-mmr-value {
+        font-size: 1.5rem;
+    }
+    
+    .lb-mmr-label {
+        font-size: 0.8rem;
+    }
+}
+
 
 

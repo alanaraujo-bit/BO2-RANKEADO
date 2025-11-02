@@ -59,10 +59,19 @@ export default async function handler(req, res) {
         });
         console.log(`[update_stats] ✅ Match salva: ${matchRef.id}`);
         
-        // Atualiza stats de cada jogador
+        // Atualiza stats de cada jogador (apenas players cadastrados)
         if (eventData.players && Array.isArray(eventData.players)) {
           for (const player of eventData.players) {
             const playerRef = db.collection('players').doc(player.player);
+            
+            // Verifica se o player está cadastrado
+            const playerDoc = await playerRef.get();
+            if (!playerDoc.exists) {
+              console.log(`[update_stats] ⚠️  Player não cadastrado: ${player.player}`);
+              continue; // Pula para o próximo player
+            }
+            
+            // Player cadastrado - atualiza stats
             await playerRef.set({
               lastSeen: timestamp,
               lastMatch: matchRef.id,
@@ -79,42 +88,76 @@ export default async function handler(req, res) {
               winner: eventData.winner_team,
               duration: eventData.duration
             });
+            
+            console.log(`[update_stats] ✅ Stats atualizadas: ${player.player}`);
           }
         }
         
         firebaseSaved = true;
         
       } else if (eventType === 'kill') {
-        // Salva kill individual
-        await db.collection('kills').add({
-          ...eventData,
-          timestamp,
-          createdAt: Date.now()
-        });
-        console.log('[update_stats] ✅ Kill salva');
-        firebaseSaved = true;
+        // Verifica se killer ou victim estão cadastrados
+        const killerRef = db.collection('players').doc(eventData.killer);
+        const victimRef = db.collection('players').doc(eventData.victim);
+        
+        const [killerDoc, victimDoc] = await Promise.all([
+          killerRef.get(),
+          victimRef.get()
+        ]);
+        
+        const killerRegistered = killerDoc.exists;
+        const victimRegistered = victimDoc.exists;
+        
+        // Salva kill apenas se pelo menos um dos dois estiver cadastrado
+        if (killerRegistered || victimRegistered) {
+          await db.collection('kills').add({
+            ...eventData,
+            killerRegistered,
+            victimRegistered,
+            timestamp,
+            createdAt: Date.now()
+          });
+          console.log(`[update_stats] ✅ Kill salva: ${eventData.killer} → ${eventData.victim}`);
+          firebaseSaved = true;
+        } else {
+          console.log(`[update_stats] ⚠️  Kill ignorada (nenhum player cadastrado): ${eventData.killer} → ${eventData.victim}`);
+        }
         
       } else if (eventType === 'player_join') {
-        // Atualiza dados do jogador
+        // Verifica se o player está cadastrado
         const playerRef = db.collection('players').doc(eventData.player);
-        await playerRef.set({
-          name: eventData.player,
-          guid: eventData.guid,
-          lastJoin: timestamp,
-          updatedAt: Date.now()
-        }, { merge: true });
-        console.log(`[update_stats] ✅ Player join: ${eventData.player}`);
-        firebaseSaved = true;
+        const playerDoc = await playerRef.get();
+        
+        if (playerDoc.exists) {
+          // Player cadastrado - atualiza dados
+          await playerRef.set({
+            name: eventData.player,
+            guid: eventData.guid,
+            lastJoin: timestamp,
+            updatedAt: Date.now()
+          }, { merge: true });
+          console.log(`[update_stats] ✅ Player join: ${eventData.player}`);
+          firebaseSaved = true;
+        } else {
+          console.log(`[update_stats] ⚠️  Player não cadastrado (join ignorado): ${eventData.player}`);
+        }
         
       } else if (eventType === 'player_quit') {
-        // Atualiza última saída do jogador
+        // Verifica se o player está cadastrado
         const playerRef = db.collection('players').doc(eventData.player);
-        await playerRef.set({
-          lastQuit: timestamp,
-          updatedAt: Date.now()
-        }, { merge: true });
-        console.log(`[update_stats] ✅ Player quit: ${eventData.player}`);
-        firebaseSaved = true;
+        const playerDoc = await playerRef.get();
+        
+        if (playerDoc.exists) {
+          // Player cadastrado - atualiza última saída
+          await playerRef.set({
+            lastQuit: timestamp,
+            updatedAt: Date.now()
+          }, { merge: true });
+          console.log(`[update_stats] ✅ Player quit: ${eventData.player}`);
+          firebaseSaved = true;
+        } else {
+          console.log(`[update_stats] ⚠️  Player não cadastrado (quit ignorado): ${eventData.player}`);
+        }
         
       } else {
         // Eventos genéricos vão para collection 'events'
