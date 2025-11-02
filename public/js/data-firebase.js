@@ -68,6 +68,10 @@ const RankedData = {
                 if (window.updateUserDisplay) {
                     window.updateUserDisplay();
                 }
+                // Check if Plutonium name is set
+                if (window.checkPlutoniumNameSetup) {
+                    setTimeout(() => window.checkPlutoniumNameSetup(), 500);
+                }
                 console.log('✅ User logged in:', this.currentUser);
             } else {
                 this.currentUserId = null;

@@ -62,16 +62,21 @@ export default async function handler(req, res) {
         // Atualiza stats de cada jogador (apenas players cadastrados)
         if (eventData.players && Array.isArray(eventData.players)) {
           for (const player of eventData.players) {
-            const playerRef = db.collection('players').doc(player.player);
+            // Busca player pelo plutoniumName
+            const playersQuery = await db.collection('players')
+              .where('plutoniumName', '==', player.player)
+              .limit(1)
+              .get();
             
-            // Verifica se o player está cadastrado
-            const playerDoc = await playerRef.get();
-            if (!playerDoc.exists) {
+            if (playersQuery.empty) {
               console.log(`[update_stats] ⚠️  Player não cadastrado: ${player.player}`);
               continue; // Pula para o próximo player
             }
             
             // Player cadastrado - atualiza stats
+            const playerDoc = playersQuery.docs[0];
+            const playerRef = db.collection('players').doc(playerDoc.id);
+            
             await playerRef.set({
               lastSeen: timestamp,
               lastMatch: matchRef.id,
@@ -96,17 +101,14 @@ export default async function handler(req, res) {
         firebaseSaved = true;
         
       } else if (eventType === 'kill') {
-        // Verifica se killer ou victim estão cadastrados
-        const killerRef = db.collection('players').doc(eventData.killer);
-        const victimRef = db.collection('players').doc(eventData.victim);
-        
-        const [killerDoc, victimDoc] = await Promise.all([
-          killerRef.get(),
-          victimRef.get()
+        // Busca killer e victim pelo plutoniumName
+        const [killerQuery, victimQuery] = await Promise.all([
+          db.collection('players').where('plutoniumName', '==', eventData.killer).limit(1).get(),
+          db.collection('players').where('plutoniumName', '==', eventData.victim).limit(1).get()
         ]);
         
-        const killerRegistered = killerDoc.exists;
-        const victimRegistered = victimDoc.exists;
+        const killerRegistered = !killerQuery.empty;
+        const victimRegistered = !victimQuery.empty;
         
         // Salva kill apenas se pelo menos um dos dois estiver cadastrado
         if (killerRegistered || victimRegistered) {
@@ -124,14 +126,18 @@ export default async function handler(req, res) {
         }
         
       } else if (eventType === 'player_join') {
-        // Verifica se o player está cadastrado
-        const playerRef = db.collection('players').doc(eventData.player);
-        const playerDoc = await playerRef.get();
+        // Busca player pelo plutoniumName
+        const playerQuery = await db.collection('players')
+          .where('plutoniumName', '==', eventData.player)
+          .limit(1)
+          .get();
         
-        if (playerDoc.exists) {
+        if (!playerQuery.empty) {
           // Player cadastrado - atualiza dados
+          const playerDoc = playerQuery.docs[0];
+          const playerRef = db.collection('players').doc(playerDoc.id);
+          
           await playerRef.set({
-            name: eventData.player,
             guid: eventData.guid,
             lastJoin: timestamp,
             updatedAt: Date.now()
@@ -143,12 +149,17 @@ export default async function handler(req, res) {
         }
         
       } else if (eventType === 'player_quit') {
-        // Verifica se o player está cadastrado
-        const playerRef = db.collection('players').doc(eventData.player);
-        const playerDoc = await playerRef.get();
+        // Busca player pelo plutoniumName
+        const playerQuery = await db.collection('players')
+          .where('plutoniumName', '==', eventData.player)
+          .limit(1)
+          .get();
         
-        if (playerDoc.exists) {
+        if (!playerQuery.empty) {
           // Player cadastrado - atualiza última saída
+          const playerDoc = playerQuery.docs[0];
+          const playerRef = db.collection('players').doc(playerDoc.id);
+          
           await playerRef.set({
             lastQuit: timestamp,
             updatedAt: Date.now()

@@ -34,6 +34,11 @@ const ProfileManager = {
 
         // 4️⃣ Update Achievements
         this.updateAchievements(player);
+
+        // 5️⃣ Update Plutonium Name Section
+        if (window.updateProfilePlutoniumSection) {
+            window.updateProfilePlutoniumSection();
+        }
     },
 
     // 1️⃣ Update Basic Profile Info

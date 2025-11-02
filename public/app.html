@@ -688,6 +688,82 @@
                     </div>
                 </div>
 
+                <!-- 🎮 1.5 NOME DO PLUTONIUM - Seção de Configuração -->
+                <div class="profile-plutonium-section" style="background: linear-gradient(135deg, rgba(255,193,7,0.05), rgba(255,152,0,0.05)); border: 2px solid rgba(255,193,7,0.3); border-radius: 16px; padding: 24px; margin: 24px; box-shadow: 0 4px 20px rgba(255,193,7,0.1);">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                        <span style="font-size: 2.5em;">🎮</span>
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; font-size: 1.4em; color: var(--rank-gold);">Nome do Plutonium</h3>
+                            <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 0.95em;">Vincule seu nome in-game para receber estatísticas automáticas</p>
+                        </div>
+                    </div>
+
+                    <div id="plutoniumNameDisplay" style="display: none;">
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                                <div>
+                                    <div style="font-size: 0.85em; color: rgba(255,255,255,0.6); margin-bottom: 6px;">NOME ATUAL NO PLUTONIUM:</div>
+                                    <div style="font-size: 1.3em; font-weight: 700; color: var(--rank-gold); font-family: 'Orbitron', monospace;" id="currentPlutoniumName">-</div>
+                                </div>
+                                <button onclick="showEditPlutoniumName()" class="btn-hero-secondary-profile" style="padding: 10px 20px;">
+                                    <span class="btn-icon">✏️</span>
+                                    <span>Editar</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; color: rgba(76,175,80,0.9); font-size: 0.9em;">
+                            <span>✅</span>
+                            <span>Conectado! Suas estatísticas serão atualizadas automaticamente quando jogar.</span>
+                        </div>
+                    </div>
+
+                    <div id="plutoniumNameEdit" style="display: none;">
+                        <form onsubmit="updatePlutoniumName(event)">
+                            <div style="background: rgba(255,193,7,0.1); border-left: 4px solid var(--rank-gold); padding: 12px 16px; margin-bottom: 16px; border-radius: 6px; font-size: 0.9em; color: rgba(255,255,255,0.85);">
+                                <strong>⚠️ IMPORTANTE:</strong> Digite exatamente como aparece no Plutonium (maiúsculas, espaços, etc.)
+                            </div>
+                            <input 
+                                type="text" 
+                                id="editPlutoniumNameInput" 
+                                class="form-input"
+                                placeholder="Seu nome no Plutonium BO2"
+                                required
+                                minlength="2"
+                                maxlength="32"
+                                style="width: 100%; margin-bottom: 12px; padding: 12px 16px; font-size: 1.05em; background: rgba(0,0,0,0.4); border: 2px solid rgba(255,193,7,0.4); border-radius: 8px; color: white;"
+                            >
+                            <div style="display: flex; gap: 12px;">
+                                <button type="submit" class="btn-hero-primary-profile" style="flex: 1;">
+                                    <span class="btn-icon">💾</span>
+                                    <span>Salvar</span>
+                                </button>
+                                <button type="button" onclick="cancelEditPlutoniumName()" class="btn-hero-secondary-profile" style="flex: 1;">
+                                    <span class="btn-icon">❌</span>
+                                    <span>Cancelar</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="plutoniumNameNotSet" style="display: none;">
+                        <div style="background: rgba(244,67,54,0.1); border-left: 4px solid #f44336; padding: 16px; margin-bottom: 16px; border-radius: 6px;">
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="font-size: 1.5em;">⚠️</span>
+                                <div>
+                                    <strong style="color: #f44336; display: block; margin-bottom: 6px;">Nome não configurado!</strong>
+                                    <p style="margin: 0; color: rgba(255,255,255,0.8); font-size: 0.95em;">
+                                        Configure seu nome do Plutonium para que suas estatísticas sejam registradas automaticamente quando você jogar.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="showEditPlutoniumName()" class="btn-hero-primary-profile" style="width: 100%; justify-content: center;">
+                            <span class="btn-icon">➕</span>
+                            <span>Configurar Agora</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- 📊 2. ESTATÍSTICAS GERAIS - Cards Organizados -->
                 <div class="profile-stats-section">
                     <div class="section-header-profile">
@@ -1588,6 +1664,75 @@
     <!-- ACCESS GRANTED MESSAGE -->
     <div class="access-granted" id="accessGranted">ACCESS GRANTED</div>
 
+    <!-- PLUTONIUM NAME SETUP MODAL -->
+    <div class="modal-overlay" id="plutoniumNameModal" style="display: none;">
+        <div class="modal-content login-modal-redesigned" style="max-width: 500px;">
+            <div class="login-modal-header">
+                <div class="login-icon-wrapper">
+                    <span style="font-size: 3em;">🎮</span>
+                </div>
+                <h2 class="login-modal-title">CONFIGURAÇÃO OBRIGATÓRIA</h2>
+                <p class="login-modal-subtitle">Vincule seu nome do Plutonium para poder jogar</p>
+            </div>
+
+            <div style="padding: 0 30px 30px;">
+                <div style="background: rgba(255,193,7,0.1); border-left: 4px solid var(--rank-gold); padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <span style="font-size: 1.5em;">⚠️</span>
+                        <div>
+                            <strong style="color: var(--rank-gold); display: block; margin-bottom: 5px;">ATENÇÃO: Nome Exato do Plutonium</strong>
+                            <p style="margin: 0; color: rgba(255,255,255,0.85); font-size: 0.95em; line-height: 1.5;">
+                                Digite <strong>EXATAMENTE</strong> o nome que você usa no Plutonium BO2. 
+                                Maiúsculas, minúsculas, espaços e caracteres especiais importam!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="plutoniumNameForm" onsubmit="savePlutoniumName(event)">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; color: rgba(255,255,255,0.9); font-weight: 600;">
+                            <span style="margin-right: 8px;">🎯</span> Seu Nome no Plutonium
+                        </label>
+                        <input 
+                            type="text" 
+                            id="plutoniumNameInput" 
+                            class="form-input"
+                            placeholder="Ex: SoldierBR_123"
+                            required
+                            minlength="2"
+                            maxlength="32"
+                            style="width: 100%; padding: 12px 16px; font-size: 1.05em; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Rajdhani', sans-serif;"
+                        >
+                        <div style="margin-top: 8px; font-size: 0.9em; color: rgba(255,255,255,0.6);">
+                            💡 Este nome será usado para identificar você nas partidas
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <div style="font-size: 0.95em; color: rgba(255,255,255,0.8); margin-bottom: 10px;">
+                            <strong>📝 Como encontrar seu nome:</strong>
+                        </div>
+                        <ol style="margin: 0; padding-left: 20px; color: rgba(255,255,255,0.7); font-size: 0.9em;">
+                            <li style="margin-bottom: 5px;">Abra o Plutonium BO2</li>
+                            <li style="margin-bottom: 5px;">Entre em qualquer servidor</li>
+                            <li style="margin-bottom: 5px;">Veja seu nome no canto superior direito ou no scoreboard (TAB)</li>
+                            <li>Copie EXATAMENTE como aparece</li>
+                        </ol>
+                    </div>
+
+                    <button type="submit" class="btn-google-modern" style="width: 100%; justify-content: center;">
+                        <span class="btn-text">✅ Confirmar e Começar a Jogar</span>
+                    </button>
+                </form>
+
+                <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: rgba(255,255,255,0.5);">
+                    Você poderá alterar isso depois na sua página de perfil
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -1611,6 +1756,7 @@
     <script src="/js/matches.js"></script>
     <script src="/js/match-registration.js"></script>
     <script src="/js/profile.js"></script>
+    <script src="/js/plutonium-name.js"></script>
     <script src="/js/ui.js"></script>
 </body>
 </html>
