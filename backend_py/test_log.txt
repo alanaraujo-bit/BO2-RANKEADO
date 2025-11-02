@@ -1,0 +1,8 @@
+KILL: Alan -> Pedro [M4A1]
+KILL: Pedro -> Bruno [DSR-50] (headshot)
+KILL: Bruno -> Alan [MSMC]
+MATCH_START: Nuketown, TDM, 6 players
+KILL: Alan -> Pedro [AN-94] (headshot)
+KILL: Alan -> Bruno [Remington 870]
+KILL: Pedro -> Alan [Ballista] (headshot)
+MATCH_END: Alan, 30-15, 10:30
