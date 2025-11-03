@@ -30,7 +30,6 @@
                 <li><a href="#profile" class="nav-link" onclick="showPage('profile')">👤 PERFIL</a></li>
                 <li><a href="#friends" class="nav-link" onclick="showPage('friends')">👥 AMIGOS</a></li>
                 <li><a href="#seasons" class="nav-link" onclick="showPage('seasons')">🏆 TEMPORADAS</a></li>
-                <li><a href="#ranks" class="nav-link" onclick="showPage('ranks')">🎖️ RANKS</a></li>
                 <li><a href="#leaderboard" class="nav-link" onclick="showPage('leaderboard')">🏆 RANKING</a></li>
                 <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
                 <li id="adminMenuItem" style="display: none;"><a href="/admin.html" class="nav-link" style="color: #ff6b6b;">🛠️ ADMIN</a></li>
@@ -563,9 +562,9 @@
                         Cada batalha registrada te aproxima do próximo rank. Não pare agora!
                     </p>
                     <div class="cta-buttons-bo2">
-                        <button class="btn-cta-primary-bo2" onclick="showPage('ranks')">
-                            <span class="btn-icon">🎖️</span>
-                            <span>VER RANKS</span>
+                        <button class="btn-cta-primary-bo2" onclick="showPage('seasons')">
+                            <span class="btn-icon">�</span>
+                            <span>VER TEMPORADAS</span>
                         </button>
                         <button class="btn-cta-secondary-bo2" onclick="showPage('profile')">
                             <span class="btn-icon">📊</span>
@@ -1421,6 +1420,10 @@
                             <span class="btn-icon">🏆</span>
                             <span class="btn-text">VER RANKING DA TEMPORADA</span>
                         </button>
+                        <button class="btn-hero-secondary" onclick="openRanksModal()">
+                            <span class="btn-icon">🎖️</span>
+                            <span class="btn-text">VER TODAS AS PATENTES</span>
+                        </button>
                         <button class="btn-hero-primary" onclick="showPage('play')">
                             <span class="btn-icon">🎮</span>
                             <span class="btn-text">REGISTRAR PARTIDA</span>
@@ -1634,9 +1637,9 @@
                             <span class="btn-icon">🎮</span>
                             <span>JOGAR AGORA</span>
                         </button>
-                        <button class="btn-cta-secondary-season" onclick="showPage('ranks')">
+                        <button class="btn-cta-secondary-season" onclick="openRanksModal()">
                             <span class="btn-icon">🎖️</span>
-                            <span>VER RANKS</span>
+                            <span>VER PATENTES</span>
                         </button>
                     </div>
                 </div>
@@ -1730,6 +1733,38 @@
                 <button class="modal-close" onclick="closeConfirmModal()">×</button>
             </div>
             <div id="confirmContent"></div>
+        </div>
+    </div>
+
+    <!-- Ranks Modal -->
+    <div class="modal-overlay" id="ranksModal">
+        <div class="modal-content ranks-modal-content">
+            <button class="modal-close-modern" onclick="closeRanksModal()">
+                <span>✕</span>
+            </button>
+            
+            <!-- Header -->
+            <div class="ranks-modal-header">
+                <div class="ranks-modal-icon-container">
+                    <div class="ranks-modal-icon-glow"></div>
+                    <div class="ranks-modal-icon">🎖️</div>
+                </div>
+                <h2 class="ranks-modal-title">SISTEMA DE PATENTES</h2>
+                <p class="ranks-modal-subtitle">Todas as patentes e requisitos de MMR da temporada</p>
+            </div>
+
+            <!-- Ranks Grid -->
+            <div class="ranks-modal-grid" id="ranksModalGrid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Footer Info -->
+            <div class="ranks-modal-footer">
+                <div class="ranks-modal-info">
+                    <span class="info-icon">💡</span>
+                    <span class="info-text">As patentes são resetadas a cada nova temporada</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2058,6 +2093,7 @@
     <!-- App Scripts -->
     <script src="/js/rank-up-animation.js"></script>
     <script src="/js/ranks.js"></script>
+    <script src="/js/ranks-modal.js"></script>
     <script src="/js/mmr.js"></script>
     <script src="/js/anti-abuse.js"></script>
     <script src="/js/data-firebase.js"></script>
