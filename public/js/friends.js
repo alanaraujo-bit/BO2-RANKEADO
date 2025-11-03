@@ -666,8 +666,8 @@ class FriendsSystem {
             
             const progInfo = document.getElementById('rankProgressInfo');
             if (progInfo) {
-                if (progress.nextRank) {
-                    progInfo.innerHTML = `Faltam <strong>${progress.mmrToNext} MMR</strong> para alcançar <strong>${progress.nextRank.icon} ${progress.nextRank.name}</strong>`;
+                if (progress.next) {
+                    progInfo.innerHTML = `Faltam <strong>${progress.mmrNeeded} MMR</strong> para alcançar <strong>${progress.next.icon} ${progress.next.name}</strong>`;
                 } else {
                     progInfo.textContent = 'Você já está no rank máximo! 🏆';
                 }
