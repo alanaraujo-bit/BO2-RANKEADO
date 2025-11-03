@@ -13,7 +13,12 @@ const UI = {
             if (activeLink) activeLink.classList.add('active');
 
             // Call page-specific renderers if present
-            if (pageId === 'profile' && RankedData && RankedData.currentUser) this.renderProfile().catch(() => {});
+            if (pageId === 'home') {
+                this.updateStats().catch(() => {});
+                this.updateTopPlayers().catch(() => {});
+                this.updatePodium().catch(() => {});
+            }
+            else if (pageId === 'profile' && RankedData && RankedData.currentUser) this.renderProfile().catch(() => {});
             else if (pageId === 'leaderboard') this.renderLeaderboard().catch(() => {});
             else if (pageId === 'history' && RankedData && RankedData.currentUser) this.renderHistory().catch(() => {});
             else if (pageId === 'ranks') this.renderRanks().catch(() => {});
