@@ -8805,5 +8805,265 @@ select.form-input,
     }
 }
 
+/* ============================================
+   RANKS MODAL - SISTEMA DE PATENTES
+   ============================================ */
+
+.ranks-modal-content {
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(145deg, rgba(20, 20, 30, 0.98), rgba(30, 30, 40, 0.98));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 122, 0, 0.2);
+    padding: 0;
+    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Header */
+.ranks-modal-header {
+    text-align: center;
+    padding: 40px 40px 30px;
+    background: linear-gradient(135deg, rgba(255, 122, 0, 0.08), rgba(255, 122, 0, 0.02));
+    border-bottom: 1px solid rgba(255, 122, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.ranks-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+    animation: headerShine 3s infinite;
+}
+
+@keyframes headerShine {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.ranks-modal-icon-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.ranks-modal-icon-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(255, 122, 0, 0.4), transparent);
+    border-radius: 50%;
+    animation: iconGlowPulse 2s infinite;
+}
+
+@keyframes iconGlowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+.ranks-modal-icon {
+    font-size: 3.5rem;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.ranks-modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff, var(--primary-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.ranks-modal-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Ranks Grid */
+.ranks-modal-grid {
+    padding: 30px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.rank-modal-card {
+    background: linear-gradient(145deg, rgba(30, 30, 40, 0.8), rgba(20, 20, 30, 0.8));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.rank-modal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--rank-color, rgba(255, 122, 0, 0.5)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.rank-modal-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 122, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 122, 0, 0.15);
+}
+
+.rank-modal-card:hover::before {
+    opacity: 1;
+}
+
+.rank-modal-icon-large {
+    font-size: 3rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.rank-modal-card:hover .rank-modal-icon-large {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.rank-modal-info {
+    flex: 1;
+}
+
+.rank-modal-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.rank-modal-mmr-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.rank-modal-mmr-value {
+    color: var(--primary-400);
+    font-weight: 600;
+    font-family: 'Rajdhana', sans-serif;
+}
+
+/* Rank Colors */
+.rank-modal-card.rank-bronze { --rank-color: #CD7F32; }
+.rank-modal-card.rank-silver { --rank-color: #C0C0C0; }
+.rank-modal-card.rank-gold { --rank-color: #FFD700; }
+.rank-modal-card.rank-platinum { --rank-color: #E5E4E2; }
+.rank-modal-card.rank-diamond { --rank-color: #B9F2FF; }
+.rank-modal-card.rank-master { --rank-color: #9370DB; }
+.rank-modal-card.rank-legend { --rank-color: #FF1493; }
+
+/* Footer */
+.ranks-modal-footer {
+    padding: 20px 40px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ranks-modal-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+.info-icon {
+    font-size: 1.2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .ranks-modal-content {
+        max-width: 95%;
+        margin: 20px;
+    }
+    
+    .ranks-modal-header {
+        padding: 30px 20px 20px;
+    }
+    
+    .ranks-modal-title {
+        font-size: 1.5rem;
+    }
+    
+    .ranks-modal-subtitle {
+        font-size: 0.85rem;
+    }
+    
+    .ranks-modal-grid {
+        padding: 20px;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .rank-modal-card {
+        padding: 16px;
+    }
+    
+    .rank-modal-icon-large {
+        font-size: 2.5rem;
+    }
+    
+    .rank-modal-name {
+        font-size: 1rem;
+    }
+    
+    .ranks-modal-footer {
+        padding: 15px 20px;
+    }
+}
+
 
 
