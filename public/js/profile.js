@@ -525,8 +525,8 @@ ProfileManager.filterWeapons = function(type) {
         }
     });
 
-    // Re-render weapons
-    RankedData.getPlayer(RankedData.currentUser, true).then(player => {
+    // Re-render weapons with cached data
+    RankedData.getPlayer(RankedData.currentUser, false).then(player => {
         if (player) this.updateWeaponsSection(player);
     });
 };
@@ -902,11 +902,15 @@ ProfileManager.renderProfile = async function() {
     
     if (!RankedData.currentUser) return;
     
-    const player = await RankedData.getPlayer(RankedData.currentUser, true);
+    // Use cached data to avoid infinite re-renders
+    const player = await RankedData.getPlayer(RankedData.currentUser, false);
     if (!player) return;
 
-    // Update new sections
-    this.updateRivalsSection(player);
-    this.updateWeaponsSection(player);
-    this.updatePerformanceSection(player);
+    // Update new sections only once
+    if (!this._sectionsUpdated) {
+        this.updateRivalsSection(player);
+        this.updateWeaponsSection(player);
+        this.updatePerformanceSection(player);
+        this._sectionsUpdated = true;
+    }
 };
