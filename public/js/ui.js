@@ -54,14 +54,24 @@ const UI = {
 
     async updateStats() {
         try {
-            if (!RankedData || typeof RankedData.getStats !== 'function') return;
+            if (!RankedData || typeof RankedData.getStats !== 'function') {
+                console.log('⚠️ RankedData.getStats not available');
+                return;
+            }
             const stats = await RankedData.getStats();
+            console.log('📊 UI received stats:', stats);
+            
             const tp = document.getElementById('totalPlayers');
             const tm = document.getElementById('totalMatches');
             const as = document.getElementById('activeSeason');
+            
+            console.log('📊 Elements found:', { tp: !!tp, tm: !!tm, as: !!as });
+            
             if (tp) tp.textContent = stats.totalPlayers || 0;
             if (tm) tm.textContent = stats.totalMatches || 0;
             if (as) as.textContent = 'S' + (stats.activeSeason || 1);
+            
+            console.log('📊 Stats updated in UI');
         } catch (e) {
             console.error('UI.updateStats error:', e);
         }

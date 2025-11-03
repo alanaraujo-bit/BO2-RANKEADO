@@ -864,13 +864,20 @@ const RankedData = {
             const playersSnapshot = await db.collection('players').get();
             const matchesSnapshot = await db.collection('matches').get();
             
-            const confirmedMatches = matchesSnapshot.docs.filter(doc => doc.data().confirmed);
+            console.log('📊 Total players docs:', playersSnapshot.size);
+            console.log('📊 Total matches docs:', matchesSnapshot.size);
             
-            return {
+            const confirmedMatches = matchesSnapshot.docs.filter(doc => doc.data().confirmed);
+            console.log('📊 Confirmed matches:', confirmedMatches.length);
+            
+            const stats = {
                 totalPlayers: playersSnapshot.size,
-                totalMatches: confirmedMatches.length,
+                totalMatches: matchesSnapshot.size, // Usar total de partidas, não só confirmadas
                 activeSeason: this.currentSeason
             };
+            
+            console.log('📊 Stats returned:', stats);
+            return stats;
         } catch (error) {
             console.error('Error getting stats:', error);
             return {
