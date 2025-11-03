@@ -27,9 +27,9 @@ app.post('/api/update_stats', (req, res) => {
     return res.status(200).json({ ok: true, recebido: body });
 });
 
-// Serve index.html for all routes (SPA)
+// Serve app.html for all routes (SPA)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'app.html'));
 });
 
 const PORT = process.env.PORT || 3000;
