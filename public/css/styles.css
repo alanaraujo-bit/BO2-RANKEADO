@@ -8209,6 +8209,166 @@ select.form-input,
     font-family: 'Rajdhani', sans-serif;
 }
 
+/* ============================================
+   PROFILE - HEATMAP SECTION (Mapa de Acertos)
+   ============================================ */
+
+.heatmap-container-profile {
+    background: linear-gradient(145deg, rgba(30, 30, 40, 0.8), rgba(20, 20, 30, 0.8));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.heatmap-container-profile:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 122, 0, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.heatmap-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.heatmap-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.heatmap-subtitle {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.heatmap-body-silhouette {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.body-part {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(20, 20, 30, 0.5));
+    border: 2px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.body-part::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 122, 0, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.body-part:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 122, 0, 0.4);
+    box-shadow: 0 4px 16px rgba(255, 122, 0, 0.2);
+}
+
+.body-part:hover::before {
+    opacity: 1;
+}
+
+/* Cores por região */
+.body-part.head {
+    border-color: rgba(255, 77, 77, 0.3);
+}
+
+.body-part.head:hover {
+    border-color: rgba(255, 77, 77, 0.6);
+    box-shadow: 0 4px 16px rgba(255, 77, 77, 0.3);
+}
+
+.body-part.torso {
+    border-color: rgba(255, 165, 0, 0.3);
+}
+
+.body-part.torso:hover {
+    border-color: rgba(255, 165, 0, 0.6);
+    box-shadow: 0 4px 16px rgba(255, 165, 0, 0.3);
+}
+
+.body-part.arms {
+    border-color: rgba(100, 149, 237, 0.3);
+}
+
+.body-part.arms:hover {
+    border-color: rgba(100, 149, 237, 0.6);
+    box-shadow: 0 4px 16px rgba(100, 149, 237, 0.3);
+}
+
+.body-part.legs {
+    border-color: rgba(144, 238, 144, 0.3);
+}
+
+.body-part.legs:hover {
+    border-color: rgba(144, 238, 144, 0.6);
+    box-shadow: 0 4px 16px rgba(144, 238, 144, 0.3);
+}
+
+.hit-count {
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hit-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Grid especial para cabeça (span 2 columns em mobile) */
+@media (max-width: 480px) {
+    .heatmap-body-silhouette {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .body-part {
+        padding: 16px;
+    }
+    
+    .hit-count {
+        font-size: 1.8rem;
+    }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .weapons-grid-profile {
