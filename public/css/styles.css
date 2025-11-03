@@ -7328,7 +7328,7 @@ select.form-input,
     color: #00FF00;
 }
 
-/*  3. MATCHES SECTION */
+/*  3. MATCHES SECTION - CARDS MODERNOS E LIMPOS */
 .profile-matches-section {
     margin-bottom: var(--space-12);
 }
@@ -7337,6 +7337,7 @@ select.form-input,
     display: flex;
     gap: var(--space-3);
     margin-bottom: var(--space-6);
+    flex-wrap: wrap;
 }
 
 .filter-btn-profile {
@@ -7356,20 +7357,266 @@ select.form-input,
 .filter-btn-profile:hover {
     border-color: #FF6600;
     color: #FFFFFF;
+    transform: translateY(-2px);
 }
 
 .filter-btn-profile.active {
     background: rgba(255, 102, 0, 0.2);
     border-color: #FF6600;
     color: #FF6600;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.3);
 }
 
 .matches-grid-profile {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: var(--space-6);
+    max-width: 100%;
 }
 
+/* CARD DE PARTIDA - DESIGN MODERNO */
+.match-card-profile {
+    background: linear-gradient(145deg, rgba(30, 30, 40, 0.9), rgba(20, 20, 30, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+}
+
+.match-card-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #FF6600, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.match-card-profile:hover::before {
+    opacity: 1;
+}
+
+.match-card-profile:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 102, 0, 0.3);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(255, 102, 0, 0.15);
+}
+
+/* Variações por Resultado */
+.match-card-profile.match-win {
+    border-left: 3px solid rgba(76, 175, 80, 0.3);
+}
+
+.match-card-profile.match-loss {
+    border-left: 3px solid rgba(244, 67, 54, 0.3);
+}
+
+/* HEADER DO CARD */
+.match-header-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.match-result-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.match-result-badge.badge-win {
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #4CAF50;
+}
+
+.match-result-badge.badge-loss {
+    background: rgba(244, 67, 54, 0.15);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #f44336;
+}
+
+.result-icon {
+    font-size: 1.2em;
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+.match-mmr-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.match-mmr-badge.mmr-positive {
+    background: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.4);
+    color: #4CAF50;
+}
+
+.match-mmr-badge.mmr-negative {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.4);
+    color: #f44336;
+}
+
+.mmr-icon {
+    font-size: 1.2em;
+}
+
+/* OPONENTE */
+.match-opponent-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.opponent-label {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(255, 102, 0, 0.8);
+    background: rgba(255, 102, 0, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.opponent-name {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #FFFFFF;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    flex: 1;
+}
+
+/* INFO DA PARTIDA */
+.match-info-profile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.info-icon {
+    font-size: 1em;
+    opacity: 0.8;
+}
+
+.info-text {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* STATS GRID */
+.match-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat-item-match {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.stat-item-match:hover {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 102, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-icon-match {
+    font-size: 1.8em;
+    filter: drop-shadow(0 2px 8px rgba(255, 102, 0, 0.4));
+}
+
+.stat-content-match {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.stat-label-match {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.stat-value-match {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1;
+}
+
+/* Cores especiais para K/D */
+.stat-value-match.stat-excellent {
+    color: #4CAF50;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.6);
+}
+
+.stat-value-match.stat-good {
+    color: #FF9800;
+    text-shadow: 0 0 10px rgba(255, 152, 0, 0.6);
+}
+
+/* VIEW MORE BUTTON */
 .view-more-profile {
     text-align: center;
     margin-top: var(--space-8);
@@ -7395,6 +7642,76 @@ select.form-input,
 .btn-view-more-profile:hover {
     background: rgba(255, 102, 0, 0.2);
     transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 102, 0, 0.3);
+}
+
+/* RESPONSIVO - MATCHES */
+@media (max-width: 768px) {
+    .matches-grid-profile {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+    }
+
+    .match-card-profile {
+        padding: 20px;
+    }
+
+    .match-header-profile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .match-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .stat-item-match {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px 16px;
+    }
+
+    .stat-content-match {
+        flex-direction: row;
+        gap: 12px;
+        justify-content: space-between;
+        flex: 1;
+    }
+
+    .stat-label-match,
+    .stat-value-match {
+        text-align: left;
+    }
+
+    .opponent-name {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .match-card-profile {
+        padding: 16px;
+    }
+
+    .match-result-badge {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+
+    .match-mmr-badge {
+        font-size: 0.9rem;
+        padding: 5px 12px;
+    }
+
+    .opponent-name {
+        font-size: 1rem;
+    }
+
+    .stat-value-match {
+        font-size: 1.3rem;
+    }
 }
 
 /*  4. ACHIEVEMENTS SECTION */

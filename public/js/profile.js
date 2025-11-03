@@ -222,28 +222,64 @@ const ProfileManager = {
             const date = new Date(match.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 
             return `
-                <div class="match-card">
-                    <div class="match-result-icon">${isWin ? '✅' : '❌'}</div>
-                    <div class="match-info">
-                        <div class="match-opponent">vs ${match.opponent}</div>
-                        <div class="match-details">${match.map} • ${match.gameMode} • ${date}</div>
-                    </div>
-                    <div class="match-stats">
-                        <div class="match-stat">
-                            <div class="match-stat-label">K/D</div>
-                            <div class="match-stat-value">${kd}</div>
+                <div class="match-card-profile ${isWin ? 'match-win' : 'match-loss'}">
+                    <!-- Header do Card com Resultado -->
+                    <div class="match-header-profile">
+                        <div class="match-result-badge ${isWin ? 'badge-win' : 'badge-loss'}">
+                            <span class="result-icon">${isWin ? '✅' : '❌'}</span>
+                            <span class="result-text">${isWin ? 'VITÓRIA' : 'DERROTA'}</span>
                         </div>
-                        <div class="match-stat">
-                            <div class="match-stat-label">KILLS</div>
-                            <div class="match-stat-value">${match.kills}</div>
-                        </div>
-                        <div class="match-stat">
-                            <div class="match-stat-label">DEATHS</div>
-                            <div class="match-stat-value">${match.deaths}</div>
+                        <div class="match-mmr-badge ${mmrChange >= 0 ? 'mmr-positive' : 'mmr-negative'}">
+                            <span class="mmr-icon">${mmrChange >= 0 ? '↗' : '↘'}</span>
+                            <span class="mmr-value">${mmrChange >= 0 ? '+' : ''}${mmrChange}</span>
                         </div>
                     </div>
-                    <div class="match-mmr-change ${mmrChange >= 0 ? 'positive' : 'negative'}">
-                        ${mmrChange >= 0 ? '+' : ''}${mmrChange}
+
+                    <!-- Oponente -->
+                    <div class="match-opponent-profile">
+                        <span class="opponent-label">VS</span>
+                        <span class="opponent-name">${match.opponent}</span>
+                    </div>
+
+                    <!-- Info da Partida -->
+                    <div class="match-info-profile">
+                        <div class="info-item">
+                            <span class="info-icon">🗺️</span>
+                            <span class="info-text">${match.map}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🎮</span>
+                            <span class="info-text">${match.gameMode}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">📅</span>
+                            <span class="info-text">${date}</span>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="match-stats-grid">
+                        <div class="stat-item-match">
+                            <div class="stat-icon-match">⚔️</div>
+                            <div class="stat-content-match">
+                                <div class="stat-label-match">K/D RATIO</div>
+                                <div class="stat-value-match ${parseFloat(kd) >= 1.5 ? 'stat-excellent' : parseFloat(kd) >= 1.0 ? 'stat-good' : ''}">${kd}</div>
+                            </div>
+                        </div>
+                        <div class="stat-item-match">
+                            <div class="stat-icon-match">🎯</div>
+                            <div class="stat-content-match">
+                                <div class="stat-label-match">KILLS</div>
+                                <div class="stat-value-match">${match.kills}</div>
+                            </div>
+                        </div>
+                        <div class="stat-item-match">
+                            <div class="stat-icon-match">💀</div>
+                            <div class="stat-content-match">
+                                <div class="stat-label-match">DEATHS</div>
+                                <div class="stat-value-match">${match.deaths}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
