@@ -3682,6 +3682,11 @@ select.form-input,
     display: flex;
     flex-direction: column;
     gap: var(--space-12);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* 1️⃣ PROFILE HEADER - BO2 THEMED */
@@ -7962,6 +7967,8 @@ select.form-input,
     padding: 32px;
     margin-bottom: 24px;
     border: 1px solid rgba(255, 122, 0, 0.1);
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .weapons-filters-profile {
@@ -7997,8 +8004,10 @@ select.form-input,
 
 .weapons-grid-profile {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .weapon-card-profile {
@@ -8009,6 +8018,10 @@ select.form-input,
     transition: all 0.3s ease;
     opacity: 0;
     animation: fadeInUp 0.5s ease forwards;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .weapon-card-profile:hover {
@@ -8122,12 +8135,16 @@ select.form-input,
     padding: 32px;
     margin-bottom: 24px;
     border: 1px solid rgba(255, 122, 0, 0.1);
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .performance-grid-profile {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .performance-card-profile {
@@ -8136,6 +8153,9 @@ select.form-input,
     border-radius: 12px;
     padding: 20px;
     transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .performance-card-profile:hover {
@@ -8190,22 +8210,65 @@ select.form-input,
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .weapons-grid-profile {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .performance-grid-profile {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
     .profile-weapons-section,
     .profile-performance-section {
         padding: 20px;
+        margin-left: 0;
+        margin-right: 0;
     }
     
-    .weapons-grid-profile {
+    .weapons-grid-profile,
+    .performance-grid-profile {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
     
     .weapon-stats-profile {
         grid-template-columns: 1fr;
+        gap: 8px;
     }
     
-    .performance-grid-profile {
-        grid-template-columns: 1fr;
+    .weapon-card-profile,
+    .performance-card-profile {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-weapons-section,
+    .profile-performance-section {
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .weapons-filters-profile {
+        gap: 8px;
+    }
+    
+    .filter-btn-profile {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+    
+    .weapon-card-header-profile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .weapon-icon-profile {
+        font-size: 1.5rem;
     }
 }
 
