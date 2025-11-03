@@ -605,9 +605,14 @@ class FriendsSystem {
             }
 
             const rankData = getRankFromMMR(playerData.mmr || 999);
-            const gamesPlayed = playerData.gamesPlayed || playerData.totalMatches || 0;
-            const winrate = playerData.wins && gamesPlayed
-                ? ((playerData.wins / gamesPlayed) * 100).toFixed(1)
+            
+            // Calcular partidas jogadas (wins + losses é mais confiável)
+            const wins = playerData.wins || 0;
+            const losses = playerData.losses || 0;
+            const gamesPlayed = wins + losses;
+            
+            const winrate = gamesPlayed > 0
+                ? ((wins / gamesPlayed) * 100).toFixed(1)
                 : '0';
             const kd = (playerData.totalDeaths || 0) > 0
                 ? (playerData.totalKills / playerData.totalDeaths).toFixed(2)
@@ -632,14 +637,14 @@ class FriendsSystem {
             setText('modalMMR', playerData.mmr || 999);
 
             // Quick stats in hero (using same IDs as detailed stats for now)
-            setText('profileWins', playerData.wins || 0);
-            setText('profileLosses', playerData.losses || 0);
+            setText('profileWins', wins);
+            setText('profileLosses', losses);
             setText('profileWinrate', `${winrate}%`);
 
             // Detailed stats grid (4 cards)
             setText('profileMatchesDetailed', gamesPlayed);
-            setText('profileWinsDetailed', playerData.wins || 0);
-            setText('profileLossesDetailed', playerData.losses || 0);
+            setText('profileWinsDetailed', wins);
+            setText('profileLossesDetailed', losses);
             setText('profileWinrateDetailed', `${winrate}%`);
 
             // Winrate progress bar on detailed card
