@@ -428,6 +428,90 @@ function loadMoreMatches() {
 // WEAPONS & ARSENAL SECTION
 // ============================================================================
 
+// Weapon name translations
+ProfileManager.weaponNames = {
+    // Assault Rifles
+    'arsa_mp_silencer_staber': 'AN-94 (Silenciada)',
+    'an94_mp': 'AN-94',
+    'm27_mp': 'M27',
+    'type95_mp': 'Type 95',
+    'sig556_mp': 'SIG556',
+    'm8a1_mp': 'M8A1',
+    'scar_mp': 'SCAR-H',
+    'tar21_mp': 'MTAR',
+    'smr_mp': 'SMR',
+    'saritch_mp': 'SWT-40',
+    'fnfal_mp': 'FAL OSW',
+    
+    // SMGs
+    'mp7_mp': 'MP7',
+    'pdw57_mp': 'PDW-57',
+    'vector_mp': 'Vector K10',
+    'mp7_mp_extclip': 'MP7 (Ext. Mag)',
+    'm*1_mp': 'MSMC',
+    'insas_mp': 'Chicom CQB',
+    'qcw05_mp': 'Skorpion EVO',
+    'evoskorpion_mp': 'Skorpion EVO',
+    'peacekeeper_mp': 'Peacekeeper',
+    
+    // Snipers
+    'dsr50_mp': 'DSR 50',
+    'ballista_mp': 'Ballista',
+    'svu_mp': 'SVU-AS',
+    'as50_mp': 'XPR-50',
+    
+    // LMGs
+    'hamr_mp': 'HAMR',
+    'lsat_mp': 'LSAT',
+    'qbb95_mp': 'QBB LSW',
+    'mk48_mp': 'Mk 48',
+    
+    // Shotguns
+    'r870_mp': 'Remington 870 MCS',
+    'm1216_mp': 'M1216',
+    'ksg_mp': 'KSG',
+    's12_mp': 'S12',
+    
+    // Pistols
+    'fiveseven_mp': 'Five-Seven',
+    'fnp45_mp': 'Tac-45',
+    'judge_mp': 'Executioner',
+    'kard_mp': 'KAP-40',
+    
+    // Specials
+    'crossbow_mp': 'Ballistic Knife',
+    'knife_ballistic_mp': 'Ballistic Knife',
+    'knife_held_mp': 'Combat Knife',
+    'riotshield_mp': 'Riot Shield',
+    
+    // Lethals
+    'frag_grenade_mp': 'Frag Grenade',
+    'sticky_grenade_mp': 'Semtex',
+    'hatchet_mp': 'Combat Axe',
+    'claymore_mp': 'Claymore',
+    'bouncingbetty_mp': 'Bouncing Betty',
+    'c4_mp': 'C4'
+};
+
+ProfileManager.getWeaponDisplayName = function(weaponCode) {
+    // Remove _mp suffix for lookup
+    const cleanCode = weaponCode.toLowerCase().trim();
+    
+    // Check if we have a translation
+    if (this.weaponNames[cleanCode]) {
+        return this.weaponNames[cleanCode];
+    }
+    
+    // Fallback: clean up the code name
+    let name = weaponCode
+        .replace(/_mp$/, '')
+        .replace(/_/g, ' ')
+        .replace(/\*/g, 'S')
+        .toUpperCase();
+    
+    return name;
+};
+
 ProfileManager.weaponsFilter = 'all';
 
 ProfileManager.filterWeapons = function(type) {
@@ -487,13 +571,14 @@ ProfileManager.updateWeaponsSection = async function(player) {
         const icon = this.getWeaponIcon(weapon.name);
         const type = this.getWeaponType(weapon.name);
         const progress = Math.min(100, (weapon.kills / 100) * 100); // Progress to 100 kills
+        const displayName = this.getWeaponDisplayName(weapon.name);
 
         return `
             <div class="weapon-card-profile" style="animation-delay: ${index * 0.1}s">
                 <div class="weapon-card-header-profile">
                     <span class="weapon-icon-profile">${icon}</span>
                     <div class="weapon-info-profile">
-                        <h4>${weapon.name}</h4>
+                        <h4>${displayName}</h4>
                         <span class="weapon-type-profile">${type}</span>
                     </div>
                 </div>
