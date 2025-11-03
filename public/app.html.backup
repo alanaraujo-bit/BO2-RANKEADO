@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BO2 Plutonium Ranked System</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhana:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">BO2</span>
+                <span class="logo-ranked">RANKED</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active" onclick="showPage('home')">🏠 HOME</a></li>
+                <li><a href="#play" class="nav-link" onclick="showPage('play')">🎮 JOGAR</a></li>
+                <li><a href="#profile" class="nav-link" onclick="showPage('profile')">👤 PERFIL</a></li>
+                <li><a href="#friends" class="nav-link" onclick="showPage('friends')">👥 AMIGOS</a></li>
+                <li><a href="#seasons" class="nav-link" onclick="showPage('seasons')">🏆 TEMPORADAS</a></li>
+                <li><a href="#ranks" class="nav-link" onclick="showPage('ranks')">🎖️ RANKS</a></li>
+                <li><a href="#leaderboard" class="nav-link" onclick="showPage('leaderboard')">🏆 RANKING</a></li>
+                <li><a href="#history" class="nav-link" onclick="showPage('history')">📜 HISTÓRICO</a></li>
+                <li id="adminMenuItem" style="display: none;"><a href="/admin.html" class="nav-link" style="color: #ff6b6b;">🛠️ ADMIN</a></li>
+            </ul>
+            <div class="nav-user">
+                <!-- Notification Bell -->
+                <div class="notification-bell" id="notificationBell" onclick="toggleNotifications()" style="display: none;">
+                    🔔
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </div>
+                <span class="user-name" id="currentUserName">Visitante</span>
+                <button class="btn-login" id="btnLogin" onclick="showLoginModal()">LOGIN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notifications Dropdown -->
+    <div class="notifications-dropdown" id="notificationsDropdown">
+        <div class="notifications-header">
+            <h3>🔔 Notificações</h3>
+            <button onclick="toggleNotifications()" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2em;">✕</button>
+        </div>
+        <div class="notifications-content" id="notificationsContent">
+            <p style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                Nenhuma notificação
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- HOME PAGE -->
+        <div id="home" class="page active">
+            <!-- 1️⃣ HERO / BANNER PRINCIPAL -->
+            <div class="hero-banner hero-improved">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-icon">⚡</span>
+                        <span class="badge-text">SISTEMA OFICIAL DE RANQUEADAS</span>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="title-highlight">DOMINE O CAMPO DE BATALHA</span>
+                        <span class="title-main">BLACK OPS 2 RANKED</span>
+                    </h1>
+                    <p class="hero-description">
+                        Entre no combate competitivo. Registre suas vitórias, suba de patente e prove que você é o melhor operador do BO2.
+                    </p>
+                    
+                    <!-- Player Current Rank (if logged in) - OCULTADO -->
+                    <!-- 
+                    <div class="hero-player-card" id="heroPlayerCard" style="display: none;">
+                        <div class="player-rank-display">
+                            <div class="rank-icon-large" id="heroRankIcon">🥉</div>
+                            <div class="rank-info">
+                                <div class="rank-label">SUA PATENTE ATUAL</div>
+                                <div class="rank-name-large" id="heroRankName">BRONZE</div>
+                                <div class="rank-mmr-display">
+                                    <span class="mmr-value" id="heroMMR">0</span>
+                                    <span class="mmr-label">MMR</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-quick-stats">
+                            <div class="quick-stat">
+                                <span class="stat-label">V/D</span>
+                                <span class="stat-value" id="heroWinRate">0%</span>
+                            </div>
+                            <div class="quick-stat">
+                                <span class="stat-label">K/D</span>
+                                <span class="stat-value" id="heroKD">0.00</span>
+                            </div>
+                            <div class="quick-stat">
+                                <span class="stat-label">BATALHAS</span>
+                                <span class="stat-value" id="heroMatches">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+
+                    <div class="hero-actions">
+                        <button class="btn-hero-primary" onclick="showPage('play')">
+                            <span class="btn-icon">�</span>
+                            <span class="btn-text">REGISTRAR BATALHA</span>
+                        </button>
+                        <button class="btn-hero-secondary" onclick="showPage('leaderboard')">
+                            <span class="btn-icon">🏆</span>
+                            <span class="btn-text">VER CLASSIFICAÇÃO</span>
+                        </button>
+                    </div>
+
+                    <div class="hero-stats-bar">
+                        <div class="stat-item">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalPlayers">0</div>
+                                <div class="stat-label">Operadores Ativos</div>
+                            </div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-icon">⚔️</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalMatches">0</div>
+                                <div class="stat-label">Combates Registrados</div>
+                            </div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="activeSeason">S1</div>
+                                <div class="stat-label">Temporada de Guerra</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="rank-showcase">
+                        <div class="showcase-ring"></div>
+                        <div class="showcase-icon" id="showcaseRankIcon">⚡</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2️⃣ COMO FUNCIONA / INTRODUÇÃO -->
+            <div class="how-it-works-section section-card">
+                <div class="section-header">
+                    <span class="section-badge">🎖️</span>
+                    <h2 class="section-title">SUA PATENTE ESPERA – SUBA NO RANKED</h2>
+                    <p class="section-subtitle">Cada kill conta. Cada vitória importa. Domine o campo de batalha e alcance a glória máxima!</p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">01</div>
+                        <div class="step-icon">⚔️</div>
+                        <h3 class="step-title">Entre em Combate</h3>
+                        <p class="step-description">Desafie outros operadores em partidas ranqueadas intensas. Só os melhores sobrevivem.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">02</div>
+                        <div class="step-icon">�</div>
+                        <h3 class="step-title">Registre sua Batalha</h3>
+                        <p class="step-description">Após cada combate, registre o resultado com kills, deaths e screenshot do placar final.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">03</div>
+                        <div class="step-icon">📈</div>
+                        <h3 class="step-title">Ganhe MMR</h3>
+                        <p class="step-description">Vitórias aumentam seu MMR. Sua performance (K/D) também influencia nos ganhos de pontos.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-number">04</div>
+                        <div class="step-icon">🏆</div>
+                        <h3 class="step-title">Suba de Patente</h3>
+                        <p class="step-description">Acumule MMR e evolua: Bronze → Prata → Ouro → Platina → Diamante → Mestre → Lenda.</p>
+                    </div>
+                </div>
+
+                <div class="rank-progression-visual">
+                    <div class="progression-track">
+                        <div class="progression-step bronze">
+                            <div class="step-icon-mini">�</div>
+                            <div class="step-name">BRONZE</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step silver">
+                            <div class="step-icon-mini">🥈</div>
+                            <div class="step-name">PRATA</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step gold">
+                            <div class="step-icon-mini">🥇</div>
+                            <div class="step-name">OURO</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step platinum">
+                            <div class="step-icon-mini">💎</div>
+                            <div class="step-name">PLATINA</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step diamond">
+                            <div class="step-icon-mini">💠</div>
+                            <div class="step-name">DIAMANTE</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step master">
+                            <div class="step-icon-mini">👑</div>
+                            <div class="step-name">MESTRE</div>
+                        </div>
+                        <div class="progression-line"></div>
+                        <div class="progression-step legend">
+                            <div class="step-icon-mini">⚡</div>
+                            <div class="step-name">LENDA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3️⃣ ÚLTIMAS PARTIDAS -->
+            <div class="recent-matches-section section-card">
+                <div class="section-header">
+                    <span class="section-badge">⚔️</span>
+                    <h2 class="section-title">SUAS ÚLTIMAS BATALHAS</h2>
+                    <p class="section-subtitle">Analise seu desempenho recente e identifique pontos de melhoria no campo de batalha</p>
+                </div>
+
+                <div id="recentMatchesContainer" class="recent-matches-container">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎮</div>
+                        <p class="empty-text">Nenhuma batalha registrada</p>
+                        <p class="empty-subtext">Faça login e registre seu primeiro combate para ver seu histórico aqui</p>
+                        <button class="btn-empty-action" onclick="showPage('play')">Entrar em Combate</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4️⃣ TOP JOGADORES / DESTAQUES -->
+            <div class="top-players-section section-card">
+                <div class="section-header">
+                    <span class="section-badge">🏆</span>
+                    <h2 class="section-title">ELITE DO BO2 RANKED</h2>
+                    <p class="section-subtitle">Os melhores operadores estão aqui. Quem vai dominar a classificação hoje?</p>
+                </div>
+
+                <div class="podium-container">
+                    <div id="podiumDisplay" class="podium-display">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <div class="top-players-list" id="topPlayersPreview">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <div class="view-all-container">
+                    <button class="btn-view-all" onclick="showPage('leaderboard')">
+                        <span>VER RANKING COMPLETO</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5️⃣ CALL TO ACTION / ENGAJAMENTO -->
+            <div class="cta-section">
+                <div class="cta-background">
+                    <div class="cta-glow"></div>
+                </div>
+                <div class="cta-content">
+                    <div class="cta-icon">⚡</div>
+                    <h2 class="cta-title">MISSÃO: DOMINAR O RANKED</h2>
+                    <p class="cta-description">Seu objetivo está claro: suba de patente, domine o combate e conquiste a glória. Registre sua próxima batalha agora!</p>
+                    <div class="cta-actions">
+                        <button class="btn-cta-primary" onclick="showPage('play')">
+                            <span class="btn-icon">🎯</span>
+                            <span class="btn-text">REGISTRAR BATALHA</span>
+                            <span class="btn-shine"></span>
+                        </button>
+                        <button class="btn-cta-secondary" onclick="showPage('friends')">
+                            <span class="btn-icon">👥</span>
+                            <span class="btn-text">DESAFIAR OPERADORES</span>
+                        </button>
+                    </div>
+                    <div class="cta-stats">
+                        <div class="cta-stat">
+                            <span class="cta-stat-icon">🔥</span>
+                            <span class="cta-stat-text">Proteção Anti-Trapaça em Operação</span>
+                        </div>
+                        <div class="cta-stat">
+                            <span class="cta-stat-icon">✅</span>
+                            <span class="cta-stat-text">Verificação Dupla de Resultados</span>
+                        </div>
+                        <div class="cta-stat">
+                            <span class="cta-stat-icon">📸</span>
+                            <span class="cta-stat-text">Confirmação Visual Obrigatória</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAY PAGE - MATCH REGISTRATION -->
+        <div id="play" class="page">
+            <!-- 1️⃣ BANNER / HERO -->
+            <div class="match-hero">
+                <div class="match-hero-content">
+                    <div class="match-badge">
+                        <span class="badge-icon">⚔️</span>
+                        <span class="badge-text">REGISTRO DE COMBATE</span>
+                    </div>
+                    <h1 class="match-hero-title">
+                        <span class="title-highlight">REGISTRE SUA BATALHA</span>
+                        <span class="title-main">E ATUALIZE SEU RANK</span>
+                    </h1>
+                    <p class="match-hero-description">
+                        Cada vitória, cada kill, cada derrota conta! Registre seus combates, atualize seu MMR e suba de patente no ranking.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2️⃣ FORMULÁRIO DE REGISTRO -->
+            <div class="match-form-section">
+                <div class="section-header">
+                    <span class="section-badge">📋</span>
+                    <h2 class="section-title">DADOS DA PARTIDA</h2>
+                    <p class="section-subtitle">Preencha os detalhes do seu combate ranqueado</p>
+                </div>
+
+                <form id="matchReportForm" class="match-form-bo2">
+                    <div class="form-grid-bo2">
+                        <!-- Adversário -->
+                        <div class="form-field-bo2">
+                            <label class="field-label-bo2">
+                                <span class="label-icon">👥</span>
+                                <span class="label-text">ADVERSÁRIO</span>
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="field-input-bo2" id="opponentSelect" required>
+                                <option value="">Selecione o oponente...</option>
+                            </select>
+                            <div class="field-hint">Escolha contra quem você batalhou</div>
+                        </div>
+
+                        <!-- Modo de Jogo -->
+                        <div class="form-field-bo2">
+                            <label class="field-label-bo2">
+                                <span class="label-icon">🎯</span>
+                                <span class="label-text">MODO DE JOGO</span>
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="field-input-bo2" id="gameModeSelect" required>
+                                <option value="">Selecione o modo...</option>
+                                <option value="TDM">Team Deathmatch</option>
+                                <option value="DOM">Domination</option>
+                                <option value="SND">Search and Destroy</option>
+                                <option value="HP">Hardpoint</option>
+                                <option value="CTF">Capture the Flag</option>
+                                <option value="KC">Kill Confirmed</option>
+                            </select>
+                            <div class="field-hint">Tipo de combate ranqueado</div>
+                        </div>
+
+                        <!-- Mapa -->
+                        <div class="form-field-bo2">
+                            <label class="field-label-bo2">
+                                <span class="label-icon">🗺️</span>
+                                <span class="label-text">CAMPO DE BATALHA</span>
+                                <span class="label-required">*</span>
+                            </label>
+                            <select class="field-input-bo2" id="mapSelect" required>
+                                <option value="">Selecione o mapa...</option>
+                                <option value="Nuketown">📍 Nuketown 2025</option>
+                                <option value="Raid">📍 Raid</option>
+                                <option value="Standoff">📍 Standoff</option>
+                                <option value="Slums">📍 Slums</option>
+                                <option value="Hijacked">📍 Hijacked</option>
+                                <option value="Express">📍 Express</option>
+                                <option value="Yemen">📍 Yemen</option>
+                                <option value="Carrier">📍 Carrier</option>
+                                <option value="Meltdown">📍 Meltdown</option>
+                                <option value="Plaza">📍 Plaza</option>
+                            </select>
+                            <div class="field-hint">Localização do combate</div>
+                        </div>
+
+                        <!-- Resultado -->
+                        <div class="form-field-bo2">
+                            <label class="field-label-bo2">
+                                <span class="label-icon">🏆</span>
+                                <span class="label-text">RESULTADO</span>
+                                <span class="label-required">*</span>
+                            </label>
+                            <div class="result-buttons">
+                                <button type="button" class="result-btn result-win" id="resultWin" onclick="selectResult('win')">
+                                    <span class="result-icon">✅</span>
+                                    <span class="result-text">VITÓRIA</span>
+                                </button>
+                                <button type="button" class="result-btn result-loss" id="resultLoss" onclick="selectResult('loss')">
+                                    <span class="result-icon">❌</span>
+                                    <span class="result-text">DERROTA</span>
+                                </button>
+                            </div>
+                            <input type="hidden" id="resultSelect" required>
+                            <div class="field-hint">Qual foi o desfecho da batalha?</div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-input-grid">
+                        <div class="form-field-bo2">
+                            <label class="field-label-bo2">
+                                <span class="label-icon">🔫</span>
+                                <span class="label-text">KILLS</span>
+                                <span class="label-required">*</span>
+                            </label>
+                            <input type="number" class="field-input-bo2 input-number" id="killsInput" min="0" max="999" placeholder="0" required>
+                            <div class="field-hint">Abates confirmados</div>
+                        </div>
+
+                        <div class="form-field-bo2">
+                            <label class="field-label-bo2">
+                                <span class="label-icon">💀</span>
+                                <span class="label-text">DEATHS</span>
+                                <span class="label-required">*</span>
+                            </label>
+                            <input type="number" class="field-input-bo2 input-number" id="deathsInput" min="0" max="999" placeholder="0" required>
+                            <div class="field-hint">Baixas sofridas</div>
+                        </div>
+
+                        <div class="kd-display" id="kdDisplay">
+                            <div class="kd-label">K/D RATIO</div>
+                            <div class="kd-value" id="kdValue">0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Notas Estratégicas -->
+                    <div class="form-field-bo2 form-field-full">
+                        <label class="field-label-bo2">
+                            <span class="label-icon">📝</span>
+                            <span class="label-text">NOTAS ESTRATÉGICAS</span>
+                            <span class="label-optional">(Opcional)</span>
+                        </label>
+                        <textarea 
+                            class="field-textarea-bo2" 
+                            id="notesInput" 
+                            placeholder="Ex: Dominamos B e C no início, flank pela direita funcionou bem..."
+                            maxlength="500"
+                            rows="4"
+                        ></textarea>
+                        <div class="field-hint">Observações sobre táticas, loadouts ou momentos chave</div>
+                    </div>
+
+                    <!-- Screenshot -->
+                    <div class="form-field-bo2 form-field-full">
+                        <label class="field-label-bo2">
+                            <span class="label-icon">📸</span>
+                            <span class="label-text">SCREENSHOT DO PLACAR</span>
+                            <span class="label-optional">(Opcional)</span>
+                        </label>
+                        <div class="file-upload-bo2">
+                            <input type="file" class="file-input-hidden" id="screenshotInput" accept="image/*">
+                            <label for="screenshotInput" class="file-upload-label">
+                                <span class="upload-icon">📤</span>
+                                <span class="upload-text">Clique para enviar screenshot</span>
+                                <span class="upload-hint">PNG, JPG até 5MB</span>
+                            </label>
+                            <div class="file-preview-bo2" id="filePreview"></div>
+                        </div>
+                        <div class="field-hint">Evidência visual do resultado para verificação</div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="form-actions-bo2">
+                        <button type="button" class="btn-form-secondary" onclick="resetForm()">
+                            <span class="btn-icon">🔄</span>
+                            <span>LIMPAR CAMPOS</span>
+                        </button>
+                        <button type="submit" class="btn-form-primary">
+                            <span class="btn-icon">💥</span>
+                            <span>CONFIRMAR BATALHA</span>
+                            <span class="btn-shine-effect"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 3️⃣ CONFIRMAÇÃO / FEEDBACK (Inicialmente oculto) -->
+            <div class="match-confirmation-card" id="matchConfirmation" style="display: none;">
+                <div class="confirmation-icon">✅</div>
+                <h3 class="confirmation-title">BATALHA REGISTRADA!</h3>
+                <p class="confirmation-description">
+                    Sua partida foi enviada e está aguardando confirmação do adversário.
+                </p>
+                <div class="confirmation-details" id="confirmationDetails">
+                    <!-- Será preenchido via JS -->
+                </div>
+                <div class="mmr-update-display" id="mmrUpdateDisplay">
+                    <!-- Será preenchido via JS -->
+                </div>
+                <button class="btn-confirmation" onclick="closeConfirmation()">
+                    <span>ENTENDIDO</span>
+                </button>
+            </div>
+
+            <!-- 4️⃣ ÚLTIMAS PARTIDAS REGISTRADAS -->
+            <div class="recent-submissions-section" id="recentSubmissionsSection" style="display: none;">
+                <div class="section-header">
+                    <span class="section-badge">📊</span>
+                    <h2 class="section-title">SUAS ÚLTIMAS BATALHAS</h2>
+                    <p class="section-subtitle">Partidas recentemente registradas</p>
+                </div>
+
+                <div class="recent-matches-grid" id="recentMatchesGrid">
+                    <!-- Será preenchido via JS -->
+                </div>
+
+                <div class="view-all-matches-btn">
+                    <button class="btn-view-all" onclick="showPage('history')">
+                        <span class="btn-icon">📜</span>
+                        <span>VER HISTÓRICO COMPLETO</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5️⃣ PENDENTES DE CONFIRMAÇÃO -->
+            <div class="pending-section" id="pendingSection" style="display: none;">
+                <div class="section-header">
+                    <span class="section-badge">⏳</span>
+                    <h2 class="section-title">AGUARDANDO CONFIRMAÇÃO</h2>
+                    <p class="section-subtitle">Partidas que precisam ser confirmadas pelo adversário</p>
+                </div>
+
+                <div id="pendingMatches" class="pending-matches-grid">
+                    <!-- Será preenchido via JS -->
+                </div>
+            </div>
+
+            <!-- 6️⃣ CALL TO ACTION -->
+            <div class="match-cta">
+                <div class="match-cta-content">
+                    <div class="cta-icon-bo2">🎮</div>
+                    <h2 class="cta-title-bo2">CONTINUE EVOLUINDO</h2>
+                    <p class="cta-description-bo2">
+                        Cada batalha registrada te aproxima do próximo rank. Não pare agora!
+                    </p>
+                    <div class="cta-buttons-bo2">
+                        <button class="btn-cta-primary-bo2" onclick="showPage('ranks')">
+                            <span class="btn-icon">🎖️</span>
+                            <span>VER RANKS</span>
+                        </button>
+                        <button class="btn-cta-secondary-bo2" onclick="showPage('profile')">
+                            <span class="btn-icon">📊</span>
+                            <span>MEU PERFIL</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div id="profile" class="page">
+            <!-- Empty State (Not Logged In) -->
+            <div id="profileNotLoggedIn" class="profile-empty-state">
+                <div class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <p class="empty-text">Você precisa estar logado</p>
+                    <p class="empty-subtext">Faça login para ver seu perfil e acompanhar suas estatísticas</p>
+                    <button class="btn-empty-action" onclick="showLoginModal()">Fazer Login</button>
+                </div>
+            </div>
+
+            <!-- Profile Content (Logged In) -->
+            <div id="profileContent" class="profile-container" style="display: none;">
+                
+                <!-- 🎯 1. HERO SECTION - Avatar, Nome, Patente, MMR, Progresso -->
+                <div class="profile-hero-section">
+                    <div class="profile-hero-bg">
+                        <div class="hero-scanline"></div>
+                    </div>
+                    
+                    <div class="profile-hero-content">
+                        <!-- Avatar Grande -->
+                        <div class="profile-avatar-wrapper">
+                            <div class="avatar-ring"></div>
+                            <div class="profile-avatar-large" id="profileAvatar">
+                                <span class="avatar-icon-large" id="profileAvatarIcon">🎮</span>
+                            </div>
+                            <div class="avatar-level-badge" id="profileLevelBadge">
+                                <span class="level-text">LV <span id="profileLevel">1</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Info Principal -->
+                        <div class="profile-hero-info">
+                            <div class="player-identity">
+                                <h1 class="player-name-hero" id="profileName">Jogador</h1>
+                                <span class="player-id-hero" id="profileId">#0000</span>
+                            </div>
+
+                            <!-- Rank e MMR em Destaque -->
+                            <div class="rank-mmr-container">
+                                <div class="rank-display-hero">
+                                    <span class="rank-icon-hero" id="profileRankIcon">🥉</span>
+                                    <div class="rank-text-hero">
+                                        <span class="rank-label-hero">RANK ATUAL</span>
+                                        <span class="rank-name-hero" id="profileRankName">BRONZE III</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mmr-display-hero">
+                                    <div class="mmr-value-hero" id="profileMMR">1000</div>
+                                    <div class="mmr-label-hero">MMR Points</div>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Progresso Animada -->
+                            <div class="rank-progress-hero" id="rankProgressSection">
+                                <div class="progress-info">
+                                    <span class="progress-text">Próximo Rank: <strong id="nextRankName">PRATA III</strong></span>
+                                    <span class="progress-remaining"><span id="mmrNeeded">200</span> MMR faltam</span>
+                                </div>
+                                <div class="progress-bar-hero">
+                                    <div class="progress-fill-hero" id="progressBarFill" style="width: 0%">
+                                        <span class="progress-glow"></span>
+                                    </div>
+                                    <span class="progress-percentage-hero" id="progressPercentage">0%</span>
+                                </div>
+                                <div class="progress-range">
+                                    <span id="currentRankMMR">0</span>
+                                    <span id="nextRankMMR">1000</span>
+                                </div>
+                            </div>
+
+                            <!-- Mensagem Rank Máximo -->
+                            <div class="max-rank-badge" id="maxRankMessage" style="display: none;">
+                                <span class="max-rank-icon">⚡</span>
+                                <span class="max-rank-text">RANK MÁXIMO ATINGIDO - LENDA!</span>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="hero-quick-stats">
+                                <div class="quick-stat-item">
+                                    <span class="quick-stat-value" id="heroWins">0</span>
+                                    <span class="quick-stat-label">Vitórias</span>
+                                </div>
+                                <div class="stat-divider-hero"></div>
+                                <div class="quick-stat-item">
+                                    <span class="quick-stat-value" id="heroLosses">0</span>
+                                    <span class="quick-stat-label">Derrotas</span>
+                                </div>
+                                <div class="stat-divider-hero"></div>
+                                <div class="quick-stat-item">
+                                    <span class="quick-stat-value" id="heroKD">0.00</span>
+                                    <span class="quick-stat-label">K/D</span>
+                                </div>
+                            </div>
+
+                            <!-- Ações Rápidas -->
+                            <div class="hero-actions">
+                                <button class="btn-hero-primary-profile" onclick="showPage('play')">
+                                    <span class="btn-icon">⚔️</span>
+                                    <span>JOGAR AGORA</span>
+                                </button>
+                                <button class="btn-hero-secondary-profile" onclick="showPage('friends')">
+                                    <span class="btn-icon">👥</span>
+                                    <span>AMIGOS</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🎮 1.5 NOME DO PLUTONIUM - Seção de Configuração -->
+                <div class="profile-plutonium-section" style="background: linear-gradient(135deg, rgba(255,193,7,0.05), rgba(255,152,0,0.05)); border: 2px solid rgba(255,193,7,0.3); border-radius: 16px; padding: 24px; margin: 24px; box-shadow: 0 4px 20px rgba(255,193,7,0.1);">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                        <span style="font-size: 2.5em;">🎮</span>
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; font-size: 1.4em; color: var(--rank-gold);">Nome do Plutonium</h3>
+                            <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 0.95em;">Vincule seu nome in-game para receber estatísticas automáticas</p>
+                        </div>
+                    </div>
+
+                    <div id="plutoniumNameDisplay" style="display: none;">
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                                <div>
+                                    <div style="font-size: 0.85em; color: rgba(255,255,255,0.6); margin-bottom: 6px;">NOME ATUAL NO PLUTONIUM:</div>
+                                    <div style="font-size: 1.3em; font-weight: 700; color: var(--rank-gold); font-family: 'Orbitron', monospace;" id="currentPlutoniumName">-</div>
+                                </div>
+                                <button onclick="showEditPlutoniumName()" class="btn-hero-secondary-profile" style="padding: 10px 20px;">
+                                    <span class="btn-icon">✏️</span>
+                                    <span>Editar</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; color: rgba(76,175,80,0.9); font-size: 0.9em;">
+                            <span>✅</span>
+                            <span>Conectado! Suas estatísticas serão atualizadas automaticamente quando jogar.</span>
+                        </div>
+                    </div>
+
+                    <div id="plutoniumNameEdit" style="display: none;">
+                        <form onsubmit="updatePlutoniumName(event)">
+                            <div style="background: rgba(255,193,7,0.1); border-left: 4px solid var(--rank-gold); padding: 12px 16px; margin-bottom: 16px; border-radius: 6px; font-size: 0.9em; color: rgba(255,255,255,0.85);">
+                                <strong>⚠️ IMPORTANTE:</strong> Digite exatamente como aparece no Plutonium (maiúsculas, espaços, etc.)
+                            </div>
+                            <input 
+                                type="text" 
+                                id="editPlutoniumNameInput" 
+                                class="form-input"
+                                placeholder="Seu nome no Plutonium BO2"
+                                required
+                                minlength="2"
+                                maxlength="32"
+                                style="width: 100%; margin-bottom: 12px; padding: 12px 16px; font-size: 1.05em; background: rgba(0,0,0,0.4); border: 2px solid rgba(255,193,7,0.4); border-radius: 8px; color: white;"
+                            >
+                            <div style="display: flex; gap: 12px;">
+                                <button type="submit" class="btn-hero-primary-profile" style="flex: 1;">
+                                    <span class="btn-icon">💾</span>
+                                    <span>Salvar</span>
+                                </button>
+                                <button type="button" onclick="cancelEditPlutoniumName()" class="btn-hero-secondary-profile" style="flex: 1;">
+                                    <span class="btn-icon">❌</span>
+                                    <span>Cancelar</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="plutoniumNameNotSet" style="display: none;">
+                        <div style="background: rgba(244,67,54,0.1); border-left: 4px solid #f44336; padding: 16px; margin-bottom: 16px; border-radius: 6px;">
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="font-size: 1.5em;">⚠️</span>
+                                <div>
+                                    <strong style="color: #f44336; display: block; margin-bottom: 6px;">Nome não configurado!</strong>
+                                    <p style="margin: 0; color: rgba(255,255,255,0.8); font-size: 0.95em;">
+                                        Configure seu nome do Plutonium para que suas estatísticas sejam registradas automaticamente quando você jogar.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="showEditPlutoniumName()" class="btn-hero-primary-profile" style="width: 100%; justify-content: center;">
+                            <span class="btn-icon">➕</span>
+                            <span>Configurar Agora</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 📊 2. ESTATÍSTICAS GERAIS - Cards Organizados -->
+                <div class="profile-stats-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">📊</span>
+                            <h2 class="section-title-profile">Estatísticas Gerais</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Seu desempenho em números</p>
+                    </div>
+
+                    <div class="stats-grid-profile">
+                        <!-- Vitórias -->
+                        <div class="stat-card-profile stat-win-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">✅</span>
+                                <span class="stat-label-profile">Vitórias</span>
+                            </div>
+                            <div class="stat-value-profile" id="statWins">0</div>
+                            <div class="stat-trend-profile">
+                                <span class="trend-icon">↗</span>
+                                <span class="trend-text">Subindo!</span>
+                            </div>
+                        </div>
+
+                        <!-- Derrotas -->
+                        <div class="stat-card-profile stat-loss-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">❌</span>
+                                <span class="stat-label-profile">Derrotas</span>
+                            </div>
+                            <div class="stat-value-profile" id="statLosses">0</div>
+                        </div>
+
+                        <!-- Taxa de Vitória -->
+                        <div class="stat-card-profile stat-highlight-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">📈</span>
+                                <span class="stat-label-profile">Taxa de Vitória</span>
+                            </div>
+                            <div class="stat-value-profile" id="statWinRate">0%</div>
+                        </div>
+
+                        <!-- K/D Ratio -->
+                        <div class="stat-card-profile stat-highlight-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">⚔️</span>
+                                <span class="stat-label-profile">K/D Ratio</span>
+                            </div>
+                            <div class="stat-value-profile" id="statKD">0.00</div>
+                        </div>
+
+                        <!-- Total Kills -->
+                        <div class="stat-card-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">🔫</span>
+                                <span class="stat-label-profile">Total Kills</span>
+                            </div>
+                            <div class="stat-value-profile" id="statTotalKills">0</div>
+                        </div>
+
+                        <!-- Total Deaths -->
+                        <div class="stat-card-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">💀</span>
+                                <span class="stat-label-profile">Total Deaths</span>
+                            </div>
+                            <div class="stat-value-profile" id="statTotalDeaths">0</div>
+                        </div>
+
+                        <!-- Melhor Streak -->
+                        <div class="stat-card-profile stat-special-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">🔥</span>
+                                <span class="stat-label-profile">Melhor Streak</span>
+                            </div>
+                            <div class="stat-value-profile" id="statBestStreak">0</div>
+                        </div>
+
+                        <!-- Total Partidas -->
+                        <div class="stat-card-profile">
+                            <div class="stat-card-header">
+                                <span class="stat-icon-profile">🎮</span>
+                                <span class="stat-label-profile">Total Partidas</span>
+                            </div>
+                            <div class="stat-value-profile" id="statTotalGames">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ⚔️ 3. ÚLTIMAS PARTIDAS - Cards Modernos -->
+                <div class="profile-matches-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">⚔️</span>
+                            <h2 class="section-title-profile">Últimas Partidas</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Reviva seus últimos combates</p>
+                    </div>
+
+                    <!-- Filtros Simples -->
+                    <div class="matches-filters-profile">
+                        <button class="filter-btn-profile active" onclick="filterMatches('all')" data-filter="all">
+                            <span>📋 Todas</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="filterMatches('win')" data-filter="win">
+                            <span>✅ Vitórias</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="filterMatches('loss')" data-filter="loss">
+                            <span>❌ Derrotas</span>
+                        </button>
+                    </div>
+
+                    <!-- Grid de Partidas -->
+                    <div class="matches-grid-profile" id="profileMatchesList">
+                        <!-- Será preenchido via JavaScript -->
+                    </div>
+
+                    <!-- Ver Mais -->
+                    <div class="view-more-profile" id="viewMoreMatches" style="display: none;">
+                        <button class="btn-view-more-profile" onclick="loadMoreMatches()">
+                            <span>Ver Mais Partidas</span>
+                            <span class="btn-icon">↓</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 🔫 4. ARSENAL & WEAPONS - Estatísticas Detalhadas de Armas -->
+                <div class="profile-weapons-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">🔫</span>
+                            <h2 class="section-title-profile">Arsenal & Armamento</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Suas armas favoritas e performance detalhada</p>
+                    </div>
+
+                    <!-- Filtros de Armas -->
+                    <div class="weapons-filters-profile">
+                        <button class="filter-btn-profile active" onclick="ProfileManager.filterWeapons('all')" data-filter="all">
+                            <span>🎯 TODAS</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="ProfileManager.filterWeapons('primary')" data-filter="primary">
+                            <span>🔫 PRIMÁRIAS</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="ProfileManager.filterWeapons('secondary')" data-filter="secondary">
+                            <span>🔪 SECUNDÁRIAS</span>
+                        </button>
+                        <button class="filter-btn-profile" onclick="ProfileManager.filterWeapons('special')" data-filter="special">
+                            <span>💥 ESPECIAIS</span>
+                        </button>
+                    </div>
+
+                    <!-- Grid de Armas -->
+                    <div class="weapons-grid-profile" id="profileWeaponsList">
+                        <!-- Será preenchido via JavaScript -->
+                        <div class="empty-state" style="display: none;" id="weaponsEmptyState">
+                            <div class="empty-icon">🔫</div>
+                            <p class="empty-text">Nenhuma arma utilizada ainda</p>
+                            <p class="empty-subtext">Registre partidas para ver suas estatísticas de armas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📊 5. PERFORMANCE & ANALYTICS - Gráficos e Métricas Avançadas -->
+                <div class="profile-performance-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">📊</span>
+                            <h2 class="section-title-profile">Performance & Analytics</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Análise detalhada do seu desempenho em combate</p>
+                    </div>
+
+                    <!-- Grid de Métricas Avançadas -->
+                    <div class="performance-grid-profile">
+                        <!-- Accuracy & Precision -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">🎯</span>
+                                <h3 class="performance-title">Precisão</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Headshots</span>
+                                    <span class="metric-value" id="statHeadshots">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Taxa de HS</span>
+                                    <span class="metric-value" id="statHeadshotRate">0%</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Accuracy</span>
+                                    <span class="metric-value" id="statAccuracy">0%</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill" id="accuracyBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Combat Effectiveness -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">⚔️</span>
+                                <h3 class="performance-title">Efetividade em Combate</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Assists</span>
+                                    <span class="metric-value" id="statAssists">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Dano Total</span>
+                                    <span class="metric-value" id="statTotalDamage">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Dano/Partida</span>
+                                    <span class="metric-value" id="statAvgDamage">0</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill combat" id="combatBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Survival & Aggression -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">🛡️</span>
+                                <h3 class="performance-title">Sobrevivência</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Mortes/Partida</span>
+                                    <span class="metric-value" id="statAvgDeaths">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Tempo de Vida Médio</span>
+                                    <span class="metric-value" id="statAvgLifetime">0s</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Taxa de Revanche</span>
+                                    <span class="metric-value" id="statRevengeRate">0%</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill survival" id="survivalBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Consistency & Streaks -->
+                        <div class="performance-card-profile">
+                            <div class="performance-card-header">
+                                <span class="performance-icon">🔥</span>
+                                <h3 class="performance-title">Consistência</h3>
+                            </div>
+                            <div class="performance-metrics">
+                                <div class="metric-row">
+                                    <span class="metric-label">Streak Atual</span>
+                                    <span class="metric-value" id="statCurrentStreak">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Melhor Streak</span>
+                                    <span class="metric-value" id="statBestStreakPerf">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">Partidas Jogadas</span>
+                                    <span class="metric-value" id="statTotalGamesPerf">0</span>
+                                </div>
+                            </div>
+                            <div class="performance-bar">
+                                <div class="performance-bar-fill streak" id="streakBarFill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hit Heatmap (onde acerta mais) -->
+                    <div class="heatmap-container-profile">
+                        <div class="heatmap-header">
+                            <h3 class="heatmap-title">🎯 Mapa de Acertos</h3>
+                            <p class="heatmap-subtitle">Onde você acerta seus oponentes</p>
+                        </div>
+                        <div class="heatmap-body-silhouette">
+                            <div class="body-part head" id="heatmapHead">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">CABEÇA</span>
+                            </div>
+                            <div class="body-part torso" id="heatmapTorso">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">TORSO</span>
+                            </div>
+                            <div class="body-part arms" id="heatmapArms">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">BRAÇOS</span>
+                            </div>
+                            <div class="body-part legs" id="heatmapLegs">
+                                <span class="hit-count">0</span>
+                                <span class="hit-label">PERNAS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de K/D Over Time (Simplified version) -->
+                    <div class="chart-container-profile">
+                        <div class="chart-header">
+                            <h3 class="chart-title">📈 Evolução K/D</h3>
+                            <p class="chart-subtitle">Suas últimas 10 partidas</p>
+                        </div>
+                        <div class="chart-body" id="kdChart">
+                            <!-- Será renderizado via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 🏅 6. CONQUISTAS - Badges Visuais -->
+                <div class="profile-achievements-section">
+                    <div class="section-header-profile">
+                        <div class="section-title-wrapper">
+                            <span class="section-icon-profile">🏅</span>
+                            <h2 class="section-title-profile">Conquistas</h2>
+                        </div>
+                        <p class="section-subtitle-profile">Suas glórias e medalhas de guerra</p>
+                    </div>
+
+                    <div class="achievements-grid-profile" id="achievementsGrid">
+                        <!-- Será preenchido via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- 🚀 5. CALL TO ACTION -->
+                <div class="profile-cta-section">
+                    <div class="cta-bg-profile">
+                        <div class="cta-scanline-profile"></div>
+                    </div>
+                    <div class="cta-content-profile">
+                        <span class="cta-icon-profile">⚡</span>
+                        <h2 class="cta-title-profile">Continue Sua Escalada</h2>
+                        <p class="cta-description-profile">
+                            Você está no caminho certo! Registre mais partidas e alcance novos ranks.
+                        </p>
+                        <div class="cta-buttons-profile">
+                            <button class="btn-cta-primary-profile" onclick="showPage('play')">
+                                <span class="btn-icon">⚔️</span>
+                                <span>JOGAR AGORA</span>
+                            </button>
+                            <button class="btn-cta-secondary-profile" onclick="showPage('leaderboard')">
+                                <span class="btn-icon">🏆</span>
+                                <span>VER RANKING</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRIENDS PAGE -->
+        <div id="friends" class="page">
+            <div class="section">
+                <h2 class="section-title">👥 AMIGOS & REDE SOCIAL</h2>
+                
+                <!-- Search Bar -->
+                <div class="friends-search">
+                    <input 
+                        type="text" 
+                        id="playerSearchInput" 
+                        class="form-input" 
+                        placeholder="Buscar amigo..." 
+                        oninput="searchPlayers(this.value)"
+                    >
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+
+                <!-- Friend Requests -->
+                <div class="friends-section" id="friendRequestsSection" style="display: none;">
+                    <h3 class="subsection-title">📬 SOLICITAÇÕES PENDENTES</h3>
+                    <div id="friendRequestsList" class="friends-grid">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                    </div>
+                </div>
+
+                <!-- Friends List -->
+                <div class="friends-section">
+                    <div class="subsection-header">
+                        <h3 class="subsection-title">✅ MEUS AMIGOS (<span id="friendsCount">0</span>)</h3>
+                        <div class="friend-filter-buttons">
+                            <button class="filter-btn-small active" onclick="friendsSystem.filterFriends('all')">
+                                TODOS
+                            </button>
+                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('online')">
+                                🟢 ONLINE
+                            </button>
+                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('playing')">
+                                🎮 JOGANDO
+                            </button>
+                            <button class="filter-btn-small" onclick="friendsSystem.filterFriends('offline')">
+                                ⚫ OFFLINE
+                            </button>
+                        </div>
+                    </div>
+                    <div id="friendsList" class="friends-grid">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="friendsEmptyState" style="display: none;">
+                            <div class="empty-state-icon">👥</div>
+                            <div class="empty-state-text">Você ainda não tem amigos</div>
+                            <div class="empty-state-hint">Use a busca acima para encontrar e adicionar jogadores</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Friends Ranking -->
+                <div class="friends-section">
+                    <h3 class="subsection-title">🏆 RANKING ENTRE AMIGOS</h3>
+                    <div id="friendsRanking" class="friends-ranking-container">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="rankingEmptyState" style="display: none;">
+                            <div class="empty-state-icon">🏆</div>
+                            <div class="empty-state-text">Nenhum ranking disponível</div>
+                            <div class="empty-state-hint">Adicione amigos para ver o ranking</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Feed -->
+                <div class="friends-section">
+                    <h3 class="subsection-title">📰 ATIVIDADE RECENTE</h3>
+                    <div id="friendsActivity" class="activity-feed">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="activityEmptyState" style="display: none;">
+                            <div class="empty-state-icon">📰</div>
+                            <div class="empty-state-text">Nenhuma atividade recente</div>
+                            <div class="empty-state-hint">As atividades dos seus amigos aparecerão aqui</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggested Friends -->
+                <div class="friends-section">
+                    <h3 class="subsection-title">💡 SUGESTÕES DE AMIZADE</h3>
+                    <p class="subsection-description">Jogadores com MMR similar ao seu que você pode conhecer</p>
+                    <div id="suggestedFriends" class="friends-grid">
+                        <!-- Preenchido dinamicamente pelo friends.js -->
+                        <div class="empty-state" id="suggestionsEmptyState" style="display: none;">
+                            <div class="empty-state-icon">💡</div>
+                            <div class="empty-state-text">Nenhuma sugestão disponível</div>
+                            <div class="empty-state-hint">Jogue mais partidas para encontrar jogadores compatíveis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKS PAGE -->
+        <div id="ranks" class="page">
+            <!-- 1️⃣ BANNER / HERO -->
+            <div class="ranks-hero">
+                <div class="ranks-hero-content">
+                    <div class="ranks-badge">
+                        <span class="badge-icon">⚡</span>
+                        <span class="badge-text">SISTEMA DE PROGRESSÃO</span>
+                    </div>
+                    <h1 class="ranks-hero-title">
+                        <span class="title-highlight">SUBA DE PATENTE</span>
+                        <span class="title-main">E DOMINE O CAMPO DE BATALHA</span>
+                    </h1>
+                    <p class="ranks-hero-description">
+                        Cada partida conta! Ganhe MMR, evolua nas patentes e mostre quem é o melhor operador do BO2 Ranked.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2️⃣ PROGRESSO DO JOGADOR (Se logado) -->
+            <div class="player-rank-progress" id="playerRankProgress" style="display: none;">
+                <div class="section-header">
+                    <span class="section-badge">📊</span>
+                    <h2 class="section-title">SEU PROGRESSO ATUAL</h2>
+                    <p class="section-subtitle">Acompanhe sua evolução rumo ao topo</p>
+                </div>
+
+                <div class="current-rank-display">
+                    <div class="current-rank-card">
+                        <div class="rank-icon-large" id="currentRankIcon">🥉</div>
+                        <div class="rank-info-large">
+                            <div class="rank-label-large">PATENTE ATUAL</div>
+                            <div class="rank-name-huge" id="currentRankName">BRONZE I</div>
+                            <div class="rank-mmr-large">
+                                <span class="mmr-value-large" id="currentMMRValue">150</span>
+                                <span class="mmr-label-large">MMR</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-arrow">➜</div>
+
+                    <div class="next-rank-card">
+                        <div class="rank-icon-medium" id="nextRankIcon">🥈</div>
+                        <div class="rank-info-medium">
+                            <div class="rank-label-medium">PRÓXIMA PATENTE</div>
+                            <div class="rank-name-medium" id="nextRankName">PRATA I</div>
+                            <div class="mmr-needed-display">
+                                <span id="mmrNeededValue">150</span> MMR restantes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-bar-section">
+                    <div class="progress-labels">
+                        <span class="progress-current" id="progressCurrentMMR">0 MMR</span>
+                        <span class="progress-percentage-display" id="progressPercentageDisplay">0%</span>
+                        <span class="progress-target" id="progressTargetMMR">300 MMR</span>
+                    </div>
+                    <div class="progress-bar-container-large">
+                        <div class="progress-bar-fill-large" id="progressBarFillLarge" style="width: 0%">
+                            <div class="progress-shine-effect"></div>
+                            <div class="progress-stripes"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3️⃣ TABELA DE RANKS -->
+            <div class="ranks-table-section">
+                <div class="section-header">
+                    <span class="section-badge">🎖️</span>
+                    <h2 class="section-title">TODAS AS PATENTES</h2>
+                    <p class="section-subtitle">Conheça todos os ranks e seus requisitos de MMR</p>
+                </div>
+
+                <div class="ranks-grid"></div>
+            </div>
+
+            <!-- 4️⃣ DICAS E ESTRATÉGIAS -->
+            <div class="ranks-tips-section">
+                <div class="section-header">
+                    <span class="section-badge">💡</span>
+                    <h2 class="section-title">DICAS PARA EVOLUIR MAIS RÁPIDO</h2>
+                    <p class="section-subtitle">Estratégias comprovadas para dominar o ranked</p>
+                </div>
+
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <div class="tip-icon">🎯</div>
+                        <h3 class="tip-title">Foque em Objetivos</h3>
+                        <p class="tip-description">
+                            Em modos como Domination e Hardpoint, capture pontos estrategicamente. Kills não valem nada sem controle de mapa.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🔫</div>
+                        <h3 class="tip-title">Domine Seu Loadout</h3>
+                        <p class="tip-description">
+                            Use armas e perks que complementam seu estilo. AN-94, MSMC e DSR-50 são meta. Hardline e Toughness são essenciais.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">🗺️</div>
+                        <h3 class="tip-title">Conheça os Mapas</h3>
+                        <p class="tip-description">
+                            Estude spawn points, rotas de flank e power positions. Conhecimento de mapa é metade da vitória.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">👥</div>
+                        <h3 class="tip-title">Jogue em Equipe</h3>
+                        <p class="tip-description">
+                            Comunique-se, cubra companheiros e coordene streaks. Trabalho em equipe vence partidas ranqueadas.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">📊</div>
+                        <h3 class="tip-title">Analise Seus Erros</h3>
+                        <p class="tip-description">
+                            Revise partidas perdidas. Identifique padrões de morte e ajuste seu posicionamento e timing.
+                        </p>
+                    </div>
+
+                    <div class="tip-card">
+                        <div class="tip-icon">⏱️</div>
+                        <h3 class="tip-title">Consistência > Grind</h3>
+                        <p class="tip-description">
+                            Melhor jogar 3 partidas focado que 10 cansado. Mantenha performance constante para subir ranks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5️⃣ CALL TO ACTION -->
+            <div class="ranks-cta">
+                <div class="ranks-cta-content">
+                    <div class="cta-icon-large">⚔️</div>
+                    <h2 class="cta-title-large">PRONTO PARA A BATALHA?</h2>
+                    <p class="cta-description-large">
+                        Coloque seu treinamento em prática. Registre suas vitórias e comece sua jornada rumo ao topo.
+                    </p>
+                    <div class="cta-buttons-large">
+                        <button class="btn-cta-primary-large" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span>REGISTRAR BATALHA</span>
+                        </button>
+                        <button class="btn-cta-secondary-large" onclick="showPage('profile')">
+                            <span class="btn-icon">📊</span>
+                            <span>VER MEU PERFIL</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD PAGE -->
+        <div id="leaderboard" class="page">
+            <div class="section">
+                <h2 class="section-title">🏆 RANKING GLOBAL</h2>
+                <div class="leaderboard-filters">
+                    <button class="filter-btn active" onclick="filterLeaderboard('global')">🌍 GLOBAL</button>
+                    <button class="filter-btn" onclick="filterLeaderboard('season')">📅 TEMPORADA</button>
+                </div>
+                <div id="leaderboardTable"></div>
+            </div>
+        </div>
+
+        <!-- SEASONS PAGE -->
+        <div id="seasons" class="page">
+            <!-- Active Season Hero -->
+            <div class="season-hero">
+                <div class="season-hero-content">
+                    <div class="season-badge">
+                        <span class="badge-icon">🏆</span>
+                        <span class="badge-text">TEMPORADA RANQUEADA</span>
+                    </div>
+                    <div class="season-status-row">
+                        <span class="season-status-pill" id="seasonStatusPill">AO VIVO</span>
+                        <span class="season-dates" id="seasonDates">--/--/---- • --/--/----</span>
+                    </div>
+                    <h1 class="season-hero-title" id="activeSeasonName">
+                        <span class="title-highlight">SEASON 1:</span>
+                        <span class="title-main">GENESIS</span>
+                    </h1>
+                    <p class="season-hero-description" id="activeSeasonDescription">
+                        A primeira temporada ranqueada. Prove seu valor e conquiste seu lugar no topo!
+                    </p>
+                    <div class="season-timer" id="seasonTimer">
+                        <div class="timer-icon">⏰</div>
+                        <div class="timer-content">
+                            <div class="timer-label">Tempo Restante</div>
+                            <div class="timer-value" id="timerValue">45 dias</div>
+                        </div>
+                    </div>
+                    <div class="season-hero-actions" style="margin-top:12px; display:flex; gap:12px; flex-wrap: wrap;">
+                        <button class="btn-hero-secondary" onclick="showPage('leaderboard')">
+                            <span class="btn-icon">🏆</span>
+                            <span class="btn-text">VER RANKING DA TEMPORADA</span>
+                        </button>
+                        <button class="btn-hero-primary" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span class="btn-text">REGISTRAR PARTIDA</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Season Rewards Section -->
+            <div class="season-rewards-section">
+                <div class="section-header">
+                    <span class="section-badge">🎁</span>
+                    <h2 class="section-title">RECOMPENSAS DA TEMPORADA</h2>
+                    <p class="section-subtitle">Conquiste seu lugar no pódio e ganhe badges exclusivas</p>
+                </div>
+
+                <div class="rewards-grid">
+                    <!-- Top 1 -->
+                    <div class="reward-card reward-top1">
+                        <div class="reward-rank">🥇 1º LUGAR</div>
+                        <div class="reward-icon">👑</div>
+                        <div class="reward-title">LEGEND SUPREME</div>
+                        <div class="reward-description">
+                            Badge dourada exclusiva + título permanente
+                        </div>
+                        <div class="reward-badge-preview">🏆 LEGEND SUPREME</div>
+                    </div>
+
+                    <!-- Top 2 -->
+                    <div class="reward-card reward-top2">
+                        <div class="reward-rank">🥈 2º LUGAR</div>
+                        <div class="reward-icon">💎</div>
+                        <div class="reward-title">ELITE MASTER</div>
+                        <div class="reward-description">
+                            Badge prateada exclusiva + título permanente
+                        </div>
+                        <div class="reward-badge-preview">🥈 ELITE MASTER</div>
+                    </div>
+
+                    <!-- Top 3 -->
+                    <div class="reward-card reward-top3">
+                        <div class="reward-rank">🥉 3º LUGAR</div>
+                        <div class="reward-icon">⭐</div>
+                        <div class="reward-title">TACTICAL EXPERT</div>
+                        <div class="reward-description">
+                            Badge bronze exclusiva + título permanente
+                        </div>
+                        <div class="reward-badge-preview">🥉 TACTICAL EXPERT</div>
+                    </div>
+
+                    <!-- Participation -->
+                    <div class="reward-card reward-participation">
+                        <div class="reward-rank">🎖️ PARTICIPAÇÃO</div>
+                        <div class="reward-icon">⚔️</div>
+                        <div class="reward-title">SEASON 1 VETERAN</div>
+                        <div class="reward-description">
+                            Badge de veterano (mínimo 10 partidas)
+                        </div>
+                        <div class="reward-badge-preview">🎖️ SEASON 1 VETERAN</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Progress Section -->
+            <div class="season-progress-section" id="seasonProgressSection">
+                <div class="section-header">
+                    <span class="section-badge">📊</span>
+                    <h2 class="section-title">SEU PROGRESSO NA TEMPORADA</h2>
+                    <p class="section-subtitle">Acompanhe suas estatísticas e progresso no ranking</p>
+                </div>
+
+                <div class="progress-stats-grid">
+                    <!-- MMR Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-label">MMR Atual</div>
+                            <div class="stat-value" id="seasonMMR">1000</div>
+                        </div>
+                    </div>
+
+                    <!-- Rank Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">🏅</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Rank da Temporada</div>
+                            <div class="stat-value" id="seasonRank">Bronze I</div>
+                        </div>
+                    </div>
+
+                    <!-- Win/Loss Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">⚔️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Vitórias / Derrotas</div>
+                            <div class="stat-value" id="seasonWinLoss">0 / 0</div>
+                        </div>
+                    </div>
+
+                    <!-- Win Rate Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Taxa de Vitória</div>
+                            <div class="stat-value" id="seasonWinRate">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- K/D Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">💀</div>
+                        <div class="stat-content">
+                            <div class="stat-label">K/D Ratio</div>
+                            <div class="stat-value" id="seasonKD">0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Leaderboard Position Card -->
+                    <div class="progress-stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Posição no Ranking</div>
+                            <div class="stat-value" id="seasonPosition">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qualification Progress -->
+                <div class="qualification-progress" id="qualificationProgress">
+                    <div class="qualification-header">
+                        <span class="qualification-icon">🎯</span>
+                        <span class="qualification-text">Progresso de Qualificação</span>
+                    </div>
+                    <div class="qualification-bar-container">
+                        <div class="qualification-bar" id="qualificationBar"></div>
+                    </div>
+                    <div class="qualification-info" id="qualificationInfo">
+                        0 / 10 partidas jogadas
+                    </div>
+                    <div class="season-goal-hint" id="seasonGoalHint" style="margin-top: 8px; color: rgba(255,255,255,0.7); font-size: 0.9rem;"></div>
+                </div>
+
+                <!-- Rank Progress to Next Rank -->
+                <div class="progress-bar-section season-rank-progress">
+                    <div class="progress-header">
+                        <div class="progress-current">
+                            <span class="progress-rank-icon" id="seasonProgressCurrentIcon">🥉</span>
+                            <span class="progress-rank-name" id="seasonProgressCurrentName">Bronze I</span>
+                        </div>
+                        <div class="progress-next">
+                            Próximo: <span id="seasonProgressNextIcon">🥉</span>
+                            <span id="seasonProgressNextName">Bronze II</span>
+                            • MMR restantes: <span id="seasonProgressMMRNeeded">0</span>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container-large">
+                        <div class="progress-bar-fill-large" id="seasonProgressBarFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-footer">
+                        <span id="seasonProgressMin">0</span>
+                        <span id="seasonProgressPercent">0%</span>
+                        <span id="seasonProgressMax">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Season Leaderboard Section -->
+            <div class="season-leaderboard-section">
+                <div class="section-header">
+                    <span class="section-badge">🏆</span>
+                    <h2 class="section-title">TOP 10 DA TEMPORADA</h2>
+                    <p class="section-subtitle">Os melhores jogadores da temporada atual</p>
+                </div>
+
+                <div class="season-leaderboard-table" id="seasonLeaderboardTable">
+                    <!-- Will be populated by JS -->
+                </div>
+
+                <div class="view-full-leaderboard">
+                    <button class="btn-view-full" onclick="showPage('leaderboard')">
+                        <span class="btn-icon">📊</span>
+                        <span>VER RANKING COMPLETO</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Past Seasons Section -->
+            <div class="past-seasons-section">
+                <div class="section-header">
+                    <span class="section-badge">📜</span>
+                    <h2 class="section-title">TEMPORADAS ANTERIORES</h2>
+                    <p class="section-subtitle">Histórico de temporadas e campeões</p>
+                </div>
+
+                <div class="past-seasons-grid" id="pastSeasonsGrid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Season CTA -->
+            <div class="season-cta">
+                <div class="season-cta-content">
+                    <div class="cta-icon-season">⚔️</div>
+                    <h2 class="cta-title-season">DOMINE A TEMPORADA</h2>
+                    <p class="cta-description-season">
+                        Cada partida conta! Suba no ranking, conquiste recompensas exclusivas e prove que você é o melhor.
+                    </p>
+                    <div class="cta-buttons-season">
+                        <button class="btn-cta-primary-season" onclick="showPage('play')">
+                            <span class="btn-icon">🎮</span>
+                            <span>JOGAR AGORA</span>
+                        </button>
+                        <button class="btn-cta-secondary-season" onclick="showPage('ranks')">
+                            <span class="btn-icon">🎖️</span>
+                            <span>VER RANKS</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY PAGE -->
+        <div id="history" class="page">
+            <div class="section">
+                <h2 class="section-title">📜 HISTÓRICO DE PARTIDAS</h2>
+                <div id="matchHistory"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODALS -->
+    
+    <!-- Login Modal - Redesigned -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content login-modal-redesigned">
+            <button class="modal-close" onclick="closeLoginModal()">×</button>
+            
+            <div class="login-modal-header">
+                <div class="login-icon-wrapper">
+                    <svg class="login-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                </div>
+                <h2 class="login-modal-title">ACESSO OPERACIONAL</h2>
+                <p class="login-modal-subtitle">Autenticação necessária para acessar o sistema</p>
+            </div>
+
+            <div class="login-terminal">
+                <div class="terminal-header">
+                    <span class="terminal-dot" style="background: #ff5f56;"></span>
+                    <span class="terminal-dot" style="background: #ffbd2e;"></span>
+                    <span class="terminal-dot" style="background: #27c93f;"></span>
+                    <span class="terminal-title">auth.sys</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-text typing-animation">Inicializando protocolo de autenticação...</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-text">Sistema: BO2 RANKED v2.0</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-text">Status: <span style="color: var(--rank-gold);">AGUARDANDO CREDENCIAIS</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-actions">
+                <button onclick="loginWithGoogle()" class="btn-google-modern">
+                    <svg class="google-icon" width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    <span class="btn-text">Autenticar com Google</span>
+                    <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="login-footer">
+                <div class="security-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span>Conexão segura via OAuth 2.0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 class="modal-title">⚠️ CONFIRMAR RESULTADO</h2>
+                <button class="modal-close" onclick="closeConfirmModal()">×</button>
+            </div>
+            <div id="confirmContent"></div>
+        </div>
+    </div>
+
+    <!-- Player Profile Modal -->
+    <!-- PLAYER PROFILE MODAL - ULTIMATE REDESIGN -->
+    <div class="modal-overlay" id="playerProfileModal">
+        <div class="player-profile-ultimate">
+            <!-- Close Button -->
+            <button class="profile-close-ultimate" onclick="closePlayerProfile()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <!-- HERO SECTION -->
+            <div class="profile-hero-section">
+                <div class="profile-hero-bg"></div>
+                <div class="profile-hero-content">
+                    <div class="profile-avatar-mega">
+                        <div class="avatar-glow-ring"></div>
+                        <div class="avatar-inner" id="profileAvatarImg">
+                            <span class="avatar-letter-mega" id="profileAvatarLetter">U</span>
+                        </div>
+                        <div class="avatar-rank-badge" id="profileRankIcon">🎖️</div>
+                    </div>
+                    <div class="profile-hero-info">
+                        <h1 class="profile-name-mega" id="profileUsername">USERNAME</h1>
+                        <div class="profile-rank-mega">
+                            <span class="rank-name-mega" id="modalRankName">BRONZE I</span>
+                            <span class="rank-mmr-mega"><span id="modalMMR">1000</span> MMR</span>
+                        </div>
+                        <div class="profile-quick-stats">
+                            <div class="quick-stat-item">
+                                <span class="qs-value" id="profileWins">0</span>
+                                <span class="qs-label">W</span>
+                            </div>
+                            <div class="quick-stat-divider"></div>
+                            <div class="quick-stat-item">
+                                <span class="qs-value" id="profileLosses">0</span>
+                                <span class="qs-label">L</span>
+                            </div>
+                            <div class="quick-stat-divider"></div>
+                            <div class="quick-stat-item highlight">
+                                <span class="qs-value" id="profileWinrate">0%</span>
+                                <span class="qs-label">WR</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions-hero" id="profileActionButtons"></div>
+                </div>
+            </div>
+
+            <!-- COMPARISON SECTION (YOU VS THEM) -->
+            <div class="profile-comparison-section" id="comparisonSection" style="display: none;">
+                <div class="comparison-header">
+                    <div class="comparison-title">
+                        <span class="comp-icon">⚔️</span>
+                        <span>COMPARAÇÃO</span>
+                    </div>
+                    <div class="comparison-subtitle">Você vs <span id="compVsName">Jogador</span></div>
+                </div>
+                <div class="comparison-grid">
+                    <!-- MMR Comparison -->
+                    <div class="comparison-item">
+                        <div class="comp-label">MMR</div>
+                        <div class="comp-bars">
+                            <div class="comp-bar-row you">
+                                <span class="comp-player-label">VOCÊ</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-you" id="compMMRYou" style="width: 50%"></div>
+                                    <span class="comp-value" id="compMMRYouValue">0</span>
+                                </div>
+                            </div>
+                            <div class="comp-bar-row them">
+                                <span class="comp-player-label">ELE</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-them" id="compMMRThem" style="width: 50%"></div>
+                                    <span class="comp-value" id="compMMRThemValue">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Winrate Comparison -->
+                    <div class="comparison-item">
+                        <div class="comp-label">WINRATE</div>
+                        <div class="comp-bars">
+                            <div class="comp-bar-row you">
+                                <span class="comp-player-label">VOCÊ</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-you" id="compWRYou" style="width: 50%"></div>
+                                    <span class="comp-value" id="compWRYouValue">0%</span>
+                                </div>
+                            </div>
+                            <div class="comp-bar-row them">
+                                <span class="comp-player-label">ELE</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-them" id="compWRThem" style="width: 50%"></div>
+                                    <span class="comp-value" id="compWRThemValue">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- K/D Comparison -->
+                    <div class="comparison-item">
+                        <div class="comp-label">K/D RATIO</div>
+                        <div class="comp-bars">
+                            <div class="comp-bar-row you">
+                                <span class="comp-player-label">VOCÊ</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-you" id="compKDYou" style="width: 50%"></div>
+                                    <span class="comp-value" id="compKDYouValue">0.00</span>
+                                </div>
+                            </div>
+                            <div class="comp-bar-row them">
+                                <span class="comp-player-label">ELE</span>
+                                <div class="comp-bar-container">
+                                    <div class="comp-bar comp-bar-them" id="compKDThem" style="width: 50%"></div>
+                                    <span class="comp-value" id="compKDThemValue">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comparison-verdict" id="comparisonVerdict">
+                    <div class="verdict-icon" id="compVerdictIcon">🏆</div>
+                    <div class="verdict-text" id="compVerdictText">Analisando estatísticas...</div>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="profile-stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon-wrap">�</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileTotalMatches">0</div>
+                        <div class="stat-label">Partidas</div>
+                    </div>
+                </div>
+                <div class="stat-box highlight-green">
+                    <div class="stat-icon-wrap">�</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileWins">0</div>
+                        <div class="stat-label">Vitórias</div>
+                    </div>
+                </div>
+                <div class="stat-box highlight-red">
+                    <div class="stat-icon-wrap">�</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileLosses">0</div>
+                        <div class="stat-label">Derrotas</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon-wrap">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="profileWinrate">0%</div>
+                        <div class="stat-label">Winrate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="profile-metrics">
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-label">K/D RATIO</span>
+                        <span class="metric-value" id="modalKD">0.00</span>
+                    </div>
+                    <div class="metric-bar">
+                        <div class="metric-fill" id="kdBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-header">
+                        <span class="metric-label">PROGRESSO DE RANK</span>
+                        <span class="metric-value" id="modalRankProgressValue">0%</span>
+                    </div>
+                    <div class="metric-bar">
+                        <div class="metric-fill rank-progress" id="modalRankProgressBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match History -->
+            <div class="profile-section">
+                <div class="section-header-new">
+                    <h3 class="section-title-new">
+                        <span class="section-icon">📜</span>
+                        HISTÓRICO RECENTE
+                    </h3>
+                    <span class="section-subtitle">Últimas 10 partidas</span>
+                </div>
+                <div class="matches-timeline" id="profileMatchHistory">
+                    <div class="empty-matches">
+                        <div class="empty-icon">🎮</div>
+                        <p>Nenhuma partida registrada</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RANK UP MODAL -->
+    <div class="rank-up-overlay" id="rankUpOverlay">
+        <div class="rank-up-waves">
+            <div class="rank-up-wave"></div>
+            <div class="rank-up-wave"></div>
+            <div class="rank-up-wave"></div>
+        </div>
+        <div class="rank-up-container">
+            <div class="rank-up-text">RANK UP!</div>
+            <div class="rank-up-icon" id="rankUpIcon">🏆</div>
+            <div class="rank-up-name" id="rankUpName">OURO I</div>
+            <div class="rank-up-mmr" id="rankUpMMR">1500 MMR</div>
+        </div>
+        <div class="rank-up-particles" id="rankUpParticles"></div>
+    </div>
+
+    <!-- ACCESS GRANTED MESSAGE -->
+    <div class="access-granted" id="accessGranted">ACCESS GRANTED</div>
+
+    <!-- PLUTONIUM NAME SETUP MODAL -->
+    <div class="modal-overlay" id="plutoniumNameModal" style="display: none;">
+        <div class="modal-content login-modal-redesigned" style="max-width: 500px;">
+            <div class="login-modal-header">
+                <div class="login-icon-wrapper">
+                    <span style="font-size: 3em;">🎮</span>
+                </div>
+                <h2 class="login-modal-title">CONFIGURAÇÃO OBRIGATÓRIA</h2>
+                <p class="login-modal-subtitle">Vincule seu nome do Plutonium para poder jogar</p>
+            </div>
+
+            <div style="padding: 0 30px 30px;">
+                <div style="background: rgba(255,193,7,0.1); border-left: 4px solid var(--rank-gold); padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <span style="font-size: 1.5em;">⚠️</span>
+                        <div>
+                            <strong style="color: var(--rank-gold); display: block; margin-bottom: 5px;">ATENÇÃO: Nome Exato do Plutonium</strong>
+                            <p style="margin: 0; color: rgba(255,255,255,0.85); font-size: 0.95em; line-height: 1.5;">
+                                Digite <strong>EXATAMENTE</strong> o nome que você usa no Plutonium BO2. 
+                                Maiúsculas, minúsculas, espaços e caracteres especiais importam!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="plutoniumNameForm" onsubmit="savePlutoniumName(event)">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; color: rgba(255,255,255,0.9); font-weight: 600;">
+                            <span style="margin-right: 8px;">🎯</span> Seu Nome no Plutonium
+                        </label>
+                        <input 
+                            type="text" 
+                            id="plutoniumNameInput" 
+                            class="form-input"
+                            placeholder="Ex: SoldierBR_123"
+                            required
+                            minlength="2"
+                            maxlength="32"
+                            style="width: 100%; padding: 12px 16px; font-size: 1.05em; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: 'Rajdhani', sans-serif;"
+                        >
+                        <div style="margin-top: 8px; font-size: 0.9em; color: rgba(255,255,255,0.6);">
+                            💡 Este nome será usado para identificar você nas partidas
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <div style="font-size: 0.95em; color: rgba(255,255,255,0.8); margin-bottom: 10px;">
+                            <strong>📝 Como encontrar seu nome:</strong>
+                        </div>
+                        <ol style="margin: 0; padding-left: 20px; color: rgba(255,255,255,0.7); font-size: 0.9em;">
+                            <li style="margin-bottom: 5px;">Abra o Plutonium BO2</li>
+                            <li style="margin-bottom: 5px;">Entre em qualquer servidor</li>
+                            <li style="margin-bottom: 5px;">Veja seu nome no canto superior direito ou no scoreboard (TAB)</li>
+                            <li>Copie EXATAMENTE como aparece</li>
+                        </ol>
+                    </div>
+
+                    <button type="submit" class="btn-google-modern" style="width: 100%; justify-content: center;">
+                        <span class="btn-text">✅ Confirmar e Começar a Jogar</span>
+                    </button>
+                </form>
+
+                <div style="margin-top: 15px; text-align: center; font-size: 0.85em; color: rgba(255,255,255,0.5);">
+                    Você poderá alterar isso depois na sua página de perfil
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase SDK v8 (compatibility mode) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="/js/firebase-config.js"></script>
+    <script src="/js/main.js"></script>
+    <!-- App Scripts -->
+    <script src="/js/rank-up-animation.js"></script>
+    <script src="/js/ranks.js"></script>
+    <script src="/js/mmr.js"></script>
+    <script src="/js/anti-abuse.js"></script>
+    <script src="/js/data-firebase.js"></script>
+    <script src="/js/friends.js"></script>
+    <script src="/js/seasons.js"></script>
+    <script src="/js/seasons-ui.js"></script>
+    <script src="/js/matches.js"></script>
+    <script src="/js/match-registration.js"></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/plutonium-name.js"></script>
+    <script src="/js/ui.js"></script>
+</body>
+</html>

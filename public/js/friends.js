@@ -606,7 +606,7 @@ class FriendsSystem {
 
             const rankData = getRankFromMMR(playerData.mmr || 999);
             
-            // Calcular partidas jogadas (wins + losses é mais confiável)
+            // Calcular partidas jogadas corretamente (wins + losses)
             const wins = playerData.wins || 0;
             const losses = playerData.losses || 0;
             const gamesPlayed = wins + losses;
