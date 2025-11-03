@@ -77,7 +77,10 @@ const UI = {
                 const rank = (typeof RankSystem !== 'undefined' && RankSystem.getRank) ? RankSystem.getRank(player.mmr) : { icon: '', name: '' };
                 const pos = i + 1;
                 const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `#${pos}`;
-                const winRate = player.gamesPlayed ? ((player.wins / player.gamesPlayed) * 100).toFixed(1) : '0.0';
+                const wins = player.wins || 0;
+                const losses = player.losses || 0;
+                const gamesPlayed = wins + losses;
+                const winRate = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(1) : '0.0';
                 const kd = (player.totalDeaths && player.totalDeaths > 0) ? (player.totalKills / player.totalDeaths).toFixed(2) : ((player.totalKills||0).toFixed(2));
 
                 return `
@@ -195,8 +198,11 @@ const UI = {
                     ? RankSystem.getRank(player.mmr) 
                     : { icon: '🎖️', name: 'Unranked' };
                 
-                const winRate = player.gamesPlayed 
-                    ? ((player.wins / player.gamesPlayed) * 100).toFixed(0) 
+                const wins = player.wins || 0;
+                const losses = player.losses || 0;
+                const gamesPlayed = wins + losses;
+                const winRate = gamesPlayed > 0
+                    ? ((wins / gamesPlayed) * 100).toFixed(0) 
                     : '0';
                 
                 const medal = position === 1 ? '🏆' : position === 2 ? '🥈' : '🥉';
@@ -281,8 +287,13 @@ const UI = {
                             ? RankSystem.getRank(player.mmr) 
                             : { icon: '🎖️', name: 'Unranked' };
                         
-                        const winRate = player.gamesPlayed 
-                            ? ((player.wins / player.gamesPlayed) * 100).toFixed(0) 
+                        // Calcular partidas como wins + losses
+                        const wins = player.wins || 0;
+                        const losses = player.losses || 0;
+                        const gamesPlayed = wins + losses;
+                        
+                        const winRate = gamesPlayed > 0
+                            ? ((wins / gamesPlayed) * 100).toFixed(0) 
                             : '0';
                         
                         const kd = (player.totalDeaths && player.totalDeaths > 0) 
@@ -324,7 +335,7 @@ const UI = {
                                 <div class="lb-stats">
                                     <div class="lb-stat">
                                         <span class="lb-stat-label">V/D</span>
-                                        <span class="lb-stat-value">${player.wins || 0}/${player.losses || 0}</span>
+                                        <span class="lb-stat-value">${wins}/${losses}</span>
                                     </div>
                                     <div class="lb-stat">
                                         <span class="lb-stat-label">K/D</span>
@@ -336,7 +347,7 @@ const UI = {
                                     </div>
                                     <div class="lb-stat">
                                         <span class="lb-stat-label">Partidas</span>
-                                        <span class="lb-stat-value">${player.gamesPlayed || 0}</span>
+                                        <span class="lb-stat-value">${gamesPlayed}</span>
                                     </div>
                                 </div>
                             </div>
