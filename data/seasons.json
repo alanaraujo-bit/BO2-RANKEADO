@@ -1,0 +1,1982 @@
+[
+  {
+    "_id": "s1-genesis",
+    "seasonNumber": 1,
+    "name": "GENESIS",
+    "displayName": "Season 1: GENESIS",
+    "description": "O Começo de Tudo",
+    "startDate": "2025-11-01T03:00:00.000Z",
+    "endDate": "2025-12-01T02:59:59.000Z",
+    "active": true,
+    "rewards": {
+      "top1": {
+        "badge": "👑 GENESIS SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 GENESIS ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ GENESIS TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ GENESIS VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s2-uprising",
+    "seasonNumber": 2,
+    "name": "UPRISING",
+    "displayName": "Season 2: UPRISING",
+    "description": "A Revolução Ranqueada",
+    "startDate": "2025-12-01T03:00:00.000Z",
+    "endDate": "2026-01-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 UPRISING SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 UPRISING ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ UPRISING TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ UPRISING VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s3-inferno",
+    "seasonNumber": 3,
+    "name": "INFERNO",
+    "displayName": "Season 3: INFERNO",
+    "description": "Fogo e Glória",
+    "startDate": "2026-01-01T03:00:00.000Z",
+    "endDate": "2026-02-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 INFERNO SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 INFERNO ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ INFERNO TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ INFERNO VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s4-reckoning",
+    "seasonNumber": 4,
+    "name": "RECKONING",
+    "displayName": "Season 4: RECKONING",
+    "description": "O Dia do Acerto de Contas",
+    "startDate": "2026-02-01T03:00:00.000Z",
+    "endDate": "2026-03-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 RECKONING SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 RECKONING ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ RECKONING TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ RECKONING VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s5-dominion",
+    "seasonNumber": 5,
+    "name": "DOMINION",
+    "displayName": "Season 5: DOMINION",
+    "description": "O Império do Rank",
+    "startDate": "2026-03-01T03:00:00.000Z",
+    "endDate": "2026-04-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 DOMINION SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 DOMINION ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ DOMINION TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ DOMINION VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s6-eclipse",
+    "seasonNumber": 6,
+    "name": "ECLIPSE",
+    "displayName": "Season 6: ECLIPSE",
+    "description": "Sombras da Competição",
+    "startDate": "2026-04-01T03:00:00.000Z",
+    "endDate": "2026-05-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 ECLIPSE SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 ECLIPSE ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ ECLIPSE TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ ECLIPSE VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s7-ascension",
+    "seasonNumber": 7,
+    "name": "ASCENSION",
+    "displayName": "Season 7: ASCENSION",
+    "description": "A Ascensão dos Lendários",
+    "startDate": "2026-05-01T03:00:00.000Z",
+    "endDate": "2026-06-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 ASCENSION SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 ASCENSION ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ ASCENSION TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ ASCENSION VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s8-warzone",
+    "seasonNumber": 8,
+    "name": "WARZONE",
+    "displayName": "Season 8: WARZONE",
+    "description": "Zona de Guerra Total",
+    "startDate": "2026-06-01T03:00:00.000Z",
+    "endDate": "2026-07-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 WARZONE SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 WARZONE ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ WARZONE TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ WARZONE VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s9-phoenix",
+    "seasonNumber": 9,
+    "name": "PHOENIX",
+    "displayName": "Season 9: PHOENIX",
+    "description": "Das Cinzas ao Topo",
+    "startDate": "2026-07-01T03:00:00.000Z",
+    "endDate": "2026-08-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 PHOENIX SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 PHOENIX ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ PHOENIX TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ PHOENIX VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s10-nemesis",
+    "seasonNumber": 10,
+    "name": "NEMESIS",
+    "displayName": "Season 10: NEMESIS",
+    "description": "Vingança Ranqueada",
+    "startDate": "2026-08-01T03:00:00.000Z",
+    "endDate": "2026-09-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 NEMESIS SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 NEMESIS ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ NEMESIS TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ NEMESIS VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s11-vanguard",
+    "seasonNumber": 11,
+    "name": "VANGUARD",
+    "displayName": "Season 11: VANGUARD",
+    "description": "A Vanguarda da Elite",
+    "startDate": "2026-09-01T03:00:00.000Z",
+    "endDate": "2026-10-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 VANGUARD SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 VANGUARD ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ VANGUARD TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ VANGUARD VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s12-apocalypse",
+    "seasonNumber": 12,
+    "name": "APOCALYPSE",
+    "displayName": "Season 12: APOCALYPSE",
+    "description": "O Fim dos Tempos",
+    "startDate": "2026-10-01T03:00:00.000Z",
+    "endDate": "2026-11-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 APOCALYPSE SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 APOCALYPSE ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ APOCALYPSE TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ APOCALYPSE VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s13-reborn",
+    "seasonNumber": 13,
+    "name": "REBORN",
+    "displayName": "Season 13: REBORN",
+    "description": "Renascimento Competitivo",
+    "startDate": "2026-11-01T03:00:00.000Z",
+    "endDate": "2026-12-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 REBORN SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 REBORN ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ REBORN TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ REBORN VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s14-titan",
+    "seasonNumber": 14,
+    "name": "TITAN",
+    "displayName": "Season 14: TITAN",
+    "description": "Era dos Titãs",
+    "startDate": "2026-12-01T03:00:00.000Z",
+    "endDate": "2027-01-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 TITAN SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 TITAN ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ TITAN TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ TITAN VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s15-exodus",
+    "seasonNumber": 15,
+    "name": "EXODUS",
+    "displayName": "Season 15: EXODUS",
+    "description": "A Grande Jornada",
+    "startDate": "2027-01-01T03:00:00.000Z",
+    "endDate": "2027-02-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 EXODUS SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 EXODUS ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ EXODUS TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ EXODUS VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s16-vendetta",
+    "seasonNumber": 16,
+    "name": "VENDETTA",
+    "displayName": "Season 16: VENDETTA",
+    "description": "Revanche Suprema",
+    "startDate": "2027-02-01T03:00:00.000Z",
+    "endDate": "2027-03-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 VENDETTA SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 VENDETTA ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ VENDETTA TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ VENDETTA VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s17-sovereign",
+    "seasonNumber": 17,
+    "name": "SOVEREIGN",
+    "displayName": "Season 17: SOVEREIGN",
+    "description": "O Império Absoluto",
+    "startDate": "2027-03-01T03:00:00.000Z",
+    "endDate": "2027-04-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 SOVEREIGN SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 SOVEREIGN ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ SOVEREIGN TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ SOVEREIGN VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s18-catalyst",
+    "seasonNumber": 18,
+    "name": "CATALYST",
+    "displayName": "Season 18: CATALYST",
+    "description": "A Faísca da Mudança",
+    "startDate": "2027-04-01T03:00:00.000Z",
+    "endDate": "2027-05-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 CATALYST SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 CATALYST ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ CATALYST TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ CATALYST VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s19-omega",
+    "seasonNumber": 19,
+    "name": "OMEGA",
+    "displayName": "Season 19: OMEGA",
+    "description": "O Fim e o Começo",
+    "startDate": "2027-05-01T03:00:00.000Z",
+    "endDate": "2027-06-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 OMEGA SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 OMEGA ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ OMEGA TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ OMEGA VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s20-rampage",
+    "seasonNumber": 20,
+    "name": "RAMPAGE",
+    "displayName": "Season 20: RAMPAGE",
+    "description": "Fúria Incontrolável",
+    "startDate": "2027-06-01T03:00:00.000Z",
+    "endDate": "2027-07-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 RAMPAGE SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 RAMPAGE ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ RAMPAGE TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ RAMPAGE VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s21-legacy",
+    "seasonNumber": 21,
+    "name": "LEGACY",
+    "displayName": "Season 21: LEGACY",
+    "description": "O Legado dos Campeões",
+    "startDate": "2027-07-01T03:00:00.000Z",
+    "endDate": "2027-08-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 LEGACY SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 LEGACY ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ LEGACY TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ LEGACY VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s22-havoc",
+    "seasonNumber": 22,
+    "name": "HAVOC",
+    "displayName": "Season 22: HAVOC",
+    "description": "Caos Controlado",
+    "startDate": "2027-08-01T03:00:00.000Z",
+    "endDate": "2027-09-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 HAVOC SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 HAVOC ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ HAVOC TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ HAVOC VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s23-prime",
+    "seasonNumber": 23,
+    "name": "PRIME",
+    "displayName": "Season 23: PRIME",
+    "description": "O Auge da Competição",
+    "startDate": "2027-09-01T03:00:00.000Z",
+    "endDate": "2027-10-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 PRIME SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 PRIME ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ PRIME TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ PRIME VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s24-cataclysm",
+    "seasonNumber": 24,
+    "name": "CATACLYSM",
+    "displayName": "Season 24: CATACLYSM",
+    "description": "A Grande Catástrofe",
+    "startDate": "2027-10-01T03:00:00.000Z",
+    "endDate": "2027-11-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 CATACLYSM SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 CATACLYSM ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ CATACLYSM TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ CATACLYSM VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s25-resurgence",
+    "seasonNumber": 25,
+    "name": "RESURGENCE",
+    "displayName": "Season 25: RESURGENCE",
+    "description": "O Ressurgimento",
+    "startDate": "2027-11-01T03:00:00.000Z",
+    "endDate": "2027-12-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 RESURGENCE SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 RESURGENCE ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ RESURGENCE TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ RESURGENCE VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s26-oblivion",
+    "seasonNumber": 26,
+    "name": "OBLIVION",
+    "displayName": "Season 26: OBLIVION",
+    "description": "No Limite do Esquecimento",
+    "startDate": "2027-12-01T03:00:00.000Z",
+    "endDate": "2028-01-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 OBLIVION SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 OBLIVION ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ OBLIVION TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ OBLIVION VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s27-reckless",
+    "seasonNumber": 27,
+    "name": "RECKLESS",
+    "displayName": "Season 27: RECKLESS",
+    "description": "Imprudência Calculada",
+    "startDate": "2028-01-01T03:00:00.000Z",
+    "endDate": "2028-02-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 RECKLESS SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 RECKLESS ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ RECKLESS TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ RECKLESS VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s28-dynasty",
+    "seasonNumber": 28,
+    "name": "DYNASTY",
+    "displayName": "Season 28: DYNASTY",
+    "description": "A Dinastia do Rank",
+    "startDate": "2028-02-01T03:00:00.000Z",
+    "endDate": "2028-03-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 DYNASTY SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 DYNASTY ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ DYNASTY TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ DYNASTY VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s29-chaos",
+    "seasonNumber": 29,
+    "name": "CHAOS",
+    "displayName": "Season 29: CHAOS",
+    "description": "Caos Puro",
+    "startDate": "2028-03-01T03:00:00.000Z",
+    "endDate": "2028-04-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 CHAOS SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 CHAOS ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ CHAOS TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ CHAOS VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  },
+  {
+    "_id": "s30-infinity",
+    "seasonNumber": 30,
+    "name": "INFINITY",
+    "displayName": "Season 30: INFINITY",
+    "description": "Rumo ao Infinito",
+    "startDate": "2028-04-01T03:00:00.000Z",
+    "endDate": "2028-05-01T02:59:59.000Z",
+    "active": false,
+    "rewards": {
+      "top1": {
+        "badge": "👑 INFINITY SUPREME CHAMPION",
+        "icon": "👑",
+        "color": "#FFD700",
+        "rarity": "legendary"
+      },
+      "top2": {
+        "badge": "💎 INFINITY ELITE MASTER",
+        "icon": "💎",
+        "color": "#C0C0C0",
+        "rarity": "epic"
+      },
+      "top3": {
+        "badge": "⭐ INFINITY TACTICAL EXPERT",
+        "icon": "⭐",
+        "color": "#CD7F32",
+        "rarity": "rare"
+      },
+      "participation": {
+        "badge": "🎖️ INFINITY VETERAN",
+        "icon": "🎖️",
+        "minGames": 15,
+        "rarity": "common"
+      }
+    },
+    "settings": {
+      "minGamesForRewards": 15,
+      "softResetMultipliers": {
+        "legend": 0.85,
+        "master": 0.8,
+        "diamond": 0.75,
+        "platinum": 0.7,
+        "gold": 0.65,
+        "silver": 0.6,
+        "bronze": 0.5
+      },
+      "minimumMMRAfterReset": {
+        "legend": 1800,
+        "master": 1500,
+        "diamond": 1200,
+        "platinum": 1000,
+        "gold": 850,
+        "silver": 700,
+        "bronze": 500
+      }
+    },
+    "leaderboard": [],
+    "statistics": {
+      "totalPlayers": 0,
+      "totalMatches": 0,
+      "avgMMR": 0,
+      "topMMR": 0
+    },
+    "createdAt": "2025-11-03T02:37:14.934Z",
+    "updatedAt": "2025-11-03T02:37:14.934Z"
+  }
+]

@@ -10,8 +10,14 @@ const SeasonData = {
     playerSeasonProgress: {}, // { seasonId: { playerId: progressData } }
     
     // Initialize season system
-    init() {
-        this.loadFromStorage();
+    async init() {
+        // Tenta carregar do arquivo JSON gerado
+        await this.loadFromJSON();
+        
+        // Fallback: carrega do localStorage se não houver JSON
+        if (this.seasons.length === 0) {
+            this.loadFromStorage();
+        }
         
         // Create default season if none exists
         if (this.seasons.length === 0) {
@@ -20,6 +26,24 @@ const SeasonData = {
         
         // Set active season
         this.activeSeason = this.seasons.find(s => s.active) || this.seasons[0];
+        
+        console.log('🏆 Temporada Ativa:', this.activeSeason?.displayName || this.activeSeason?.name);
+    },
+    
+    // Load seasons from JSON file
+    async loadFromJSON() {
+        try {
+            const response = await fetch('/data/seasons.json');
+            if (response.ok) {
+                this.seasons = await response.json();
+                console.log(`✅ ${this.seasons.length} temporadas carregadas do servidor`);
+                this.save(); // Salva no localStorage também
+                return true;
+            }
+        } catch (error) {
+            console.warn('⚠️ Não foi possível carregar seasons.json, usando localStorage');
+        }
+        return false;
     },
     
     // Create default first season
@@ -314,6 +338,11 @@ const SeasonData = {
         }
     }
 };
+
+// Export to window for global access
+if (typeof window !== 'undefined') {
+    window.SeasonData = SeasonData;
+}
 
 // Initialize on load
 if (typeof document !== 'undefined') {

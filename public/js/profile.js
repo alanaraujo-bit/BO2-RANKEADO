@@ -215,71 +215,64 @@ const ProfileManager = {
         const filteredMatches = this.filterMatches(matches);
         const displayMatches = filteredMatches.slice(0, this.matchesDisplayed);
 
-        matchesList.innerHTML = displayMatches.map(match => {
+        matchesList.innerHTML = displayMatches.map((match, index) => {
             const isWin = match.result === 'win';
             const kd = match.deaths > 0 ? (match.kills / match.deaths).toFixed(2) : match.kills.toFixed(2);
             const mmrChange = match.mmrChange || 0;
-            const date = new Date(match.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+            const date = new Date(match.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+            
+            // Extrair informações do modo de jogo (ex: "TDM 1v1", "TDM 2v2", etc)
+            const gameMode = match.gameMode || 'TDM';
+            const modeMatch = gameMode.match(/(\d+)v(\d+)/);
+            const teamSize = modeMatch ? `${modeMatch[1]}v${modeMatch[2]}` : '1v1';
+            const modeType = gameMode.replace(/\s*\d+v\d+\s*/, '').trim() || 'TDM';
 
             return `
-                <div class="match-card-profile ${isWin ? 'match-win' : 'match-loss'}">
-                    <!-- Header do Card com Resultado -->
-                    <div class="match-header-profile">
-                        <div class="match-result-badge ${isWin ? 'badge-win' : 'badge-loss'}">
-                            <span class="result-icon">${isWin ? '✅' : '❌'}</span>
-                            <span class="result-text">${isWin ? 'VITÓRIA' : 'DERROTA'}</span>
+                <div class="match-row-compact ${isWin ? 'match-win' : 'match-loss'}">
+                    <!-- Indicador Lateral -->
+                    <div class="match-indicator ${isWin ? 'win' : 'loss'}"></div>
+                    
+                    <!-- Resultado Icon -->
+                    <div class="match-result-icon-compact">
+                        ${isWin ? '<span class="win-icon">✓</span>' : '<span class="loss-icon">✕</span>'}
+                    </div>
+                    
+                    <!-- Info Principal -->
+                    <div class="match-main-info">
+                        <div class="match-opponent-compact">
+                            <span class="vs-label">vs</span>
+                            <span class="opponent-name-compact">${match.opponent || 'Unknown'}</span>
                         </div>
-                        <div class="match-mmr-badge ${mmrChange >= 0 ? 'mmr-positive' : 'mmr-negative'}">
-                            <span class="mmr-icon">${mmrChange >= 0 ? '↗' : '↘'}</span>
-                            <span class="mmr-value">${mmrChange >= 0 ? '+' : ''}${mmrChange}</span>
+                        <div class="match-meta-compact">
+                            <span class="meta-item">${match.map || 'Unknown'}</span>
+                            <span class="meta-separator">•</span>
+                            <span class="meta-item">${modeType}</span>
+                            <span class="meta-separator">•</span>
+                            <span class="meta-item meta-team">${teamSize}</span>
+                            <span class="meta-separator">•</span>
+                            <span class="meta-item meta-date">${date}</span>
                         </div>
                     </div>
-
-                    <!-- Oponente -->
-                    <div class="match-opponent-profile">
-                        <span class="opponent-label">VS</span>
-                        <span class="opponent-name">${match.opponent}</span>
-                    </div>
-
-                    <!-- Info da Partida -->
-                    <div class="match-info-profile">
-                        <div class="info-item">
-                            <span class="info-icon">🗺️</span>
-                            <span class="info-text">${match.map}</span>
+                    
+                    <!-- Stats Compactos -->
+                    <div class="match-stats-compact">
+                        <div class="stat-compact stat-kd">
+                            <span class="stat-label-compact">K/D</span>
+                            <span class="stat-value-compact ${parseFloat(kd) >= 1.5 ? 'excellent' : parseFloat(kd) >= 1.0 ? 'good' : ''}">${kd}</span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-icon">🎮</span>
-                            <span class="info-text">${match.gameMode}</span>
+                        <div class="stat-compact">
+                            <span class="stat-label-compact">K</span>
+                            <span class="stat-value-compact">${match.kills || 0}</span>
                         </div>
-                        <div class="info-item">
-                            <span class="info-icon">📅</span>
-                            <span class="info-text">${date}</span>
+                        <div class="stat-compact">
+                            <span class="stat-label-compact">D</span>
+                            <span class="stat-value-compact">${match.deaths || 0}</span>
                         </div>
                     </div>
-
-                    <!-- Stats Grid -->
-                    <div class="match-stats-grid">
-                        <div class="stat-item-match">
-                            <div class="stat-icon-match">⚔️</div>
-                            <div class="stat-content-match">
-                                <div class="stat-label-match">K/D RATIO</div>
-                                <div class="stat-value-match ${parseFloat(kd) >= 1.5 ? 'stat-excellent' : parseFloat(kd) >= 1.0 ? 'stat-good' : ''}">${kd}</div>
-                            </div>
-                        </div>
-                        <div class="stat-item-match">
-                            <div class="stat-icon-match">🎯</div>
-                            <div class="stat-content-match">
-                                <div class="stat-label-match">KILLS</div>
-                                <div class="stat-value-match">${match.kills}</div>
-                            </div>
-                        </div>
-                        <div class="stat-item-match">
-                            <div class="stat-icon-match">💀</div>
-                            <div class="stat-content-match">
-                                <div class="stat-label-match">DEATHS</div>
-                                <div class="stat-value-match">${match.deaths}</div>
-                            </div>
-                        </div>
+                    
+                    <!-- MMR Badge -->
+                    <div class="match-mmr-compact ${mmrChange >= 0 ? 'positive' : 'negative'}">
+                        <span class="mmr-sign">${mmrChange >= 0 ? '+' : ''}</span><span class="mmr-number">${Math.abs(mmrChange)}</span>
                     </div>
                 </div>
             `;

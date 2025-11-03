@@ -27,6 +27,11 @@ const MatchSystem = {
         const winner = result === 'win' ? reporter : opponent;
         const loser = result === 'win' ? opponent : reporter;
         
+        // Obtem temporada ativa
+        const activeSeason = SeasonData.getActiveSeason();
+        const seasonId = activeSeason ? (activeSeason._id || activeSeason.id) : null;
+        const seasonNumber = activeSeason ? activeSeason.seasonNumber : null;
+        
         // Create match object
         const match = {
             playerA: reporter,
@@ -38,7 +43,9 @@ const MatchSystem = {
             map: map,
             mode: mode,
             reporter: reporter,
-            confirmed: false
+            confirmed: false,
+            seasonId: seasonId,
+            seasonNumber: seasonNumber
         };
         
         try {
