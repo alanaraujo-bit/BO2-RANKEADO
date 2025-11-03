@@ -1862,76 +1862,97 @@
                 </div>
             </div>
 
-            <!-- Stats Overview -->
-            <div class="profile-stats-grid">
-                <div class="stat-box">
-                    <div class="stat-icon-wrap">�</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="profileTotalMatches">0</div>
-                        <div class="stat-label">Partidas</div>
+            
+            <!-- DETAILED STATS GRID (4 Cards) -->
+            <div class="profile-detailed-stats">
+                <div class="detailed-stat-card">
+                    <div class="dstat-header">
+                        <span class="dstat-icon">🎮</span>
+                        <span class="dstat-label">PARTIDAS</span>
                     </div>
+                    <div class="dstat-value" id="profileMatchesDetailed">0</div>
+                    <div class="dstat-subtext">Total jogado</div>
                 </div>
-                <div class="stat-box highlight-green">
-                    <div class="stat-icon-wrap">�</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="profileWins">0</div>
-                        <div class="stat-label">Vitórias</div>
+
+                <div class="detailed-stat-card win">
+                    <div class="dstat-header">
+                        <span class="dstat-icon">🏆</span>
+                        <span class="dstat-label">VITÓRIAS</span>
                     </div>
+                    <div class="dstat-value" id="profileWinsDetailed">0</div>
+                    <div class="dstat-subtext">Sequência: <strong id="profileWinStreak">0</strong></div>
                 </div>
-                <div class="stat-box highlight-red">
-                    <div class="stat-icon-wrap">�</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="profileLosses">0</div>
-                        <div class="stat-label">Derrotas</div>
+
+                <div class="detailed-stat-card loss">
+                    <div class="dstat-header">
+                        <span class="dstat-icon">💀</span>
+                        <span class="dstat-label">DERROTAS</span>
                     </div>
+                    <div class="dstat-value" id="profileLossesDetailed">0</div>
+                    <div class="dstat-subtext">Sequência: <strong id="profileLoseStreak">0</strong></div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-icon-wrap">📈</div>
-                    <div class="stat-content">
-                        <div class="stat-value" id="profileWinrate">0%</div>
-                        <div class="stat-label">Winrate</div>
+
+                <div class="detailed-stat-card">
+                    <div class="dstat-header">
+                        <span class="dstat-icon">📈</span>
+                        <span class="dstat-label">WINRATE</span>
+                    </div>
+                    <div class="dstat-value" id="profileWinrateDetailed">0%</div>
+                    <div class="dstat-progress">
+                        <div class="dstat-bar" id="winrateProgressBar" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Performance Metrics -->
-            <div class="profile-metrics">
-                <div class="metric-item">
-                    <div class="metric-header">
-                        <span class="metric-label">K/D RATIO</span>
-                        <span class="metric-value" id="modalKD">0.00</span>
+            <!-- K/D RATIO CARD -->
+            <div class="profile-detailed-stats" style="grid-template-columns: 1fr; padding: 0 32px 24px;">
+                <div class="detailed-stat-card">
+                    <div class="dstat-header">
+                        <span class="dstat-icon">💥</span>
+                        <span class="dstat-label">K/D RATIO</span>
                     </div>
-                    <div class="metric-bar">
-                        <div class="metric-fill" id="kdBar" style="width: 0%"></div>
+                    <div class="dstat-value" id="profileKDDetailed">0.00</div>
+                    <div class="dstat-progress">
+                        <div class="dstat-bar kd-bar" id="kdProgressBar" style="width: 0%"></div>
                     </div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-header">
-                        <span class="metric-label">PROGRESSO DE RANK</span>
-                        <span class="metric-value" id="modalRankProgressValue">0%</span>
-                    </div>
-                    <div class="metric-bar">
-                        <div class="metric-fill rank-progress" id="modalRankProgressBar" style="width: 0%"></div>
-                    </div>
+                    <div class="dstat-subtext">Máximo ideal: 3.00+</div>
                 </div>
             </div>
 
-            <!-- Match History -->
-            <div class="profile-section">
-                <div class="section-header-new">
-                    <h3 class="section-title-new">
-                        <span class="section-icon">📜</span>
-                        HISTÓRICO RECENTE
+            <!-- RANK PROGRESSION -->
+            <div class="profile-rank-progression">
+                <div class="rank-prog-header">
+                    <span class="rank-prog-title">PROGRESSÃO DE RANK</span>
+                    <span class="rank-prog-percentage" id="rankProgressPercent">0%</span>
+                </div>
+                <div class="rank-prog-bar-container">
+                    <div class="rank-prog-bar" id="rankProgressBar" style="width: 0%">
+                        <div class="rank-prog-glow"></div>
+                    </div>
+                </div>
+                <div class="rank-prog-info" id="rankProgressInfo">
+                    Faltam <strong>0 MMR</strong> para o próximo rank
+                </div>
+            </div>
+
+            <!-- MATCH HISTORY SECTION -->
+            <div class="profile-matches-section">
+                <div class="matches-section-header">
+                    <h3 class="matches-title">
+                        <span class="matches-icon">📜</span>
+                        HISTÓRICO DE PARTIDAS
                     </h3>
-                    <span class="section-subtitle">Últimas 10 partidas</span>
+                    <div class="matches-subtitle">Últimas 10 partidas registradas</div>
                 </div>
-                <div class="matches-timeline" id="profileMatchHistory">
-                    <div class="empty-matches">
-                        <div class="empty-icon">🎮</div>
-                        <p>Nenhuma partida registrada</p>
+                <div class="matches-timeline-ultimate" id="profileMatchHistory">
+                    <div class="empty-matches-ultimate">
+                        <div class="empty-icon-mega">🎮</div>
+                        <p>Nenhuma partida registrada ainda</p>
+                        <div class="empty-subtext">As partidas aparecerão aqui após o primeiro jogo</div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
