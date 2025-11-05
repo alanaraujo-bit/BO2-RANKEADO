@@ -93,8 +93,42 @@ export default async function handler(req, res) {
             
             // Calcula delta de MMR
             const currentMMR = playerData.mmr || 1000;
-            const kFactor = 32; // Fator K do sistema Elo
-            const mmrChange = isWin ? kFactor : -kFactor;
+            // --- Cálculo dinâmico de MMR ---
+            // Parâmetros básicos
+            const baseK = 32;
+            const opponent = registeredPlayers.find(p => p.data.team !== playerTeam);
+            let opponentMMR = 1000;
+            if (opponent) {
+              const opponentData = (await db.collection('players').doc(opponent.docId).get()).data();
+              opponentMMR = opponentData?.mmr || 1000;
+            }
+            // Expected score (Elo)
+            const expected = 1 / (1 + Math.pow(10, (opponentMMR - currentMMR) / 400));
+            // Performance multiplier (K/D)
+            const kills = regPlayer.data.kills || 0;
+            const deaths = regPlayer.data.deaths || 0;
+            const kd = deaths > 0 ? kills / deaths : kills;
+            let perfMultiplier = 1.0;
+            if (kd >= 3.0) perfMultiplier = 1.3;
+            else if (kd >= 2.0) perfMultiplier = 1.2;
+            else if (kd >= 1.5) perfMultiplier = 1.1;
+            else if (kd >= 1.0) perfMultiplier = 1.0;
+            else if (kd > 0) perfMultiplier = 0.9;
+            else perfMultiplier = 0.8;
+            // Streak bonus (simples, pode ser aprimorado)
+            const winStreak = playerData.winStreak || 0;
+            let streakBonus = 0;
+            if (winStreak >= 10) streakBonus = 10;
+            else if (winStreak >= 7) streakBonus = 7;
+            else if (winStreak >= 5) streakBonus = 5;
+            else if (winStreak >= 3) streakBonus = 3;
+            // Ganho base
+            let mmrChange = 0;
+            if (isWin) {
+              mmrChange = Math.round(baseK * (1 - expected) * perfMultiplier + streakBonus);
+            } else {
+              mmrChange = -Math.round(baseK * (expected) * perfMultiplier);
+            }
             const newMMR = Math.max(0, currentMMR + mmrChange);
             
             // Atualiza stats do player
