@@ -262,54 +262,68 @@ const UI = {
             
             const leaderboard = await RankedData.getLeaderboard(type) || [];
             const container = document.getElementById('leaderboardTable');
-            
             if (!container) {
                 console.error('leaderboardTable container not found');
                 return;
             }
-            
             if (leaderboard.length === 0) {
                 container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:2rem;">Nenhum jogador ranqueado ainda.</p>';
                 return;
             }
-            
             const currentUsername = RankedData.currentUser;
             const totalPlayers = leaderboard.length;
-            
+            // Filtros
+            const sortBy = container.getAttribute('data-sort') || 'mmr';
+            const timeFilter = container.getAttribute('data-time') || 'season';
+            // Ordenação
+            const sortedLeaderboard = [...leaderboard].sort((a, b) => {
+                switch (sortBy) {
+                    case 'mmr': return b.mmr - a.mmr;
+                    case 'kills': return (b.totalKills || 0) - (a.totalKills || 0);
+                    case 'wins': return (b.wins || 0) - (a.wins || 0);
+                    default: return b.mmr - a.mmr;
+                }
+            });
+            // Filtragem
+            const filteredLeaderboard = timeFilter === 'season' ? 
+                sortedLeaderboard.filter(player => {
+                    const seasonStart = window.currentSeason?.startDate;
+                    return !seasonStart || (player.lastMatch && new Date(player.lastMatch) >= new Date(seasonStart));
+                }) : 
+                sortedLeaderboard;
             container.innerHTML = `
-                <div class="lb-header">
-                    <div class="lb-search-wrapper">
-                        <input type="text" id="leaderboardSearch" placeholder="Buscar jogador..." class="lb-search">
+                <div class="lb-filter-header">
+                    <div class="season-filter" id="seasonFilter">
+                        <button class="season-btn ${timeFilter === 'season' ? 'active' : ''}" data-time="season" onclick="UI.updateLeaderboardFilter('season')">TEMPORADA</button>
+                        <button class="season-btn ${timeFilter === 'allTime' ? 'active' : ''}" data-time="allTime" onclick="UI.updateLeaderboardFilter('allTime')">GLOBAL</button>
+                    </div>
+                    <div class="sort-select">
+                        <select id="sortFilter" onchange="UI.updateLeaderboardSort(this.value)">
+                            <option value="mmr" ${sortBy === 'mmr' ? 'selected' : ''}>ORDENAR POR MMR</option>
+                            <option value="kills" ${sortBy === 'kills' ? 'selected' : ''}>ORDENAR POR KILLS</option>
+                            <option value="wins" ${sortBy === 'wins' ? 'selected' : ''}>ORDENAR POR VITÓRIAS</option>
+                        </select>
                     </div>
                     <div class="lb-info">
-                        <span>${totalPlayers} jogadores</span>
+                        <span>${filteredLeaderboard.length} jogadores</span>
                     </div>
                 </div>
-                
                 <div class="lb-container">
-                    ${leaderboard.map((player, index) => {
+                    ${filteredLeaderboard.map((player, index) => {
                         const rank = (typeof RankSystem !== 'undefined' && RankSystem.getRank) 
                             ? RankSystem.getRank(player.mmr) 
                             : { icon: '🎖️', name: 'Unranked' };
-                        
-                        // Calcular partidas como wins + losses
                         const wins = player.wins || 0;
                         const losses = player.losses || 0;
                         const gamesPlayed = wins + losses;
-                        
-                        const winRate = gamesPlayed > 0
-                            ? ((wins / gamesPlayed) * 100).toFixed(0) 
-                            : '0';
-                        
+                        const winRate = gamesPlayed > 0 ? ((wins / gamesPlayed) * 100).toFixed(0) : '0';
                         const kd = (player.totalDeaths && player.totalDeaths > 0) 
                             ? (player.totalKills / player.totalDeaths).toFixed(2) 
                             : (player.totalKills || 0).toFixed(2);
-                        
                         const position = index + 1;
                         const isCurrentUser = currentUsername && (player.username === currentUsername || player.name === currentUsername);
                         const topClass = position <= 3 ? `top-${position}` : '';
                         const currentClass = isCurrentUser ? 'is-current' : '';
-                        
                         return `
                             <div class="lb-card ${topClass} ${currentClass}" data-player="${player.username || player.name}" onclick="openPlayerProfile('${player.username || player.name}')" style="cursor: pointer;">
                                 <div class="lb-rank">
@@ -318,7 +332,6 @@ const UI = {
                                     ${position === 2 ? '<span class="lb-medal">🥈</span>' : ''}
                                     ${position === 3 ? '<span class="lb-medal">🥉</span>' : ''}
                                 </div>
-                                
                                 <div class="lb-player">
                                     <div class="lb-avatar">${(player.username || player.name || '?')[0].toUpperCase()}</div>
                                     <div class="lb-name">
@@ -326,17 +339,14 @@ const UI = {
                                         ${isCurrentUser ? '<span class="lb-you">VOCÊ</span>' : ''}
                                     </div>
                                 </div>
-                                
                                 <div class="lb-tier">
                                     <span class="lb-tier-icon">${rank.icon || '🎖️'}</span>
                                     <span class="lb-tier-name">${rank.name || 'Unranked'}</span>
                                 </div>
-                                
                                 <div class="lb-mmr">
                                     <div class="lb-mmr-value">${player.mmr || 0}</div>
                                     <div class="lb-mmr-label">MMR</div>
                                 </div>
-                                
                                 <div class="lb-stats">
                                     <div class="lb-stat">
                                         <span class="lb-stat-label">V/D</span>
@@ -351,8 +361,8 @@ const UI = {
                                         <span class="lb-stat-value">${winRate}%</span>
                                     </div>
                                     <div class="lb-stat">
-                                        <span class="lb-stat-label">Partidas</span>
-                                        <span class="lb-stat-value">${gamesPlayed}</span>
+                                        <span class="lb-stat-label">Kills</span>
+                                        <span class="lb-stat-value">${player.totalKills || 0}</span>
                                     </div>
                                 </div>
                             </div>
@@ -360,21 +370,6 @@ const UI = {
                     }).join('')}
                 </div>
             `;
-            
-            // Funcionalidade de busca
-            const searchInput = document.getElementById('leaderboardSearch');
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const cards = document.querySelectorAll('.lb-card');
-                    
-                    cards.forEach(card => {
-                        const playerName = card.dataset.player?.toLowerCase() || '';
-                        card.style.display = playerName.includes(searchTerm) ? '' : 'none';
-                    });
-                });
-            }
-            
             // Scroll para usuário atual
             if (currentUsername) {
                 setTimeout(() => {
@@ -392,7 +387,34 @@ const UI = {
     async renderHistory() { try { /* keep for compatibility */ } catch(e) { console.error(e); } },
     async renderRanks() { try { /* keep for compatibility */ } catch(e) { console.error(e); } },
 
-    async populateOpponentSelect() { try { /* no-op */ } catch(e) { console.error(e); } }
+    async populateOpponentSelect() { try { /* no-op */ } catch(e) { console.error(e); } },
+
+    updateLeaderboardFilter(timeFilter) {
+        try {
+            document.querySelectorAll('.season-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.time === timeFilter);
+            });
+            const container = document.getElementById('leaderboardTable');
+            if (container) {
+                container.setAttribute('data-time', timeFilter);
+                this.renderLeaderboard();
+            }
+        } catch (e) {
+            console.error('Error updating leaderboard filter:', e);
+        }
+    },
+
+    updateLeaderboardSort(sortValue) {
+        try {
+            const container = document.getElementById('leaderboardTable');
+            if (container) {
+                container.setAttribute('data-sort', sortValue);
+                this.renderLeaderboard();
+            }
+        } catch (e) {
+            console.error('Error updating leaderboard sort:', e);
+        }
+    }
 };
 
 // Expose UI to global scope for legacy code

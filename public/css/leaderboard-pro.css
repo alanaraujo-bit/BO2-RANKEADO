@@ -1,0 +1,410 @@
+/* leaderboard-pro.css - Estilo profissional, minimalista, responsivo e com cores laranja/dourado */
+:root {
+  --primary-orange: #ff8c00;
+  --primary-gold: #ffa500;
+  --background-dark: #181818;
+  --card-bg: #232323;
+  --text-main: #fff;
+  --text-muted: #bdbdbd;
+  --border-gold: #ffa500;
+  --border-radius: 12px;
+  --shadow: 0 2px 16px rgba(0,0,0,0.12);
+}
+
+.lb-filter-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  background: var(--background-dark);
+  padding: 1.5rem 0 1rem 0;
+  border-bottom: 2px solid var(--primary-orange);
+}
+
+.season-filter {
+  display: flex;
+  gap: 0.5rem;
+}
+.season-btn {
+  background: none;
+  border: 2px solid var(--primary-orange);
+  color: var(--primary-orange);
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.season-btn.active {
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-gold));
+  color: #fff;
+  box-shadow: 0 0 10px var(--primary-orange);
+}
+
+.sort-select select {
+  background: var(--card-bg);
+  color: var(--primary-orange);
+  border: 2px solid var(--primary-orange);
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.sort-select select:focus {
+  border-color: var(--primary-gold);
+}
+
+/* Lista vertical para ranking */
+/* Lista vertical para ranking com borda dourada */
+/* Lista vertical compacta para ranking */
+/* Cards mais compridos e compactos */
+.lb-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 1rem 0.2rem;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1.5px solid var(--primary-orange);
+  border-radius: 10px;
+  background: rgba(30, 20, 10, 0.85);
+  box-shadow: 0 0 16px 1px rgba(255, 140, 0, 0.10);
+}
+
+/* Card fino, comprimido e clean */
+/* Card fino, comprimido, limpo e sem overflow */
+/* Card fino, comprido e super compacto */
+.lb-card {
+  background: var(--card-bg);
+  color: var(--text-main);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0.35rem 1.2rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  min-height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #222;
+  border-left: 3px solid transparent;
+  transition: background 0.2s, border-left 0.2s;
+  font-size: 0.92em;
+  overflow: hidden;
+}
+/* Destaque top 1 e usuário atual */
+.lb-card.top-1, .lb-card.is-current {
+  border-left: 4px solid var(--border-gold);
+  box-shadow: 0 0 16px 2px var(--border-gold), 0 0 8px 2px var(--primary-orange);
+  background: rgba(255, 215, 0, 0.10);
+  position: relative;
+  z-index: 2;
+}
+.lb-card.top-2 { border-left: 4px solid #c0c0c0; background: rgba(192, 192, 192, 0.07); }
+.lb-card.top-3 { border-left: 4px solid #cd7f32; background: rgba(205, 127, 50, 0.07); }
+.lb-card:hover { background: rgba(255, 140, 0, 0.13); }
+
+/* Medalha e posição */
+/* Medalha e posição compacta */
+/* Medalha e posição compacta */
+.lb-rank {
+  min-width: 38px;
+  text-align: center;
+  font-size: 0.95em;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.12em;
+}
+.lb-medal { font-size: 1em; margin-right: 0.08em; }
+.lb-pos { color: var(--primary-orange); font-size: 0.95em; }
+
+/* Avatar, nome e badge VOCÊ */
+/* Avatar, nome e badge VOCÊ compactos */
+/* Avatar, nome e badge VOCÊ super compactos */
+.lb-player {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  min-width: 70px;
+}
+.lb-avatar {
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-gold));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85em;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 4px 1px var(--primary-orange);
+}
+.lb-name {
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--primary-orange);
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-you {
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-gold));
+  color: #fff;
+  font-size: 0.7em;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+  text-transform: uppercase;
+  box-shadow: 0 0 4px 1px var(--primary-orange);
+  max-width: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tier compacta */
+/* Tier super compacta */
+.lb-tier {
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+  font-size: 0.85em;
+  min-width: 40px;
+}
+.lb-tier-icon { font-size: 0.9em; }
+.lb-tier-name { color: var(--primary-gold); font-weight: 600; }
+
+/* MMR compacta */
+/* MMR super compacta */
+.lb-mmr {
+  text-align: center;
+  min-width: 38px;
+}
+.lb-mmr-value {
+  font-size: 0.9em;
+  font-weight: 900;
+  color: var(--primary-orange);
+}
+.lb-mmr-label {
+  font-size: 0.65em;
+  color: var(--text-muted);
+}
+
+/* Stats alinhados à direita, compactos */
+/* Stats compactos */
+/* Stats compactos, sem overflow */
+/* Stats super compactos */
+.lb-stats {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: flex-end;
+  min-width: 80px;
+  flex-wrap: wrap;
+}
+.lb-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 24px;
+  max-width: 40px;
+  overflow: hidden;
+}
+.lb-stat-label {
+  font-size: 0.55em;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  max-width: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-stat-value {
+  font-size: 0.8em;
+  font-weight: 900;
+  color: var(--text-main);
+  letter-spacing: 0.1px;
+  max-width: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-stat-value.good { color: #4caf50; }
+.lb-stat-value.ok { color: #ffa500; }
+.lb-stat-value.bad { color: #ff5252; }
+
+@media (max-width: 900px) {
+  .lb-container { max-width: 100%; padding: 0.3rem 0.01rem; }
+  .lb-card { padding: 0.12rem 0.01rem; font-size: 0.89em; }
+}
+@media (max-width: 600px) {
+  .lb-filter-header { flex-direction: column; gap: 0.3rem; padding: 0.3rem 0 0.1rem 0; }
+  .lb-container { padding: 0.1rem 0.01rem; }
+  .lb-card { flex-direction: column; align-items: flex-start; padding: 0.06rem 0.01rem; font-size: 0.85em; }
+  .lb-stats { flex-wrap: wrap; gap: 0.1rem; min-width: 40px; }
+}
+.lb-card.top-1 {
+  border-color: var(--border-gold);
+  box-shadow: 0 0 24px var(--primary-gold);
+}
+.lb-card.top-2 {
+  border-color: #c0c0c0;
+}
+.lb-card.top-3 {
+  border-color: #cd7f32;
+}
+.lb-card.is-current {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 16px var(--primary-orange);
+}
+.lb-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 4px 24px var(--primary-orange);
+}
+
+.lb-rank {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3em;
+  margin-bottom: 0.5rem;
+}
+.lb-medal {
+  font-size: 1.5em;
+}
+.lb-pos {
+  font-weight: 900;
+  color: var(--primary-orange);
+}
+
+.lb-player {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+.lb-avatar {
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-gold));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.2em;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lb-name {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--primary-orange);
+}
+.lb-you {
+  background: var(--primary-orange);
+  color: #fff;
+  font-size: 0.8em;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  text-transform: uppercase;
+}
+
+.lb-tier {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1em;
+  margin-bottom: 0.5rem;
+}
+.lb-tier-icon {
+  font-size: 1.2em;
+}
+.lb-tier-name {
+  color: var(--primary-gold);
+  font-weight: 600;
+}
+
+.lb-mmr {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.lb-mmr-value {
+  font-size: 1.3em;
+  font-weight: 900;
+  color: var(--primary-orange);
+}
+.lb-mmr-label {
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+
+.lb-stats {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.lb-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lb-stat-label {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.lb-stat-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.lb-stat-value.good {
+  color: #4caf50;
+}
+.lb-stat-value.ok {
+  color: #ffa500;
+}
+.lb-stat-value.bad {
+  color: #ff5252;
+}
+
+@media (max-width: 900px) {
+  .lb-container {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
+  .lb-card {
+    min-width: 220px;
+    max-width: 100%;
+    padding: 1rem 0.7rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .lb-filter-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0 0.5rem 0;
+  }
+  .lb-container {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    padding: 0.5rem 0.2rem;
+  }
+  .lb-card {
+    min-width: 100%;
+    padding: 0.7rem 0.3rem;
+  }
+}
